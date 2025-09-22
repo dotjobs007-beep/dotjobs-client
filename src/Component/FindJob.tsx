@@ -16,7 +16,7 @@ export default function Jobs() {
   };
 
   return (
-    <div className="my-24 px-4 flex flex-col items-center lg:px-20">
+    <div className="my-24 px-4 flex flex-col items-center lg:px-[10rem]">
       {/* Header */}
       <div className="mb-6 text-center max-w-2xl">
         <h1 className="text-3xl lg:text-4xl font-bold mb-2">
@@ -39,9 +39,9 @@ export default function Jobs() {
               onChange={(e) => setQuery(e.target.value)}
               placeholder="Search jobs, companies, skills..."
               className="
-                w-full lg:flex-1 px-4 py-3 rounded-lg border border-gray-300
-                focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent
-                text-gray-700
+                w-full lg:flex-1 px-4 text-[#00000080] py-3 rounded-lg border border-gray-300
+                focus:outline-none
+                bg-[#FDD7FD]
               "
             />
             <button

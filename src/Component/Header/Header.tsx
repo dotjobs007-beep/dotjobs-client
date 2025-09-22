@@ -99,7 +99,7 @@ function DropdownMenu({
 
       {/* Navigation links */}
       <ul className="flex flex-col gap-3 px-4">
-        <li className="cursor-pointer hover:underline">Find Jobs</li>
+        <li className="cursor-pointer hover:underline" onClick={() => router.push("/jobs")}>Find Jobs</li>
         <li className="cursor-pointer hover:underline">Find Talents</li>
         <li className="cursor-pointer hover:underline">Abouts</li>
       </ul>
@@ -133,6 +133,11 @@ export default function Header() {
   };
 
   const router = useRouter();
+
+  useEffect(() => {
+    setMenuOpen(false)
+    setShowModal(false)
+  }, [router])
 
   return (
     <header className="fixed top-0 left-0 w-full z-50 flex items-center justify-between p-6 lg:px-15 bg-background text-foreground h-16">
