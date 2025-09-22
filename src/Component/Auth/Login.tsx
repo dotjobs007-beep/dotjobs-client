@@ -1,33 +1,56 @@
 "use client";
 import { useState } from "react";
 import Image from "next/image";
-import { signInWithPopup, signInWithEmailAndPassword } from "firebase/auth";
+import toast from "react-hot-toast";
+import {
+  signInWithPopup,
+  signInWithEmailAndPassword,
+  sendPasswordResetEmail,
+} from "firebase/auth";
 import { auth, googleProvider, twitterProvider } from "@/Firebase/firebase";
 import { FcGoogle } from "react-icons/fc";
-import { FaTwitter } from "react-icons/fa";
+import { SiX } from "react-icons/si"; // X icon
 
 export default function Login() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
+  // ✅ Google Login
   const handleGoogleLogin = async () => {
-    await signInWithPopup(auth, googleProvider);
+    try {
+      await signInWithPopup(auth, googleProvider);
+      toast.success("Logged in with Google");
+    } catch (err: any) {
+      toast.error(err.message || "Google login failed");
+    }
   };
 
+  // ✅ X (Twitter) Login
   const handleTwitterLogin = async () => {
-    await signInWithPopup(auth, twitterProvider);
+    try {
+      await signInWithPopup(auth, twitterProvider);
+      toast.success("Logged in with X");
+    } catch (err: any) {
+      toast.error(err.message || "X login failed");
+    }
   };
 
+  // ✅ Email Login
   const handleEmailLogin = async (e: React.FormEvent) => {
     e.preventDefault();
-    await signInWithEmailAndPassword(auth, email, password);
+    try {
+      await signInWithEmailAndPassword(auth, email, password);
+      toast.success("Logged in successfully");
+    } catch (err: any) {
+      toast.error(err.message || "Invalid email or password");
+    }
   };
 
   return (
-    <div className="flex h-screen overflow-hidden">
+    <div className="flex lg:h-[89vh] overflow-hidden">
       {/* Left Form */}
-      <div className="flex-1 flex flex-col justify-center px-12">
-        <h1 className="text-4xl font-bold mb-8">Login</h1>
+      <div className="flex-1 flex flex-col justify-center px-12 h-full">
+        <h1 className="text-3xl font-bold mb-8">Login</h1>
 
         <form onSubmit={handleEmailLogin} className="flex flex-col gap-5">
           <input
@@ -46,6 +69,7 @@ export default function Login() {
             onChange={(e) => setPassword(e.target.value)}
             required
           />
+
           <button
             type="submit"
             className="bg-blue-600 text-white p-4 rounded-lg hover:bg-blue-700 flex justify-center items-center gap-2 transition"
@@ -60,7 +84,7 @@ export default function Login() {
           <hr className="flex-1 border-t" />
         </div>
 
-        {/* OAuth Buttons - Row on medium/large, column on small */}
+        {/* OAuth Buttons */}
         <div className="flex flex-col md:flex-row gap-4">
           <div
             onClick={handleGoogleLogin}
@@ -72,16 +96,25 @@ export default function Login() {
 
           <div
             onClick={handleTwitterLogin}
-            className="flex-1 flex items-center justify-center bg-[#1DA1F2] hover:bg-[#0d95e8] text-white rounded-lg py-3 gap-3 cursor-pointer transition"
+            className="flex-1 flex items-center justify-center bg-black hover:bg-gray-800 text-white rounded-lg py-3 gap-3 cursor-pointer transition"
           >
-            <FaTwitter size={26} />
-            <span className="font-medium">Login with Twitter</span>
+            <SiX size={26} />
+            <span className="font-medium">Login with X</span>
           </div>
         </div>
 
-        <p className="mt-6 text-gray-500">
-          Don't have an account? <a href="/auth/signup" className="text-blue-500 font-medium">Sign Up</a>
-        </p>
+        <div className="lg:flex md:flex justify-between mt-1">
+          <p className="mt-6 text-gray-500">
+            Don’t have an account?{" "}
+            <a href="/auth/signup" className="text-blue-500 font-medium">
+              Sign Up
+            </a>
+          </p>
+
+          <p className="text-blue-500 text-sm mt-2 hover:underline self-start">
+            <a href="/auth/forgot-password">Forgot password?</a>
+          </p>
+        </div>
       </div>
 
       {/* Right Image */}

@@ -4,7 +4,7 @@ import Image from "next/image";
 import { signInWithPopup, createUserWithEmailAndPassword } from "firebase/auth";
 import { auth, googleProvider, twitterProvider } from "@/Firebase/firebase";
 import { FcGoogle } from "react-icons/fc";
-import { FaTwitter } from "react-icons/fa";
+import { SiX } from "react-icons/si"; // X logo
 
 export default function Signup() {
   const [email, setEmail] = useState("");
@@ -24,10 +24,10 @@ export default function Signup() {
   };
 
   return (
-    <div className="flex h-screen overflow-hidden">
+    <div className="flex lg:h-[89vh] overflow-hidden">
       {/* Left Form */}
       <div className="flex-1 flex flex-col justify-center px-12 h-full">
-        <h1 className="text-4xl font-bold mb-8">Sign Up</h1>
+        <h1 className="text-3xl font-bold mb-8">Sign Up</h1>
 
         <form onSubmit={handleEmailSignup} className="flex flex-col gap-5">
           <input
@@ -60,7 +60,7 @@ export default function Signup() {
           <hr className="flex-1 border-t" />
         </div>
 
-        {/* OAuth Buttons - Row on medium/large, column on small */}
+        {/* OAuth Buttons */}
         <div className="flex flex-col md:flex-row gap-4">
           <div
             onClick={handleGoogleSignup}
@@ -72,10 +72,10 @@ export default function Signup() {
 
           <div
             onClick={handleTwitterSignup}
-            className="flex-1 flex items-center justify-center bg-[#1DA1F2] hover:bg-[#0d95e8] text-white rounded-lg py-3 gap-3 cursor-pointer transition"
+            className="flex-1 flex items-center justify-center bg-black hover:bg-gray-800 text-white rounded-lg py-3 gap-3 cursor-pointer transition"
           >
-            <FaTwitter size={26} />
-            <span className="font-medium">Sign up with Twitter</span>
+            <SiX size={26} />
+            <span className="font-medium">Sign up with X</span>
           </div>
         </div>
 
