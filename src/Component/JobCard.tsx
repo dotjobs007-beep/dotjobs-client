@@ -1,5 +1,6 @@
 "use client";
 import Image from "next/image";
+import Card from "./Card";
 
 interface JobCardProps {
   logo: string;
@@ -8,18 +9,21 @@ interface JobCardProps {
   tags: string[];
 }
 
-export default function JobCard({ logo, title, description, tags }: JobCardProps) {
+//  flex flex-col md:flex-row
+//         md:items-center md:justify-between
+export default function JobCard({
+  logo,
+  title,
+  description,
+  tags,
+}: JobCardProps) {
   return (
-    <div
+    <Card
       className="
         flex flex-col md:flex-row 
         md:items-center md:justify-between 
-        gap-6 p-6 mt-10 
-        rounded-2xl text-white shadow-md
-      "
-      style={{
-        background: "linear-gradient(to right, #FF2670, #724B99)",
-      }}
+        gap-6 mt-10 
+      shadow-md"
     >
       {/* Company Logo */}
       <div className="flex justify-center md:justify-start">
@@ -38,7 +42,9 @@ export default function JobCard({ logo, title, description, tags }: JobCardProps
         <div className="flex flex-col gap-4 text-center md:text-left">
           <div>
             <b className="text-xl block mb-1">{title}</b>
-            <p className="text-[12px] max-w-md mx-auto md:mx-0">{description}</p>
+            <p className="text-[12px] max-w-md mx-auto md:mx-0">
+              {description}
+            </p>
           </div>
 
           {/* Job Info Tags */}
@@ -52,14 +58,16 @@ export default function JobCard({ logo, title, description, tags }: JobCardProps
         </div>
 
         {/* Apply Button */}
-        <button className="
+        <button
+          className="
           bg-white text-[#724B99] px-5 py-2 rounded-lg 
           font-semibold hover:bg-gray-100 transition 
           whitespace-nowrap
-        ">
+        "
+        >
           Apply Now
         </button>
       </div>
-    </div>
+    </Card>
   );
 }

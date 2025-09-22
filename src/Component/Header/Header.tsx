@@ -142,7 +142,7 @@ export default function Header() {
 
         {/* Large screen navigation */}
         <ul className="hidden lg:flex gap-6 ml-8 mt-2">
-          <li className="cursor-pointer hover:underline">Find Jobs</li>
+          <li className="cursor-pointer hover:underline" onClick={()=> router.replace("/jobs")}>Find Jobs</li>
           <li className="cursor-pointer hover:underline">Find Talents</li>
           <li className="cursor-pointer hover:underline">Abouts</li>
         </ul>
