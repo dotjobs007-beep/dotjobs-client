@@ -1,0 +1,14 @@
+[
+  {
+    "logo": "/images/logo_holder.png",
+    "title": "Junior Rust Engineer",
+    "description": "Join the core team building the next-generation decentralized exchange on Polkadot. Work with cutting-edge blockchain technology and grow your Rust skills.",
+    "tags": ["Full-time", "Remote", "$150K - $200K"]
+  },
+  {
+    "logo": "/images/logo_holder.png",
+    "title": "Frontend React Developer",
+    "description": "Help craft beautiful UI for decentralized finance applications. Experience with Next.js and Tailwind is a plus.",
+    "tags": ["Contract", "Remote", "$80K - $120K"]
+  }
+]
