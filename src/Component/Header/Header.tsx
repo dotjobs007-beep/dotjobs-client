@@ -135,10 +135,12 @@ export default function Header() {
   const router = useRouter();
 
   return (
-    <header className="fixed top-0 left-0 w-full z-50 flex items-center justify-between p-4 lg:px-15 bg-background text-foreground h-16">
+    <header className="fixed top-0 left-0 w-full z-50 flex items-center justify-between p-6 lg:px-15 bg-background text-foreground h-16">
       {/* Logo */}
       <div className="flex justify-between">
-        <div className="text-2xl cursor-pointer font-bold" onClick={() => router.replace("/")}>Logo</div>
+        <div className="text-2xl cursor-pointer font-bold" onClick={() => router.replace("/")}>
+           <Image src="/images/logo.png" alt="logo" width={100} height={100}/>
+        </div>
 
         {/* Large screen navigation */}
         <ul className="hidden lg:flex gap-6 ml-8 mt-2">
