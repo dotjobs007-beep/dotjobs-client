@@ -1,15 +1,19 @@
 "use client";
 import jobs from "@/mock/job.json";
-import Card from "../Card";
+import Card from "../../Card";
 import Image from "next/image";
 import { useParams } from "next/navigation";
+import { ArrowRight, Bookmark } from "lucide-react"; // ✅ Add icons
+import { useRouter } from "next/navigation";
 
 export default function ViewJobDetails() {
-  const params = useParams();               // ✅ Get params on client
+  const params = useParams(); // ✅ Get params on client
   const job = jobs.find((j) => String(j.id) === params?.id);
+  const router = useRouter()
+
   return (
     <main className="px-6 py-8 lg:px-[10rem]">
-      <p className="mb-6">
+      <p className="mb-6 text-gray-500 text-sm">
         Jobs / Web development / Senior Blockchain Engineer
       </p>
 
@@ -21,11 +25,14 @@ export default function ViewJobDetails() {
         </div>
 
         <div className="flex gap-3">
-          <button className="bg-purple-600 text-white px-4 py-2 rounded-lg hover:bg-purple-700 transition">
-            Apply Now
+          {/* ✅ Apply Button with Icon */}
+          <button onClick={() => router.push("/jobs/apply")} className="bg-purple-600 text-white px-4 py-2 rounded-lg hover:bg-purple-700 transition flex items-center gap-2">
+            Apply Now <ArrowRight size={18} />
           </button>
-          <button className="border border-purple-600 text-purple-600 px-4 py-2 rounded-lg hover:bg-purple-50 transition">
-            Save
+
+          {/* ✅ Save Button with Icon */}
+          <button className="border border-purple-600 text-purple-600 px-4 py-2 rounded-lg hover:bg-purple-50 transition flex items-center gap-2">
+            <Bookmark size={18} /> Save
           </button>
         </div>
       </div>
@@ -71,7 +78,7 @@ export default function ViewJobDetails() {
               <h3 className="font-bold text-lg">Blockchain Solutions Inc.</h3>
             </div>
 
-            <p className="text-sm  mb-3 leading-relaxed">
+            <p className="text-sm mb-3 leading-relaxed">
               About the company here. We are seeking a highly skilled Senior
               Software Developer to join our team. In this role, you will lead
               the design, development, and maintenance of software applications,

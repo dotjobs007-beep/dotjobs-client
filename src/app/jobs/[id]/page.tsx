@@ -1,4 +1,4 @@
-import ViewJobDetails from "@/Component/Protected/ViewJob";
+import ViewJobDetails from "@/Component/Protected/Job/ViewJob";
 
 export default function page(){
     return (
