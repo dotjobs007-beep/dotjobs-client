@@ -7,6 +7,8 @@ interface JobCardProps {
   title: string;
   description: string;
   tags: string[];
+  onClick?: () => void;
+  buttonText?: string;
 }
 
 //  flex flex-col md:flex-row
@@ -16,6 +18,8 @@ export default function JobCard({
   title,
   description,
   tags,
+  onClick = () => {},
+  buttonText = "Apply Now",
 }: JobCardProps) {
   return (
     <Card
@@ -64,8 +68,9 @@ export default function JobCard({
           font-semibold hover:bg-gray-100 transition 
           whitespace-nowrap
         "
+        onClick={() => onClick() }
         >
-          Apply Now
+          {buttonText}
         </button>
       </div>
     </Card>

@@ -1,5 +1,7 @@
 "use client";
 
+import Link from "next/link";
+
 export default function PostJob() {
   return (
     <div className="flex flex-col items-center text-[12px] justify-center p-6 max-w-lg mx-auto">
@@ -15,11 +17,13 @@ export default function PostJob() {
       <div className="w-full bg-[#98418E] p-6 rounded-lg">
         <form className="flex flex-col gap-4">
           {/* Job Details */}
-          <div>
+          <div className="border-b border-white/100 pb-10">
             <h1 className="text-white font-bold mb-4">Job Details</h1>
 
             <div className="mt-4">
-              <label className="block mb-2 font-medium text-white">Job Title</label>
+              <label className="block mb-2 font-medium text-white">
+                Job Title
+              </label>
               <input
                 type="text"
                 placeholder="e.g Senior Software Engineer"
@@ -29,7 +33,9 @@ export default function PostJob() {
             </div>
 
             <div className="mt-4">
-              <label className="block mb-2 font-medium text-white">Job description</label>
+              <label className="block mb-2 font-medium text-white">
+                Job description
+              </label>
               <textarea
                 placeholder="Describe the responsibilities, requirements and benefits of the role"
                 className="w-full h-[100px] bg-[#FCE9FC] text-[#00000080] rounded-md p-2 
@@ -39,7 +45,9 @@ export default function PostJob() {
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
               <div>
-                <label className="block mb-2 font-medium text-white">Employment Type</label>
+                <label className="block mb-2 font-medium text-white">
+                  Employment Type
+                </label>
                 <select
                   className="w-full bg-[#FCE9FC] text-[#00000080] rounded-md p-2 focus:outline-none focus:ring-0"
                   defaultValue=""
@@ -55,7 +63,9 @@ export default function PostJob() {
               </div>
 
               <div>
-                <label className="block mb-2 font-medium text-white">Work Arrangement</label>
+                <label className="block mb-2 font-medium text-white">
+                  Work Arrangement
+                </label>
                 <select
                   className="w-full bg-[#FCE9FC] text-[#00000080] rounded-md p-2 focus:outline-none focus:ring-0"
                   defaultValue=""
@@ -72,7 +82,9 @@ export default function PostJob() {
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
               <div>
-                <label className="block mb-2 font-medium text-white">Salary Type</label>
+                <label className="block mb-2 font-medium text-white">
+                  Salary Type
+                </label>
                 <select
                   className="w-full bg-[#FCE9FC] text-[#00000080] rounded-md p-2 focus:outline-none focus:ring-0"
                   defaultValue=""
@@ -87,7 +99,9 @@ export default function PostJob() {
               </div>
 
               <div>
-                <label className="block mb-2 font-medium text-white">Salary Range</label>
+                <label className="block mb-2 font-medium text-white">
+                  Salary Range
+                </label>
                 <input
                   type="text"
                   placeholder="e.g. 800-200"
@@ -105,11 +119,13 @@ export default function PostJob() {
           </div>
 
           {/* Company Details */}
-          <div className="mt-6">
+          <div className="border-b border-white/100 pb-10">
             <h1 className="text-white font-bold mb-4">Company Details</h1>
 
             <div className="mt-4">
-              <label className="block mb-2 font-medium text-white">Company Name</label>
+              <label className="block mb-2 font-medium text-white">
+                Company Name
+              </label>
               <input
                 type="text"
                 placeholder="e.g. Acme Corp"
@@ -119,7 +135,9 @@ export default function PostJob() {
             </div>
 
             <div className="mt-4">
-              <label className="block mb-2 font-medium text-white">Company Website (optional)</label>
+              <label className="block mb-2 font-medium text-white">
+                Company Website (optional)
+              </label>
               <input
                 type="text"
                 placeholder="e.g. www.acme.com"
@@ -129,7 +147,9 @@ export default function PostJob() {
             </div>
 
             <div className="mt-4">
-              <label className="block mb-2 font-medium text-white">Company Location</label>
+              <label className="block mb-2 font-medium text-white">
+                Company Location
+              </label>
               <input
                 type="text"
                 placeholder="e.g. New York, NY"
@@ -139,32 +159,54 @@ export default function PostJob() {
             </div>
 
             <div className="mt-4">
-              <label className="block mb-2 font-medium text-white">Company Description (optional)</label>
+              <label className="block mb-2 font-medium text-white">
+                Company Description (optional)
+              </label>
               <textarea
                 placeholder="Briefly describe your company"
                 className="w-full h-[100px] bg-[#FCE9FC] text-[#00000080] rounded-md p-2 
                            focus:outline-none focus:ring-0"
               />
             </div>
-          </div>
 
-          {/* ✅ New: Company Logo at the Bottom */}
-          <div className="mt-6">
-            <label className="block mb-2 font-medium text-white">Company Logo</label>
-            <input
-              type="file"
-              accept="image/*"
-              className="w-full bg-[#FCE9FC] text-[#00000080] rounded-md p-2
+            {/* ✅ New: Company Logo at the Bottom */}
+            <div className="mt-6">
+              <label className="block mb-2 font-medium text-white">
+                Company Logo
+              </label>
+              <input
+                type="file"
+                accept="image/*"
+                className="w-full bg-[#FCE9FC] text-[#00000080] rounded-md p-2
                          focus:outline-none focus:ring-0 file:mr-4 file:py-2 file:px-4 
                          file:rounded-md file:border-0 file:text-sm file:font-semibold 
                          file:bg-[#FF2670] file:text-white hover:file:bg-[#e02666]"
-            />
+              />
+            </div>
+          </div>
+
+          {/* Verification */}
+
+          <div className="pb-10 bg-[#7A2E7A] p-4 rounded-md mt-6">
+            <h1 className="text-white font-bold mb-4">Verification</h1>
+            <p className="text-white text-[10px]">
+              To maintain the quality of job postings, we require identity
+              verification through Polka Identity or Polkassembly.
+            </p>
           </div>
 
           {/* Submit Button */}
-          <button className="w-full text-white font-bold py-2 px-4 rounded-md mt-6 bg-[#FF2670] hover:bg-[#e02666] transition duration-300">
-            Post Job
-          </button>
+          <div className="flex justify-between gap-6 items-center">
+            {/* Bordered Verify Identity Box */}
+            <div className="w-full border border-white/30 rounded-md p-3 text-white text-center font-medium hover:border-white transition duration-300 cursor-pointer">
+              <Link href="/jobs/verify_identity">Verify Identity </Link>
+            </div>
+
+            {/* Post Job Button */}
+            <div className="w-full bg-[#FF2670] rounded-md p-3 text-white text-center font-medium hover:border-white transition duration-300 cursor-pointer">
+              Post Job
+            </div>
+          </div>
         </form>
       </div>
     </div>

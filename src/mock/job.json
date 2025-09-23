@@ -1,14 +1,14 @@
 [
   {
     "id": "1",
-    "logo": "/images/company1.png",
+    "logo": "/images/logo_holder.png",
     "title": "Frontend Developer",
     "description": "Build cutting-edge web apps.",
     "tags": ["Remote", "Full-time"]
   },
   {
     "id": "2",
-    "logo": "/images/company2.png",
+    "logo": "/images/logo_holder.png",
     "title": "Smart Contract Engineer",
     "description": "Work with blockchain tech.",
     "tags": ["Hybrid", "Gig"]
