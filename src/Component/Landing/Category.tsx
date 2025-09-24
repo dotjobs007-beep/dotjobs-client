@@ -4,10 +4,10 @@ import Image from "next/image";
 import { useEffect, useRef, useState } from "react";
 import JobCard from "../JobCard";
 import jobs from "../../mock/job.json"
-import Image1 from "../../../public/images/image1.png"
-import Image2 from "../../../public/images/image2.png"
-import Image3 from "../../../public/images/image3.png"
-import Image4 from "../../../public/images/image4.png"
+// import Image1 from "../../../public/images/image1.png"
+// import Image2 from "../../../public/images/image2.png"
+// import Image3 from "../../../public/images/image3.png"
+// import Image4 from "../../../public/images/image4.png"
 
 type CategoryCardProps = {
   imageSrc: any;
@@ -72,10 +72,10 @@ export function CategoryCard({ imageSrc, alt, label, delay = 0 }: CategoryCardPr
 // Main Category component
 export default function Category() {
   const categories = [
-    { imageSrc: Image1, alt: "Category 1", label: "Design" },
-    { imageSrc: Image2, alt: "Category 2", label: "Development" },
-    { imageSrc: Image3, alt: "Category 3", label: "Marketing" },
-    { imageSrc: Image4, alt: "Category 4", label: "Writing" },
+    { imageSrc: "https://res.cloudinary.com/dk06cndku/image/upload/v1758747694/image1_kij58k.png", alt: "Category 1", label: "Design" },
+    { imageSrc: "https://res.cloudinary.com/dk06cndku/image/upload/v1758747694/image2_u3ffv1.png", alt: "Category 2", label: "Development" },
+    { imageSrc: "https://res.cloudinary.com/dk06cndku/image/upload/v1758747694/image3_uuhtqb.png", alt: "Category 3", label: "Marketing" },
+    { imageSrc: "https://res.cloudinary.com/dk06cndku/image/upload/v1758747694/image4_kjvrey.png", alt: "Category 4", label: "Writing" },
   ];
 
   return (
