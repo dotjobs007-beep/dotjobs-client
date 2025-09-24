@@ -1,14 +1,14 @@
 [
   {
     "id": "1",
-    "logo": "/images/logo_holder.png",
+    "logo": "https://res.cloudinary.com/dk06cndku/image/upload/v1758747695/logo_holder_nw8s2g.png",
     "title": "Frontend Developer",
     "description": "Build cutting-edge web apps.",
     "tags": ["Remote", "Full-time"]
   },
   {
     "id": "2",
-    "logo": "/images/logo_holder.png",
+    "logo": "https://res.cloudinary.com/dk06cndku/image/upload/v1758747695/logo_holder_nw8s2g.png",
     "title": "Smart Contract Engineer",
     "description": "Work with blockchain tech.",
     "tags": ["Hybrid", "Gig"]

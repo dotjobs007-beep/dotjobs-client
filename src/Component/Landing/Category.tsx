@@ -4,9 +4,13 @@ import Image from "next/image";
 import { useEffect, useRef, useState } from "react";
 import JobCard from "../JobCard";
 import jobs from "../../mock/job.json"
+import Image1 from "../../../public/images/image1.png"
+import Image2 from "../../../public/images/image2.png"
+import Image3 from "../../../public/images/image3.png"
+import Image4 from "../../../public/images/image4.png"
 
 type CategoryCardProps = {
-  imageSrc: string;
+  imageSrc: any;
   alt: string;
   label: string;
   delay?: number; // Stagger delay
@@ -68,10 +72,10 @@ export function CategoryCard({ imageSrc, alt, label, delay = 0 }: CategoryCardPr
 // Main Category component
 export default function Category() {
   const categories = [
-    { imageSrc: "/images/image1.png", alt: "Category 1", label: "Design" },
-    { imageSrc: "/images/image2.png", alt: "Category 2", label: "Development" },
-    { imageSrc: "/images/image3.png", alt: "Category 3", label: "Marketing" },
-    { imageSrc: "/images/image4.png", alt: "Category 4", label: "Writing" },
+    { imageSrc: Image1, alt: "Category 1", label: "Design" },
+    { imageSrc: Image2, alt: "Category 2", label: "Development" },
+    { imageSrc: Image3, alt: "Category 3", label: "Marketing" },
+    { imageSrc: Image4, alt: "Category 4", label: "Writing" },
   ];
 
   return (
