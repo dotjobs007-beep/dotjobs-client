@@ -8,13 +8,19 @@ import { usePolkadotWallet } from "../../hooks/usePolkadotWallet";
 import WalletModal from "../WalletModal";
 import { useRouter } from "next/navigation";
 import { AppRouterInstance } from "next/dist/shared/lib/app-router-context.shared-runtime";
+import { useAuth } from "@/app/context/authcontext";
 
 // Verification Image Component
-function Verification() {
+interface IVerificationProps {
+  isVerified: boolean;
+}
+function Verification({isVerified}: IVerificationProps) {
+
+  const imgUrl = isVerified ? "/images/verified.png" : "/images/not_verified.png";
   return (
     <div className="relative w-10 h-10 lg:w-15 lg:h-15 flex-shrink-0">
       <Image
-        src="/images/not_verified.png"
+        src={imgUrl}
         alt="verification signal"
         width={80}
         height={80}
@@ -117,15 +123,11 @@ function DropdownMenu({
 }
 
 export default function Header() {
-  const [isLoggedIn, setIsLoggedIn] = useState(true);
+  // const [isLoggedIn, setIsLoggedIn] = useState(true);
   const [showModal, setShowModal] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
   const { walletAddress, connectWallet, walletMissing } = usePolkadotWallet();
-
-  useEffect(() => {
-    const stored = localStorage.getItem("isLoggedIn");
-    setIsLoggedIn(stored === "true");
-  }, []);
+  const {isLoggedIn, isVerified} = useAuth()
 
   const handleConnectClick = () => {
     connectWallet();
@@ -157,7 +159,7 @@ export default function Header() {
 
       {/* Large screen right section */}
       <div className="hidden lg:flex items-center gap-4">
-        <Verification />
+        <Verification isVerified={isVerified}/>
         <Avatar />
         <ActionButtons
           isLoggedIn={isLoggedIn}
@@ -170,7 +172,7 @@ export default function Header() {
 
       {/* Medium & small screens */}
       <div className="flex lg:hidden">
-        <Verification />
+        <Verification isVerified={isVerified} />
         {isLoggedIn && <Avatar />}
         <ThemeToggle />
         <button

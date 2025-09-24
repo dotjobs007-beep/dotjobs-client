@@ -5,6 +5,7 @@ import { Unbounded } from "next/font/google";
 
 import Header from "@/Component/Header/Header";
 import { Toaster } from "react-hot-toast";
+import { AuthProvider } from "./context/authcontext";
 export const metadata: Metadata = {
   title: "Tailwind v4 Dark Mode",
   description: "Manual toggle with Tailwind v4",
@@ -21,6 +22,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body  className={unbounded.className}>
+        <AuthProvider>
         <Header />
         {/* <header className="p-4 flex justify-end">
         </header> */}
@@ -52,6 +54,7 @@ export default function RootLayout({
           }}
         />
         </main>
+        </AuthProvider>
       </body>
     </html>
   );

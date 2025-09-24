@@ -5,22 +5,56 @@ import { signInWithPopup, createUserWithEmailAndPassword } from "firebase/auth";
 import { auth, googleProvider, twitterProvider } from "@/Firebase/firebase";
 import { FcGoogle } from "react-icons/fc";
 import { SiX } from "react-icons/si"; // X logo
+import service from "@/helper/service.helper";
+import { IApiResponse } from "@/interface/interface";
+import toast from "react-hot-toast";
+import { useRouter } from "next/navigation";
+import { useAuth } from "@/app/context/authcontext";
 
 export default function Signup() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const router = useRouter();
+  const { setIsLoggedIn } = useAuth();
 
   const handleGoogleSignup = async () => {
-    await signInWithPopup(auth, googleProvider);
+    const result = await signInWithPopup(auth, googleProvider);
+    const user = result.user;
+    const token = await user.getIdToken();
+    await handleAuthentication(token);
   };
 
   const handleTwitterSignup = async () => {
-    await signInWithPopup(auth, twitterProvider);
+    const result = await signInWithPopup(auth, twitterProvider);
+    const user = result.user;
+    const token = await user.getIdToken();
+    await handleAuthentication(token);
   };
 
   const handleEmailSignup = async (e: React.FormEvent) => {
     e.preventDefault();
-    await createUserWithEmailAndPassword(auth, email, password);
+    const result = await createUserWithEmailAndPassword(auth, email, password);
+    const user = result.user;
+    const token = await user.getIdToken();
+    await handleAuthentication(token);
+  };
+
+  const handleAuthentication = async (token: string) => {
+    const headers = {
+      authorization: `Bearer ${token}`,
+    };
+    const registerUser: IApiResponse<null> = await service.fetcher(
+      "/user/auth",
+      "POST",
+      { headers }
+    );
+    if (registerUser.code == 201 || registerUser.code == 200) {
+      router.push("/dashboard/profile");
+      setIsLoggedIn(true);
+      return;
+    } else {
+      toast.error(registerUser.message);
+    }
   };
 
   return (
@@ -67,7 +101,9 @@ export default function Signup() {
             className="flex-1 flex items-center justify-center border border-gray-300 rounded-lg py-3 gap-3 hover:bg-gray-100 cursor-pointer transition"
           >
             <FcGoogle size={26} />
-            <span className="text-gray-700 font-medium">Sign up with Google</span>
+            <span className="text-gray-700 font-medium">
+              Sign up with Google
+            </span>
           </div>
 
           <div
@@ -80,7 +116,10 @@ export default function Signup() {
         </div>
 
         <p className="mt-6 text-gray-500">
-          Already have an account? <a href="/auth/signin" className="text-blue-500 font-medium">Login</a>
+          Already have an account?{" "}
+          <a href="/auth/signin" className="text-blue-500 font-medium">
+            Login
+          </a>
         </p>
       </div>
 
