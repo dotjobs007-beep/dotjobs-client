@@ -9,6 +9,9 @@ import WalletModal from "../WalletModal";
 import { useRouter } from "next/navigation";
 import { AppRouterInstance } from "next/dist/shared/lib/app-router-context.shared-runtime";
 import { useAuth } from "@/app/context/authcontext";
+import logo from "../../../public/Images/logo.png";
+import NotVerified from "../../../public/Images/not_verified.png";
+import Verified from "../../../public/Images/verified.png";
 
 // Verification Image Component
 interface IVerificationProps {
@@ -16,7 +19,7 @@ interface IVerificationProps {
 }
 function Verification({isVerified}: IVerificationProps) {
 
-  const imgUrl = isVerified ? "/images/verified.png" : "/images/not_verified.png";
+  const imgUrl = isVerified ? Verified : NotVerified;
   return (
     <div className="relative w-10 h-10 lg:w-15 lg:h-15 flex-shrink-0">
       <Image
@@ -146,7 +149,7 @@ export default function Header() {
       {/* Logo */}
       <div className="flex justify-between">
         <div className="text-2xl cursor-pointer font-bold" onClick={() => router.replace("/")}>
-           <Image src="/images/logo.png" alt="logo" width={100} height={100}/>
+           <Image src="https://res.cloudinary.com/dk06cndku/image/upload/v1758747694/logo_tp996y.png" alt="logo" width={100} height={100}/>
         </div>
 
         {/* Large screen navigation */}
