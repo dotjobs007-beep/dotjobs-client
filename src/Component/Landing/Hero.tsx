@@ -16,7 +16,7 @@ export default function Hero() {
       {/* Banner Image */}
       <div>
         <Image
-          src="/images/banner.png"
+          src="https://res.cloudinary.com/dk06cndku/image/upload/v1758747694/banner_eokjjm.png"
           alt="banner image"
           height={400}
           width={1500}
