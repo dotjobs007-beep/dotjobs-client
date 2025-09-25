@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { use, useEffect, useState } from "react";
 import ThemeToggle from "../ThemeToggle";
 import Image from "next/image";
 import { FiUser, FiMenu, FiX } from "react-icons/fi";
@@ -10,7 +10,7 @@ import { useRouter } from "next/navigation";
 import { AppRouterInstance } from "next/dist/shared/lib/app-router-context.shared-runtime";
 import { useAuth } from "@/app/context/authcontext";
 import toast from "react-hot-toast";
-import { IApiResponse } from "@/interface/interface";
+import { IApiResponse, IUserDetails } from "@/interface/interface";
 import service from "@/helper/service.helper";
 import Spinner from "../Spinner";
 import { log } from "console";
@@ -55,7 +55,7 @@ function ActionButtons({
       <div className="flex justify-between gap-3">
         <div
           className="px-4 py-2 rounded-lg bg-red-600 cursor-pointer text-white text-[12px] font-medium hover:bg-red-700 transition-colors"
-          onClick={() => router.replace("/jobs/post")}
+          onClick={() => router.replace("/jobs/post_job")}
         >
           Post Job
         </div>
@@ -140,18 +140,50 @@ function DropdownMenu({
 }
 
 export default function Header() {
-  // const [isLoggedIn, setIsLoggedIn] = useState(true);
   const [showModal, setShowModal] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
   const { walletAddress, connectWallet, walletMissing } = usePolkadotWallet();
   const { isLoggedIn } = useAuth();
+  const [isLoading, setIsLoading] = useState(false);
+  const router = useRouter();
 
-  const handleConnectClick = () => {
-    connectWallet();
-    if (!walletAddress && walletMissing) setShowModal(true);
+  const handleConnectClick = async () => {
+    await connectWallet();
+    if (!walletAddress && walletMissing) {
+      setShowModal(true);
+      return;
+    }
   };
 
-  const router = useRouter();
+  const handleWalletConnected = async () => {
+    setIsLoading(true);
+    const response: IApiResponse<IUserDetails> = await service.fetcher(
+      `/user/connect-wallet/${walletAddress}`,
+      "PATCH",
+      { withCredentials: true }
+    );
+
+    if (response.code === 401) {
+      setIsLoading(false);
+      router.push("/auth/signin");
+      return;
+    }
+
+    if (response.status === "error") {
+      toast.error(response.message);
+      setIsLoading(false);
+      return;
+    } else {
+      setIsLoading(false);
+      return;
+    }
+  };
+
+  useEffect(() => {
+    if (walletAddress) {
+      handleWalletConnected();
+    }
+  }, [walletAddress]);
 
   useEffect(() => {
     setMenuOpen(false);
@@ -187,7 +219,7 @@ export default function Header() {
         </ul>
       </div>
 
-      {/* Large screen right section */}
+      {/* ✅ Large screen right section */}
       <div className="hidden lg:flex items-center gap-4">
         <ActionButtons
           isLoggedIn={isLoggedIn}
@@ -196,11 +228,34 @@ export default function Header() {
           router={router}
         />
         <ThemeToggle />
+
+        {/* ✅ Avatar Icon */}
+        {isLoggedIn && (
+          <button
+            onClick={() => router.push("/dashboard/profile")}
+            className="p-2 rounded-full hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors"
+            title="My Profile"
+          >
+            <FiUser size={22} />
+          </button>
+        )}
       </div>
 
       {/* Medium & small screens */}
       <div className="flex lg:hidden">
         <ThemeToggle />
+
+        {/* ✅ Mobile avatar button (optional) */}
+        {isLoggedIn && (
+          <button
+            onClick={() => router.push("/dashboard/profile")}
+            className="p-2 rounded-full ml-2 hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors"
+            title="My Profile"
+          >
+            <FiUser size={22} />
+          </button>
+        )}
+
         <button
           className="py-2 ml-2 rounded-md hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors"
           onClick={() => setMenuOpen(!menuOpen)}
@@ -225,22 +280,7 @@ export default function Header() {
         onClose={() => setShowModal(false)}
       />
 
-      {/* Animations */}
-      <style jsx>{`
-        @keyframes slideDown {
-          0% {
-            opacity: 0;
-            transform: translateY(-10px);
-          }
-          100% {
-            opacity: 1;
-            transform: translateY(0);
-          }
-        }
-        .animate-slideDown {
-          animation: slideDown 0.3s ease-out forwards;
-        }
-      `}</style>
+      <Spinner isLoading={isLoading} />
     </header>
   );
 }

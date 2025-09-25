@@ -54,7 +54,6 @@ export default function ProfilePage() {
   const handleSave = async () => {
     setIsLoading(true);
     const skillsArray = skills.split(",").map((skill) => skill.trim());
-    console.log("Skills Array:", skillsArray);
     const response: IApiResponse<IUserDetails> = await service.fetcher(
       "/user/update-profile",
       "PATCH",
@@ -87,14 +86,6 @@ export default function ProfilePage() {
     }
   };
 
-  //   const handleEditOpen = () => {
-  //   if (!userData) return;
-  //   // 🟢 Pre-fill with existing data
-  //   setAbout(userData.about || "");
-  //   setSkills(userData.skill?.join(", ") || ""); // <-- show previous skills
-  //   setShowEdit(true);
-  // };
-
   return (
     <div>
       {!isLoading && userData && (
@@ -121,7 +112,7 @@ export default function ProfilePage() {
                 className="rounded-full mt-[-30px] border-4 border-white/30 bg-gray-500"
               />
               <h2 className="text-2xl font-bold">{userData.name}</h2>
-              <p className="text-sm text-white/80 mt-1">{userData.role}</p>
+              <p className="text-sm text-white/80 mt-1">{userData.email}</p>
               <p className="text-xs text-white/70 mt-3">
                 Joined on:{" "}
                 <span className="font-medium">
@@ -203,8 +194,8 @@ export default function ProfilePage() {
 
       {/* ✅ Edit Modal */}
       {showEdit && (
-        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
-          <Card className="bg-white rounded-xl p-6 w-full max-w-md">
+        <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50">
+          <Card className="bg-white rounded-xl p-6 w-full max-w-md shadow-2xl border border-gray-100">
             <h2 className="text-xl font-bold mb-4">Edit Profile</h2>
 
             <label className="block text-sm font-medium text-gray-700 mb-1">
@@ -213,7 +204,9 @@ export default function ProfilePage() {
             <textarea
               value={about}
               onChange={(e) => setAbout(e.target.value)}
-              className="w-full border rounded-lg p-2 mb-4 text-gray-800"
+              className="w-full border-gray-300 p-3 rounded-lg border
+          focus:outline-none
+          bg-[#FDD7FD] mb-4 text-gray-800"
               rows={4}
             />
 
@@ -223,7 +216,9 @@ export default function ProfilePage() {
             <input
               value={skills}
               onChange={(e) => setSkills(e.target.value)}
-              className="w-full border rounded-lg p-2 mb-4 text-gray-800"
+              className="w-full border-gray-300 p-3 rounded-lg border
+          focus:outline-none
+          bg-[#FDD7FD] mb-4 text-gray-800"
               placeholder="e.g. React, Node.js"
             />
 
