@@ -24,16 +24,15 @@ class ServiceHelper {
         ...(options.headers || {}),
       };
 
-      console.log("ServiceHelper.fetcher request:", { url: `${this.baseUrl}${url}`, method, headers });
-
       const response = await axios.request<IApiResponse<T>>({
         url: `${this.baseUrl}${url}`,
         method,
         headers,
         ...Object.fromEntries(Object.entries(options).filter(([k]) => k !== "headers")),
+        withCredentials: true, // include cookies
       });
 
-      console.log("ServiceHelper.fetcher response:", response.data);
+      console.log("ServiceHelper.fetcher response:", response);
 
       return response.data;
     } catch (error: any) {

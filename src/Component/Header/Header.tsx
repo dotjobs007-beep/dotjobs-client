@@ -9,57 +9,57 @@ import WalletModal from "../WalletModal";
 import { useRouter } from "next/navigation";
 import { AppRouterInstance } from "next/dist/shared/lib/app-router-context.shared-runtime";
 import { useAuth } from "@/app/context/authcontext";
-import logo from "../../../public/Images/logo.png";
-import NotVerified from "../../../public/Images/not_verified.png";
-import Verified from "../../../public/Images/verified.png";
+import toast from "react-hot-toast";
+import { IApiResponse } from "@/interface/interface";
+import service from "@/helper/service.helper";
+import Spinner from "../Spinner";
+import { log } from "console";
 
-// Verification Image Component
-interface IVerificationProps {
-  isVerified: boolean;
-}
-function Verification({isVerified}: IVerificationProps) {
-
-  const imgUrl = isVerified ? Verified : NotVerified;
-  return (
-    <div className="relative w-10 h-10 lg:w-15 lg:h-15 flex-shrink-0">
-      <Image
-        src={imgUrl}
-        alt="verification signal"
-        width={80}
-        height={80}
-        className="object-contain absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2"
-      />
-    </div>
-  );
-}
-
-// Avatar Component
-function Avatar() {
-  return (
-    <div className="w-10 h-10 flex items-center justify-center rounded-full bg-gray-200 dark:bg-gray-700 text-gray-500 dark:text-gray-300 border-2 border-gray-300 dark:border-gray-700">
-      <FiUser size={20} />
-    </div>
-  );
-}
-
-// Action Buttons Component
+// Action Buttons Componet
 function ActionButtons({
   isLoggedIn,
   walletAddress,
   handleConnectClick,
+  // handleLogout,
   router,
 }: {
   isLoggedIn: boolean;
   walletAddress: string | null;
   handleConnectClick: () => void;
+  // handleLogout: () => void;
   router: AppRouterInstance;
 }) {
+  const [isLoading, setIsLoading] = useState(false);
+  const { logout } = useAuth();
+  const handleLogout = async () => {
+    setIsLoading(true);
+
+    const registerUser: IApiResponse<null> = await service.fetcher(
+      "/user/logout",
+      "POST"
+    );
+    if (registerUser.code == 201 || registerUser.code == 200) {
+      setIsLoading(false);
+      router.push("/auth/signin");
+      logout();
+      return;
+    } else {
+      toast.error(registerUser.message);
+      setIsLoading(false);
+      return;
+    }
+  };
+
   if (isLoggedIn) {
     return (
       <div className="flex justify-between gap-3">
-        <div className="px-4 py-2 rounded-lg bg-red-600 cursor-pointer text-white text-[12px] font-medium hover:bg-red-700 transition-colors">
+        <div
+          className="px-4 py-2 rounded-lg bg-red-600 cursor-pointer text-white text-[12px] font-medium hover:bg-red-700 transition-colors"
+          onClick={() => router.replace("/jobs/post")}
+        >
           Post Job
         </div>
+
         <button
           onClick={handleConnectClick}
           className="px-4 py-2 rounded-lg bg-purple-600 text-[12px] text-white font-medium hover:bg-purple-700 transition-colors"
@@ -68,6 +68,15 @@ function ActionButtons({
             ? `${walletAddress.slice(0, 6)}...${walletAddress.slice(-4)}`
             : "Connect Wallet"}
         </button>
+
+        {/* ✅ Logout Button */}
+        <button
+          onClick={handleLogout}
+          className="px-4 py-2 rounded-lg bg-gray-600 text-[12px] text-white font-medium hover:bg-gray-700 transition-colors"
+        >
+          Logout
+        </button>
+        <Spinner isLoading={isLoading} />
       </div>
     );
   } else {
@@ -108,7 +117,12 @@ function DropdownMenu({
 
       {/* Navigation links */}
       <ul className="flex flex-col gap-3 px-4">
-        <li className="cursor-pointer hover:underline" onClick={() => router.push("/jobs")}>Find Jobs</li>
+        <li
+          className="cursor-pointer hover:underline"
+          onClick={() => router.push("/jobs")}
+        >
+          Find Jobs
+        </li>
         <li className="cursor-pointer hover:underline">Find Talents</li>
         <li className="cursor-pointer hover:underline">Abouts</li>
       </ul>
@@ -130,7 +144,7 @@ export default function Header() {
   const [showModal, setShowModal] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
   const { walletAddress, connectWallet, walletMissing } = usePolkadotWallet();
-  const {isLoggedIn, isVerified} = useAuth()
+  const { isLoggedIn } = useAuth();
 
   const handleConnectClick = () => {
     connectWallet();
@@ -140,21 +154,34 @@ export default function Header() {
   const router = useRouter();
 
   useEffect(() => {
-    setMenuOpen(false)
-    setShowModal(false)
-  }, [router])
+    setMenuOpen(false);
+    setShowModal(false);
+  }, [router]);
 
   return (
     <header className="fixed top-0 left-0 w-full z-50 flex items-center justify-between p-6 lg:px-15 bg-background text-foreground h-16">
       {/* Logo */}
       <div className="flex justify-between">
-        <div className="text-2xl cursor-pointer font-bold" onClick={() => router.replace("/")}>
-           <Image src="https://res.cloudinary.com/dk06cndku/image/upload/v1758747694/logo_tp996y.png" alt="logo" width={100} height={100}/>
+        <div
+          className="text-2xl cursor-pointer font-bold"
+          onClick={() => router.replace("/")}
+        >
+          <Image
+            src="https://res.cloudinary.com/dk06cndku/image/upload/v1758747694/logo_tp996y.png"
+            alt="logo"
+            width={100}
+            height={100}
+          />
         </div>
 
         {/* Large screen navigation */}
         <ul className="hidden lg:flex gap-6 ml-8 mt-2">
-          <li className="cursor-pointer hover:underline" onClick={()=> router.replace("/jobs")}>Find Jobs</li>
+          <li
+            className="cursor-pointer hover:underline"
+            onClick={() => router.replace("/jobs")}
+          >
+            Find Jobs
+          </li>
           <li className="cursor-pointer hover:underline">Find Talents</li>
           <li className="cursor-pointer hover:underline">Abouts</li>
         </ul>
@@ -162,8 +189,6 @@ export default function Header() {
 
       {/* Large screen right section */}
       <div className="hidden lg:flex items-center gap-4">
-        <Verification isVerified={isVerified}/>
-        <Avatar />
         <ActionButtons
           isLoggedIn={isLoggedIn}
           walletAddress={walletAddress}
@@ -175,8 +200,6 @@ export default function Header() {
 
       {/* Medium & small screens */}
       <div className="flex lg:hidden">
-        <Verification isVerified={isVerified} />
-        {isLoggedIn && <Avatar />}
         <ThemeToggle />
         <button
           className="py-2 ml-2 rounded-md hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors"

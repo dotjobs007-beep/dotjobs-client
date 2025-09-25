@@ -10,12 +10,14 @@ import { IApiResponse } from "@/interface/interface";
 import toast from "react-hot-toast";
 import { useRouter } from "next/navigation";
 import { useAuth } from "@/app/context/authcontext";
+import Spinner from "../Spinner";
 
 export default function Signup() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const router = useRouter();
   const { setIsLoggedIn } = useAuth();
+  const [isLoading, setIsLoading] = useState(false);
 
   const handleGoogleSignup = async () => {
     const result = await signInWithPopup(auth, googleProvider);
@@ -40,9 +42,16 @@ export default function Signup() {
   };
 
   const handleAuthentication = async (token: string) => {
+    if (!token) {
+      toast.error("Authentication failed. Please try again.");
+      return;
+    }
     const headers = {
       authorization: `Bearer ${token}`,
     };
+
+    setIsLoading(true);
+
     const registerUser: IApiResponse<null> = await service.fetcher(
       "/user/auth",
       "POST",
@@ -51,9 +60,12 @@ export default function Signup() {
     if (registerUser.code == 201 || registerUser.code == 200) {
       router.push("/dashboard/profile");
       setIsLoggedIn(true);
+      setIsLoading(false);
       return;
     } else {
       toast.error(registerUser.message);
+      setIsLoading(false);
+      return;
     }
   };
 
@@ -132,6 +144,8 @@ export default function Signup() {
           className="object-cover"
         />
       </div>
+
+      <Spinner isLoading={isLoading} />
     </div>
   );
 }

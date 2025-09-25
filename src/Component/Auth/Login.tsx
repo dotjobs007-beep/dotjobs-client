@@ -2,24 +2,31 @@
 import { useState } from "react";
 import Image from "next/image";
 import toast from "react-hot-toast";
-import {
-  signInWithPopup,
-  signInWithEmailAndPassword,
-  sendPasswordResetEmail,
-} from "firebase/auth";
+import { signInWithPopup, signInWithEmailAndPassword } from "firebase/auth";
 import { auth, googleProvider, twitterProvider } from "@/Firebase/firebase";
 import { FcGoogle } from "react-icons/fc";
 import { SiX } from "react-icons/si"; // X icon
+import { useRouter } from "next/navigation";
+import { IApiResponse } from "@/interface/interface";
+import service from "@/helper/service.helper";
+import Spinner from "../Spinner";
+import { useAuth } from "@/app/context/authcontext";
 
 export default function Login() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
+  // const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const router = useRouter();
+  const { setIsLoggedIn } = useAuth();
 
   // ✅ Google Login
   const handleGoogleLogin = async () => {
     try {
-      await signInWithPopup(auth, googleProvider);
-      toast.success("Logged in with Google");
+      const result = await signInWithPopup(auth, googleProvider);
+      const user = result.user;
+      const token = await user.getIdToken();
+      await handleAuthentication(token);
     } catch (err: any) {
       toast.error(err.message || "Google login failed");
     }
@@ -28,8 +35,10 @@ export default function Login() {
   // ✅ X (Twitter) Login
   const handleTwitterLogin = async () => {
     try {
-      await signInWithPopup(auth, twitterProvider);
-      toast.success("Logged in with X");
+      const result = await signInWithPopup(auth, twitterProvider);
+      const user = result.user;
+      const token = await user.getIdToken();
+      await handleAuthentication(token);
     } catch (err: any) {
       toast.error(err.message || "X login failed");
     }
@@ -39,10 +48,41 @@ export default function Login() {
   const handleEmailLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
-      await signInWithEmailAndPassword(auth, email, password);
-      toast.success("Logged in successfully");
+      const result = await signInWithEmailAndPassword(auth, email, password);
+      const user = result.user;
+      const token = await user.getIdToken();
+      await handleAuthentication(token);
     } catch (err: any) {
       toast.error(err.message || "Invalid email or password");
+    }
+  };
+
+  const handleAuthentication = async (token: string) => {
+    if (!token) {
+      toast.error("Authentication failed. Please try again.");
+      return;
+    }
+    const headers = {
+      authorization: `Bearer ${token}`,
+    };
+
+    setIsLoading(true);
+
+    const registerUser: IApiResponse<null> = await service.fetcher(
+      "/user/auth",
+      "POST",
+      { headers }
+    );
+    if (registerUser.code == 201 || registerUser.code == 200) {
+      router.push("/dashboard/profile");
+      setIsLoggedIn(true);
+      setIsLoading(false);
+      return;
+    } else {
+      toast.error(registerUser.message);
+      setIsLoading(false);
+      setIsLoading(false);
+      return;
     }
   };
 
@@ -126,6 +166,7 @@ export default function Login() {
           className="object-cover rounded-l-2xl"
         />
       </div>
+      <Spinner isLoading={isLoading} />
     </div>
   );
 }

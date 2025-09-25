@@ -4,16 +4,13 @@ import { createContext, useContext, useEffect, useState } from "react";
 interface AuthContextType {
   isLoggedIn: boolean;
   setIsLoggedIn: (value: boolean) => void;
-  isVerified: boolean;
-  setIsVerified: (value: boolean) => void;
   logout: () => void;
 }
 
 const AuthContext = createContext<AuthContextType | null>(null);
 
-export function AuthProvider({ children, initialVerified = false }: { children: React.ReactNode; initialVerified?: boolean }) {
+export function AuthProvider({ children}: { children: React.ReactNode}) {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
-  const [isVerified, setIsVerified] = useState(initialVerified);
 
   // Load login state from localStorage
   useEffect(() => {
@@ -28,12 +25,11 @@ export function AuthProvider({ children, initialVerified = false }: { children: 
 
   const logout = () => {
     setIsLoggedIn(false);
-    setIsVerified(false);
     localStorage.removeItem("isLoggedIn");
   };
 
   return (
-    <AuthContext.Provider value={{ isLoggedIn, setIsLoggedIn, isVerified, setIsVerified, logout }}>
+    <AuthContext.Provider value={{ isLoggedIn, setIsLoggedIn, logout }}>
       {children}
     </AuthContext.Provider>
   );
