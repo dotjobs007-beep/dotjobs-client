@@ -2,6 +2,7 @@
 import Image from "next/image";
 import { useState } from "react";
 import { FiSearch } from "react-icons/fi";
+import BannerImage from "../../../public/images/banner.png";
 
 export default function Hero() {
   const [query, setQuery] = useState("");
@@ -16,7 +17,7 @@ export default function Hero() {
       {/* Banner Image */}
       <div>
         <Image
-          src="https://res.cloudinary.com/dk06cndku/image/upload/v1758747694/banner_eokjjm.png"
+          src={BannerImage}
           alt="banner image"
           height={400}
           width={1500}

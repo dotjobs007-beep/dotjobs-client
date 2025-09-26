@@ -3,7 +3,10 @@
 import Image from "next/image";
 import { useEffect, useRef, useState } from "react";
 import JobCard from "../JobCard";
-import jobs from "../../mock/job.json"
+// import jobs from "../../mock/job.json"
+import service from "@/helper/service.helper";
+import { IApiResponse, IJob, IJobResponse, IPagination } from "@/interface/interface";
+import { useRouter } from "next/dist/client/components/navigation";
 // import Image1 from "../../../public/images/image1.png"
 // import Image2 from "../../../public/images/image2.png"
 // import Image3 from "../../../public/images/image3.png"
@@ -78,6 +81,8 @@ export default function Category() {
     { imageSrc: "https://res.cloudinary.com/dk06cndku/image/upload/v1758747694/image4_kjvrey.png", alt: "Category 4", label: "Writing" },
   ];
 
+
+
   return (
     <div className="mt-20 px-4">
       <h1 className="font-bold lg:text-[35px] text-[25px] mb-8 text-center lg:text-left">
@@ -95,10 +100,6 @@ export default function Category() {
           />
         ))}
       </div>
-
-      {jobs.map((el, i) => {
-        return <JobCard key={i} logo={el.logo} title={el.title} description={el.description} tags={el.tags}  />
-      })}
 
     </div>
   );
