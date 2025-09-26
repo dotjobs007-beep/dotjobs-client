@@ -46,7 +46,7 @@ class ServiceHelper {
         data: null,
         message: error instanceof Error ? error.message : "An unknown error occurred",
         code: 500,
-        success: "error",
+        status: "error",
       };
 
       console.error("ServiceHelper.fetcher unknown error:", err);

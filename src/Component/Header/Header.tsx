@@ -1,6 +1,6 @@
 "use client";
 
-import { use, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import ThemeToggle from "../ThemeToggle";
 import Image from "next/image";
 import { FiUser, FiMenu, FiX } from "react-icons/fi";
@@ -13,40 +13,42 @@ import toast from "react-hot-toast";
 import { IApiResponse, IUserDetails } from "@/interface/interface";
 import service from "@/helper/service.helper";
 import Spinner from "../Spinner";
-import { log } from "console";
+import { openInNovaWallet } from "../OpenNovaWallet";
+// import { openInNovaWallet } from "../../helper/openInNovaWallet";
 
-// Action Buttons Componet
+/* ===========================
+   Action Buttons
+=========================== */
 function ActionButtons({
   isLoggedIn,
   walletAddress,
   handleConnectClick,
-  // handleLogout,
   router,
+  isMobile,
+  walletMissing,
 }: {
   isLoggedIn: boolean;
   walletAddress: string | null;
   handleConnectClick: () => void;
-  // handleLogout: () => void;
   router: AppRouterInstance;
+  isMobile: boolean;
+  walletMissing: boolean;
 }) {
   const [isLoading, setIsLoading] = useState(false);
   const { logout } = useAuth();
+
   const handleLogout = async () => {
     setIsLoading(true);
+    const res: IApiResponse<null> = await service.fetcher("/user/logout", "POST");
 
-    const registerUser: IApiResponse<null> = await service.fetcher(
-      "/user/logout",
-      "POST"
-    );
-    if (registerUser.code == 201 || registerUser.code == 200) {
+    if (res.code === 201 || res.code === 200) {
       setIsLoading(false);
       router.push("/auth/signin");
       logout();
       return;
     } else {
-      toast.error(registerUser.message);
+      toast.error(res.message);
       setIsLoading(false);
-      return;
     }
   };
 
@@ -60,16 +62,25 @@ function ActionButtons({
           Post Job
         </div>
 
-        <button
-          onClick={handleConnectClick}
-          className="px-4 py-2 rounded-lg bg-purple-600 text-[12px] text-white font-medium hover:bg-purple-700 transition-colors"
-        >
-          {walletAddress
-            ? `${walletAddress.slice(0, 6)}...${walletAddress.slice(-4)}`
-            : "Connect Wallet"}
-        </button>
+        {/* ✅ If mobile + no injected wallet, show Nova Wallet button */}
+        {isMobile && walletMissing ? (
+          <button
+            onClick={openInNovaWallet}
+            className="px-4 py-2 rounded-lg bg-purple-600 text-[12px] text-white font-medium hover:bg-purple-700 transition-colors"
+          >
+            Open in Nova Wallet
+          </button>
+        ) : (
+          <button
+            onClick={handleConnectClick}
+            className="px-4 py-2 rounded-lg bg-purple-600 text-[12px] text-white font-medium hover:bg-purple-700 transition-colors"
+          >
+            {walletAddress
+              ? `${walletAddress.slice(0, 6)}...${walletAddress.slice(-4)}`
+              : "Connect Wallet"}
+          </button>
+        )}
 
-        {/* ✅ Logout Button */}
         <button
           onClick={handleLogout}
           className="px-4 py-2 rounded-lg bg-gray-600 text-[12px] text-white font-medium hover:bg-gray-700 transition-colors"
@@ -99,32 +110,32 @@ function ActionButtons({
   }
 }
 
-// Dropdown menu component for medium/small screens
+/* ===========================
+   Dropdown Menu (Mobile)
+=========================== */
 function DropdownMenu({
   isLoggedIn,
   walletAddress,
   handleConnectClick,
   router,
+  isMobile,
+  walletMissing,
 }: {
   isLoggedIn: boolean;
   walletAddress: string | null;
   handleConnectClick: () => void;
   router: AppRouterInstance;
+  isMobile: boolean;
+  walletMissing: boolean;
 }) {
   return (
     <div className="absolute top-full right-0 w-full md:w-[50vw] bg-background dark:bg-gray-900 shadow-md py-4 z-50 animate-slideDown">
-      {/* Buttons on top */}
-
-      {/* Navigation links */}
       <ul className="flex flex-col gap-3 px-4">
-        <li
-          className="cursor-pointer hover:underline"
-          onClick={() => router.push("/jobs")}
-        >
-          Find Jobs
-        </li>
+        <li onClick={() => router.push("/jobs")} className="cursor-pointer hover:underline">Find Jobs</li>
+        <li onClick={() => router.push("/jobs/my_jobs")} className="cursor-pointer hover:underline">My Jobs</li>
+        <li onClick={() => router.push("/dashboard/my-applications")} className="cursor-pointer hover:underline">My Applications</li>
         <li className="cursor-pointer hover:underline">Find Talents</li>
-        <li className="cursor-pointer hover:underline">Abouts</li>
+        <li className="cursor-pointer hover:underline">About</li>
       </ul>
 
       <div className="flex flex-wrap gap-3 px-4 mt-4">
@@ -133,29 +144,35 @@ function DropdownMenu({
           walletAddress={walletAddress}
           handleConnectClick={handleConnectClick}
           router={router}
+          isMobile={isMobile}
+          walletMissing={walletMissing}
         />
       </div>
     </div>
   );
 }
 
+/* ===========================
+   Header Component
+=========================== */
 export default function Header() {
   const [showModal, setShowModal] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
-  const { walletAddress, connectWallet, walletMissing } = usePolkadotWallet();
+  const { walletAddress, connectWallet, walletMissing, isMobile } = usePolkadotWallet();
   const { isLoggedIn } = useAuth();
   const [isLoading, setIsLoading] = useState(false);
   const router = useRouter();
 
   const handleConnectClick = async () => {
     await connectWallet();
-    if (!walletAddress && walletMissing) {
+    if (!walletAddress && walletMissing && !isMobile) {
+      // Desktop without extension
       setShowModal(true);
-      return;
     }
   };
 
   const handleWalletConnected = async () => {
+    if (!walletAddress) return;
     setIsLoading(true);
     const response: IApiResponse<IUserDetails> = await service.fetcher(
       `/user/connect-wallet/${walletAddress}`,
@@ -164,25 +181,15 @@ export default function Header() {
     );
 
     if (response.code === 401) {
-      setIsLoading(false);
       router.push("/auth/signin");
-      return;
-    }
-
-    if (response.status === "error") {
+    } else if (response.status === "error") {
       toast.error(response.message);
-      setIsLoading(false);
-      return;
-    } else {
-      setIsLoading(false);
-      return;
     }
+    setIsLoading(false);
   };
 
   useEffect(() => {
-    if (walletAddress) {
-      handleWalletConnected();
-    }
+    if (walletAddress) handleWalletConnected();
   }, [walletAddress]);
 
   useEffect(() => {
@@ -192,7 +199,6 @@ export default function Header() {
 
   return (
     <header className="fixed top-0 left-0 w-full z-50 flex items-center justify-between p-6 lg:px-15 bg-background text-foreground h-16">
-      {/* Logo */}
       <div className="flex justify-between">
         <div
           className="text-2xl cursor-pointer font-bold"
@@ -206,30 +212,27 @@ export default function Header() {
           />
         </div>
 
-        {/* Large screen navigation */}
         <ul className="hidden lg:flex gap-6 ml-8 mt-2">
-          <li
-            className="cursor-pointer hover:underline"
-            onClick={() => router.replace("/jobs")}
-          >
-            Find Jobs
-          </li>
+          <li onClick={() => router.replace("/jobs")} className="cursor-pointer hover:underline">Find Jobs</li>
+          <li onClick={() => router.replace("/jobs/my_jobs")} className="cursor-pointer hover:underline">My Jobs</li>
+          <li onClick={() => router.replace("/dashboard/my-applications")} className="cursor-pointer hover:underline">My Applications</li>
           <li className="cursor-pointer hover:underline">Find Talents</li>
-          <li className="cursor-pointer hover:underline">Abouts</li>
+          <li className="cursor-pointer hover:underline">About</li>
         </ul>
       </div>
 
-      {/* ✅ Large screen right section */}
+      {/* Desktop Right Section */}
       <div className="hidden lg:flex items-center gap-4">
         <ActionButtons
           isLoggedIn={isLoggedIn}
           walletAddress={walletAddress}
           handleConnectClick={handleConnectClick}
           router={router}
+          isMobile={isMobile}
+          walletMissing={walletMissing}
         />
         <ThemeToggle />
 
-        {/* ✅ Avatar Icon */}
         {isLoggedIn && (
           <button
             onClick={() => router.push("/dashboard/profile")}
@@ -241,11 +244,10 @@ export default function Header() {
         )}
       </div>
 
-      {/* Medium & small screens */}
+      {/* Mobile Menu */}
       <div className="flex lg:hidden">
         <ThemeToggle />
 
-        {/* ✅ Mobile avatar button (optional) */}
         {isLoggedIn && (
           <button
             onClick={() => router.push("/dashboard/profile")}
@@ -263,23 +265,22 @@ export default function Header() {
           {menuOpen ? <FiX size={22} /> : <FiMenu size={22} />}
         </button>
 
-        {/* Dropdown menu */}
         {menuOpen && (
           <DropdownMenu
             isLoggedIn={isLoggedIn}
             walletAddress={walletAddress}
             handleConnectClick={handleConnectClick}
             router={router}
+            isMobile={isMobile}
+            walletMissing={walletMissing}
           />
         )}
       </div>
 
-      {/* Wallet modal */}
       <WalletModal
-        show={showModal && walletMissing}
+        show={showModal && walletMissing && !isMobile}
         onClose={() => setShowModal(false)}
       />
-
       <Spinner isLoading={isLoading} />
     </header>
   );

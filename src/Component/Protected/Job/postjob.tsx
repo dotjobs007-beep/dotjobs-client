@@ -23,6 +23,7 @@ export default function PostJob() {
     companyDescription: "",
     companyLogo: "",
   });
+  const [loading, setLoading] = useState(false);
 
   const [uploading, setUploading] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -95,6 +96,8 @@ export default function PostJob() {
       logo: formData.companyLogo,
     };
 
+    setLoading(true);
+
     const res: IApiResponse<any> = await service.fetcher(
       "/job/post-job",
       "POST",
@@ -106,14 +109,18 @@ export default function PostJob() {
 
     if (res.code === 401) {
       router.replace("/auth/signin");
+      setLoading(false);
       return;
     }
 
     if (res.status === "error") {
       toast.error(res.message);
+      setLoading(false);
       return;
     }
     toast.success(res.message);
+    setLoading(false);
+    router.replace("/jobs/my_jobs");
     // TODO: Redirect to job listings or dashboard
   };
 
@@ -401,7 +408,7 @@ export default function PostJob() {
               disabled={uploading}
               className="ml-auto px-8 py-2 rounded-full font-semibold bg-gradient-to-r from-[#FF2670] to-[#FF4B92] shadow hover:scale-105 hover:shadow-lg transition disabled:opacity-60"
             >
-              {uploading ? "Uploading..." : "Post Job"}
+              {loading ? "Uploading..." : "Post Job"}
             </button>
           )}
         </div>
