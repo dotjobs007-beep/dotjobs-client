@@ -11,7 +11,7 @@ import { IApiResponse } from "@/interface/interface";
 import service from "@/helper/service.helper";
 import Spinner from "../Spinner";
 import { useAuth } from "@/app/context/authcontext";
-import AuthImage from "../../../public/images/auth_img.png";
+// import AuthImage from "../../../public/images/auth_img.png";
 
 export default function Login() {
   const [email, setEmail] = useState("");
@@ -161,7 +161,7 @@ export default function Login() {
       {/* Right Image */}
       <div className="flex-1 hidden lg:block relative h-full">
         <Image
-          src={AuthImage}
+          src="https://res.cloudinary.com/dk06cndku/image/upload/v1758747694/auth_img_jkezhd.png"
           alt="Login illustration"
           fill
           className="object-cover rounded-l-2xl"

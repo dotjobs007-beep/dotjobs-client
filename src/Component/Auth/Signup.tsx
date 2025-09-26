@@ -11,7 +11,6 @@ import toast from "react-hot-toast";
 import { useRouter } from "next/navigation";
 import { useAuth } from "@/app/context/authcontext";
 import Spinner from "../Spinner";
-import AuthImage from "../../../public/images/auth_img.png";
 
 
 export default function Signup() {
@@ -140,7 +139,7 @@ export default function Signup() {
       {/* Right Image */}
       <div className="flex-1 hidden md:block relative h-full">
         <Image
-          src={AuthImage}
+          src="https://res.cloudinary.com/dk06cndku/image/upload/v1758747694/auth_img_jkezhd.png"
           alt="Signup illustration"
           fill
           className="object-cover"
