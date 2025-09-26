@@ -6,7 +6,7 @@ interface JobCardProps {
   logo: string;
   title: string;
   description: string;
-  tags: string;
+  tags: string[];
   salaryRange?: { min?: number; max?: number };
   onClick?: () => void;
   buttonText?: string;
@@ -23,11 +23,9 @@ export default function JobCard({
 }: JobCardProps) {
   const salaryText =
     salaryRange && (salaryRange.min || salaryRange.max)
-      ? `${
-          salaryRange.min ? `${salaryRange.min.toLocaleString()}` : ""
-        }${salaryRange.min && salaryRange.max ? " - " : ""}${
-          salaryRange.max ? `${salaryRange.max.toLocaleString()}` : ""
-        }`
+      ? `${salaryRange.min ? `${salaryRange.min.toLocaleString()}` : ""}${
+          salaryRange.min && salaryRange.max ? " - " : ""
+        }${salaryRange.max ? `${salaryRange.max.toLocaleString()}` : ""}`
       : "Not specified";
 
   return (
@@ -67,9 +65,14 @@ export default function JobCard({
 
           {/* Job Tags */}
           <div className="flex flex-wrap justify-center md:justify-start gap-2 text-[11px] font-medium">
-            <span className="bg-gray-200 text-gray-600 px-2 py-1 rounded-full">
-              {tags}
-            </span>
+            {tags.map((tag, index) => (
+              <span
+                key={index}
+                className="bg-gray-200 text-gray-600 px-2 py-1 rounded-full"
+              >
+                {tag}
+              </span>
+            ))}
           </div>
         </div>
 

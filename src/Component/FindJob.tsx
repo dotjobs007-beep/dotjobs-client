@@ -202,10 +202,15 @@ export default function Jobs() {
         ) : jobs.length ? (
           jobs.map((job) => (
             <JobCard
+              key={job._id}
               logo={job.logo || ""}
               title={job.title}
               description={job.description}
-              tags={job.employment_type}
+              tags={[
+                job.employment_type,
+                job.salary_type,
+                job.work_arrangement,
+              ]}
               salaryRange={job.salary_range}
             />
           ))
