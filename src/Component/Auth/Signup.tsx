@@ -22,33 +22,50 @@ export default function Signup() {
   const [isLoading, setIsLoading] = useState(false);
 
   const handleGoogleSignup = async () => {
-    if (isMobile()) {
-      await signInWithRedirect(auth, googleProvider);
-      return;
+    try {
+      let result;
+      if (isMobile()) {
+        // Use redirect on mobile
+        await signInWithRedirect(auth, googleProvider);
+        return;
+      } else {
+        result = await signInWithPopup(auth, googleProvider);
+      }
+      const user = result.user;
+      const token = await user.getIdToken();
+      await handleAuthentication(token);
+    } catch (err: any) {
+      toast.error(err.message || "Google signup failed");
     }
-    const result = await signInWithPopup(auth, googleProvider);
-    const user = result.user;
-    const token = await user.getIdToken();
-    await handleAuthentication(token);
   };
 
   const handleTwitterSignup = async () => {
-    if (isMobile()) {
-      await signInWithRedirect(auth, twitterProvider);
-      return;
+    try {
+      let result;
+      if (isMobile()) {
+        await signInWithRedirect(auth, twitterProvider);
+        return;
+      } else {
+        result = await signInWithPopup(auth, twitterProvider);
+      }
+      const user = result.user;
+      const token = await user.getIdToken();
+      await handleAuthentication(token);
+    } catch (err: any) {
+      toast.error(err.message || "X signup failed");
     }
-    const result = await signInWithPopup(auth, twitterProvider);
-    const user = result.user;
-    const token = await user.getIdToken();
-    await handleAuthentication(token);
   };
 
   const handleEmailSignup = async (e: React.FormEvent) => {
     e.preventDefault();
-    const result = await createUserWithEmailAndPassword(auth, email, password);
-    const user = result.user;
-    const token = await user.getIdToken();
-    await handleAuthentication(token);
+    try {
+      const result = await createUserWithEmailAndPassword(auth, email, password);
+      const user = result.user;
+      const token = await user.getIdToken();
+      await handleAuthentication(token);
+    } catch (err: any) {
+      toast.error(err.message || "Signup failed");
+    }
   };
 
   const handleAuthentication = async (token: string) => {
