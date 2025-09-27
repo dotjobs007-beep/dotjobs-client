@@ -1,7 +1,7 @@
 "use client";
 import { useState } from "react";
 import Image from "next/image";
-import { signInWithPopup, createUserWithEmailAndPassword, signInWithRedirect } from "firebase/auth";
+import { signInWithPopup, createUserWithEmailAndPassword, signInWithRedirect, setPersistence, browserLocalPersistence } from "firebase/auth";
 import { auth, googleProvider, twitterProvider } from "@/Firebase/firebase";
 import { isMobile } from "@/utils/isMobile";
 import { FcGoogle } from "react-icons/fc";
@@ -23,6 +23,13 @@ export default function Signup() {
 
   const handleGoogleSignup = async () => {
     try {
+      // Ensure persistence is set so redirect flows survive on mobile
+      try {
+        await setPersistence(auth, browserLocalPersistence);
+      } catch (pErr) {
+        console.debug("setPersistence failed:", pErr);
+      }
+
       let result;
       if (isMobile()) {
         // Use redirect on mobile

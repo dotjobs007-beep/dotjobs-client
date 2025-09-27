@@ -2,7 +2,7 @@
 import { useState } from "react";
 import Image from "next/image";
 import toast from "react-hot-toast";
-import { signInWithPopup, signInWithEmailAndPassword, signInWithRedirect } from "firebase/auth";
+import { signInWithPopup, signInWithEmailAndPassword, signInWithRedirect, setPersistence, browserLocalPersistence } from "firebase/auth";
 import { auth, googleProvider, twitterProvider } from "@/Firebase/firebase";
 import { isMobile } from "@/utils/isMobile";
 import { FcGoogle } from "react-icons/fc";
@@ -25,10 +25,17 @@ export default function Login() {
   // ✅ Google Login
   const handleGoogleLogin = async () => {
     try {
+      // Ensure persistence is set so redirect flows survive on mobile
+      try {
+        await setPersistence(auth, browserLocalPersistence);
+      } catch (pErr) {
+        console.debug("setPersistence failed:", pErr);
+      }
+
       let result;
       if (isMobile()) {
         // Use redirect flow on mobile
-        result = await signInWithRedirect(auth, googleProvider);
+        await signInWithRedirect(auth, googleProvider);
         return;
       } else {
         result = await signInWithPopup(auth, googleProvider);
