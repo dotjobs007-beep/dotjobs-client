@@ -114,7 +114,7 @@ export default function Login() {
     <div className="flex lg:h-[89vh] overflow-hidden">
       {inApp && (
         <div className="w-full bg-yellow-100 text-yellow-900 p-3 text-center">
-          It looks like you're in an in-app browser. For sign-in please
+          It looks like you are in an in-app browser. For sign-in please
           <button
             onClick={() => window.open(window.location.href, "_blank")}
             className="font-semibold underline ml-1"

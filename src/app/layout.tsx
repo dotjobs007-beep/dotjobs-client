@@ -6,6 +6,7 @@ import { Unbounded } from "next/font/google";
 import Header from "@/Component/Header/Header";
 import { Toaster } from "react-hot-toast";
 import { AuthProvider } from "./context/authcontext";
+import Script from "next/script";
 export const metadata: Metadata = {
   title: "Tailwind v4 Dark Mode",
   description: "Manual toggle with Tailwind v4",
@@ -53,6 +54,16 @@ export default function RootLayout({
             },
           }}
         />
+
+                {/* Load Eruda only in development */}
+        {process.env.NODE_ENV === "development" && (
+          <>
+            <Script src="https://cdn.jsdelivr.net/npm/eruda" strategy="beforeInteractive" />
+            <Script id="eruda-init" strategy="beforeInteractive">
+              {`eruda.init();`}
+            </Script>
+          </>
+        )}
         </main>
         </AuthProvider>
       </body>

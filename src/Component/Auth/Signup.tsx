@@ -1,115 +1,26 @@
 "use client";
-import { useState } from "react";
 import Image from "next/image";
-import { signInWithPopup, createUserWithEmailAndPassword, signInWithRedirect, setPersistence, browserLocalPersistence } from "firebase/auth";
-import { auth, googleProvider, twitterProvider } from "@/Firebase/firebase";
-import { isMobile } from "@/utils/isMobile";
-import { isInAppBrowser } from "@/utils/inAppBrowser";
 import { FcGoogle } from "react-icons/fc";
-import { SiX } from "react-icons/si"; // X logo
-import service from "@/helper/service.helper";
-import { IApiResponse } from "@/interface/interface";
-import toast from "react-hot-toast";
-import { useRouter } from "next/navigation";
-import { useAuth } from "@/app/context/authcontext";
+import { SiX } from "react-icons/si";
 import Spinner from "../Spinner";
-
+import useSignupLogic from "./SignupLogic";
 
 export default function Signup() {
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const router = useRouter();
-  const { setIsLoggedIn } = useAuth();
-  const inApp = typeof window !== "undefined" && isInAppBrowser();
-  const [isLoading, setIsLoading] = useState(false);
-
-  const handleGoogleSignup = async () => {
-    try {
-      // Ensure persistence is set so redirect flows survive on mobile
-      try {
-        await setPersistence(auth, browserLocalPersistence);
-      } catch (pErr) {
-        console.debug("setPersistence failed:", pErr);
-      }
-
-      let result;
-      if (isMobile()) {
-        // Use redirect on mobile
-        await signInWithRedirect(auth, googleProvider);
-        return;
-      } else {
-        result = await signInWithPopup(auth, googleProvider);
-      }
-      const user = result.user;
-      const token = await user.getIdToken();
-      await handleAuthentication(token);
-    } catch (err: any) {
-      toast.error(err.message || "Google signup failed");
-    }
-  };
-
-  const handleTwitterSignup = async () => {
-    try {
-      let result;
-      if (isMobile()) {
-        await signInWithRedirect(auth, twitterProvider);
-        return;
-      } else {
-        result = await signInWithPopup(auth, twitterProvider);
-      }
-      const user = result.user;
-      const token = await user.getIdToken();
-      await handleAuthentication(token);
-    } catch (err: any) {
-      toast.error(err.message || "X signup failed");
-    }
-  };
-
-  const handleEmailSignup = async (e: React.FormEvent) => {
-    e.preventDefault();
-    try {
-      const result = await createUserWithEmailAndPassword(auth, email, password);
-      const user = result.user;
-      const token = await user.getIdToken();
-      await handleAuthentication(token);
-    } catch (err: any) {
-      toast.error(err.message || "Signup failed");
-    }
-  };
-
-  const handleAuthentication = async (token: string) => {
-    if (!token) {
-      toast.error("Authentication failed. Please try again.");
-      return;
-    }
-    const headers = {
-      authorization: `Bearer ${token}`,
-    };
-
-    setIsLoading(true);
-
-    const registerUser: IApiResponse<null> = await service.fetcher(
-      "/user/auth",
-      "POST",
-      { headers }
-    );
-    if (registerUser.code == 201 || registerUser.code == 200) {
-      router.push("/dashboard/profile");
-      setIsLoggedIn(true);
-      setIsLoading(false);
-      return;
-    } else {
-      toast.error(registerUser.message);
-      setIsLoading(false);
-      return;
-    }
-  };
+  const {
+    email, setEmail,
+    password, setPassword,
+    isLoading,
+    inApp,
+    handleEmailSignup,
+    handleGoogleSignup,
+    handleTwitterSignup,
+  } = useSignupLogic(); 
 
   return (
     <div className="flex lg:h-[89vh] overflow-hidden">
       {inApp && (
         <div className="w-full bg-yellow-100 text-yellow-900 p-3 text-center">
-          It looks like you're in an in-app browser. For sign-up please
+          It looks like you are in an in-app browser. For sign-up please
           <button
             onClick={() => window.open(window.location.href, "_blank")}
             className="font-semibold underline ml-1"
@@ -118,11 +29,18 @@ export default function Signup() {
           </button>
         </div>
       )}
+
       {/* Left Form */}
       <div className="flex-1 flex flex-col justify-center px-12 h-full">
         <h1 className="text-3xl font-bold mb-8">Sign Up</h1>
 
-        <form onSubmit={handleEmailSignup} className="flex flex-col gap-5">
+        <form
+          onSubmit={(e) => {
+            e.preventDefault();
+            handleEmailSignup();
+          }}
+          className="flex flex-col gap-5"
+        >
           <input
             type="email"
             placeholder="Email"
@@ -160,9 +78,7 @@ export default function Signup() {
             className="flex-1 flex items-center justify-center border border-gray-300 rounded-lg py-3 gap-3 hover:bg-gray-100 cursor-pointer transition"
           >
             <FcGoogle size={26} />
-            <span className="text-gray-700 font-medium">
-              Sign up with Google
-            </span>
+            <span className="text-gray-700 font-medium">Sign up with Google</span>
           </div>
 
           <div
