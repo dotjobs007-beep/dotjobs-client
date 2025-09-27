@@ -11,66 +11,68 @@ class ServiceHelper {
     }
   }
 
-  async fetcher<T>(
-    url: string,
-    method: Method = "GET",
-    options: AxiosRequestConfig = {}
-  ): Promise<IApiResponse<T>> {
-    try {
-      // Merge headers safely: options.headers do not override secret
-      const headers = {
-        "Content-Type": "application/json",
-        "secret": this.secret, // match your middleware header name
-        ...(options.headers || {}),
-      };
+ async fetcher<T>(
+  url: string,
+  method: Method = "GET",
+  options: AxiosRequestConfig = {}
+): Promise<IApiResponse<T>> {
+  try {
+    // Try to get token from localStorage
+    const token = typeof window !== "undefined" ? localStorage.getItem("dottoken") : null;
+    console.log("ServiceHelper.fetcher called with:", { url, method, options, tokenPresent: !!token });
 
-      const response = await axios.request<IApiResponse<T>>({
-        url: `${this.baseUrl}${url}`,
-        method,
-        headers,
-        ...Object.fromEntries(Object.entries(options).filter(([k]) => k !== "headers")),
-        withCredentials: true, // include cookies
-      });
+    // Merge headers safely
+    const headers = {
+      "Content-Type": "application/json",
+      "secret": this.secret, // your secret
+      ...(token ? { Authorization: `Bearer ${token}` } : {}), // attach token if exists
+      ...(options.headers || {}),
+    };
 
-      console.log("ServiceHelper.fetcher response:", response);
+    const response = await axios.request<IApiResponse<T>>({
+      url: `${this.baseUrl}${url}`,
+      method,
+      headers,
+      ...Object.fromEntries(Object.entries(options).filter(([k]) => k !== "headers")),
+      withCredentials: true, // include cookies
+    });
 
-      return response.data;
-    } catch (error: any) {
-      // Return backend error if available
-      if (axios.isAxiosError(error)) {
-        // If server responded with data, return it
-        if (error.response?.data) {
-          console.error("ServiceHelper.fetcher AxiosError (response.data):", error.response.data);
-          return error.response.data as IApiResponse<T>;
-        }
+    console.log("ServiceHelper.fetcher response:", response);
 
-        // Network / CORS / no response case — log full axios error for debugging
-        console.error("ServiceHelper.fetcher AxiosError (no response). message:", error.message);
-        console.error("Axios error details:", {
-          message: error.message,
-          code: error.code,
-          config: error.config && {
-            url: error.config.url,
-            method: error.config.method,
-            headers: error.config.headers,
-          },
-        });
-      } else {
-        // Non-axios error
-        console.error("ServiceHelper.fetcher non-Axios error:", error);
+    return response.data;
+  } catch (error: any) {
+    // Error handling (keep as you have)
+    if (axios.isAxiosError(error)) {
+      if (error.response?.data) {
+        console.error("ServiceHelper.fetcher AxiosError (response.data):", error.response.data);
+        return error.response.data as IApiResponse<T>;
       }
-
-      const err: IApiResponse<null> = {
-        data: null,
-        message: error instanceof Error ? error.message : "An unknown error occurred",
-        code: 500,
-        status: "error",
-      };
-
-      console.error("ServiceHelper.fetcher returning error object:", err);
-      return err as IApiResponse<T>;
+      console.error("ServiceHelper.fetcher AxiosError (no response). message:", error.message);
+      console.error("Axios error details:", {
+        message: error.message,
+        code: error.code,
+        config: error.config && {
+          url: error.config.url,
+          method: error.config.method,
+          headers: error.config.headers,
+        },
+      });
+    } else {
+      console.error("ServiceHelper.fetcher non-Axios error:", error);
     }
+
+    const err: IApiResponse<null> = {
+      data: null,
+      message: error instanceof Error ? error.message : "An unknown error occurred",
+      code: 500,
+      status: "error",
+    };
+
+    console.error("ServiceHelper.fetcher returning error object:", err);
+    return err as IApiResponse<T>;
   }
+}
+
 }
 
 

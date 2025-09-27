@@ -9,6 +9,8 @@ import {
   getRedirectResult,
   onAuthStateChanged,
   createUserWithEmailAndPassword,
+  signInWithEmailAndPassword,
+  sendPasswordResetEmail,
 } from "firebase/auth";
 import { auth, googleProvider, twitterProvider } from "@/Firebase/firebase";
 import { isMobile } from "@/utils/isMobile";
@@ -19,7 +21,7 @@ import { useRouter } from "next/navigation";
 import { useAuth } from "@/app/context/authcontext";
 import toast from "react-hot-toast";
 
-export default function useSignupLogic() {
+export default function useSignInLogic() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [isLoading, setIsLoading] = useState(false);
@@ -55,21 +57,21 @@ export default function useSignupLogic() {
     }
   };
 
-  /** ---------------- Email Signup ---------------- **/
-  const handleEmailSignup = async () => {
+  /** ---------------- Email Signin ---------------- **/
+  const handleEmailSignIn = async () => {
     try {
-      const result = await createUserWithEmailAndPassword(auth, email, password);
+      const result = await signInWithEmailAndPassword(auth, email, password);
       const token = await result.user.getIdToken();
       await handleAuthentication(token);
     } catch (err: any) {
-      toast.error(err.message || "Signup failed");
+      toast.error(err.message || "Sign in failed");
     }
   };
 
-  /** ---------------- Google Signup ---------------- **/
-  const handleGoogleSignup = async () => {
+  /** ---------------- Google Signin ---------------- **/
+  const handleGoogleSignin = async () => {
     if (inApp) {
-      return toast.error("Please open this page in Safari/Chrome to sign up.");
+      return toast.error("Please open this page in Safari/Chrome to sign in.");
     }
 
     try {
@@ -86,16 +88,16 @@ export default function useSignupLogic() {
         await handleAuthentication(token);
       }
     } catch (err: any) {
-      toast.error(err.message || "Google signup failed");
+      toast.error(err.message || "Google signin failed");
     }
   };
 
-  /** ---------------- Twitter Signup ---------------- **/
-  const handleTwitterSignup = async () => {
-    console.log("[Twitter] Signup start");
+  /** ---------------- Twitter Signin ---------------- **/
+  const handleTwitterSignin = async () => {
+    console.log("[Twitter] Signin start");
 
     if (inApp) {
-      return toast.error("Please open this page in Safari/Chrome to sign up.");
+      return toast.error("Please open this page in Safari/Chrome to sign in.");
     }
 
     try {
@@ -112,6 +114,21 @@ export default function useSignupLogic() {
       toast.error(err.message || "Twitter signup failed");
     }
   };
+
+  /** ---------------- Forgotten Password ---------------- **/
+  const handleForgotPassword = async () => {
+    if (!email) return toast.error("Please enter your email");
+
+    setIsLoading(true);
+    try {
+      await sendPasswordResetEmail(auth, email);
+      toast.success("Password reset email sent");
+    } catch (err: any) {
+      toast.error(err.message || "Failed to send password reset email");
+    } finally {
+      setIsLoading(false);
+    }
+  };    
 
   /** ---------------- Effects ---------------- **/
   useEffect(() => {
@@ -134,8 +151,9 @@ export default function useSignupLogic() {
     setPassword,
     isLoading,
     inApp,
-    handleEmailSignup,
-    handleGoogleSignup,
-    handleTwitterSignup,
+    handleEmailSignIn,
+    handleGoogleSignin,
+    handleTwitterSignin,
+    handleForgotPassword,
   };
 }

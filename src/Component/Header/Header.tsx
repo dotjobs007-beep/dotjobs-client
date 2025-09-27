@@ -14,6 +14,8 @@ import { IApiResponse, IUserDetails } from "@/interface/interface";
 import service from "@/helper/service.helper";
 import Spinner from "../Spinner";
 import { openInNovaWallet } from "../OpenNovaWallet";
+import { signOut } from "firebase/auth";
+import { auth } from "@/Firebase/firebase";
 // import { openInNovaWallet } from "../../helper/openInNovaWallet";
 
 /* ===========================
@@ -39,17 +41,13 @@ function ActionButtons({
 
   const handleLogout = async () => {
     setIsLoading(true);
-    const res: IApiResponse<null> = await service.fetcher("/user/logout", "POST");
-
-    if (res.code === 201 || res.code === 200) {
-      setIsLoading(false);
-      router.push("/auth/signin");
-      logout();
-      return;
-    } else {
-      toast.error(res.message);
-      setIsLoading(false);
-    }
+    await signOut(auth);
+    logout();
+    localStorage.removeItem("isLoggedIn");
+    localStorage.removeItem("dottoken");
+    toast.success("Logged out successfully");
+    router.push("/auth/signin");
+    setIsLoading(false);
   };
 
   if (isLoggedIn) {
