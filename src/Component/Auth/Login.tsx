@@ -5,6 +5,7 @@ import toast from "react-hot-toast";
 import { signInWithPopup, signInWithEmailAndPassword, signInWithRedirect, setPersistence, browserLocalPersistence } from "firebase/auth";
 import { auth, googleProvider, twitterProvider } from "@/Firebase/firebase";
 import { isMobile } from "@/utils/isMobile";
+import { isInAppBrowser } from "@/utils/inAppBrowser";
 import { FcGoogle } from "react-icons/fc";
 import { SiX } from "react-icons/si"; // X icon
 import { useRouter } from "next/navigation";
@@ -21,6 +22,7 @@ export default function Login() {
   // const [isLoggedIn, setIsLoggedIn] = useState(false);
   const router = useRouter();
   const { setIsLoggedIn } = useAuth();
+  const inApp = typeof window !== "undefined" && isInAppBrowser();
 
   // ✅ Google Login
   const handleGoogleLogin = async () => {
@@ -110,6 +112,17 @@ export default function Login() {
 
   return (
     <div className="flex lg:h-[89vh] overflow-hidden">
+      {inApp && (
+        <div className="w-full bg-yellow-100 text-yellow-900 p-3 text-center">
+          It looks like you're in an in-app browser. For sign-in please
+          <button
+            onClick={() => window.open(window.location.href, "_blank")}
+            className="font-semibold underline ml-1"
+          >
+            open in your browser
+          </button>
+        </div>
+      )}
       {/* Left Form */}
       <div className="flex-1 flex flex-col justify-center px-12 h-full">
         <h1 className="text-3xl font-bold mb-8">Login</h1>

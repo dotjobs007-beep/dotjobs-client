@@ -4,6 +4,7 @@ import Image from "next/image";
 import { signInWithPopup, createUserWithEmailAndPassword, signInWithRedirect, setPersistence, browserLocalPersistence } from "firebase/auth";
 import { auth, googleProvider, twitterProvider } from "@/Firebase/firebase";
 import { isMobile } from "@/utils/isMobile";
+import { isInAppBrowser } from "@/utils/inAppBrowser";
 import { FcGoogle } from "react-icons/fc";
 import { SiX } from "react-icons/si"; // X logo
 import service from "@/helper/service.helper";
@@ -19,6 +20,7 @@ export default function Signup() {
   const [password, setPassword] = useState("");
   const router = useRouter();
   const { setIsLoggedIn } = useAuth();
+  const inApp = typeof window !== "undefined" && isInAppBrowser();
   const [isLoading, setIsLoading] = useState(false);
 
   const handleGoogleSignup = async () => {
@@ -105,6 +107,17 @@ export default function Signup() {
 
   return (
     <div className="flex lg:h-[89vh] overflow-hidden">
+      {inApp && (
+        <div className="w-full bg-yellow-100 text-yellow-900 p-3 text-center">
+          It looks like you're in an in-app browser. For sign-up please
+          <button
+            onClick={() => window.open(window.location.href, "_blank")}
+            className="font-semibold underline ml-1"
+          >
+            open in your browser
+          </button>
+        </div>
+      )}
       {/* Left Form */}
       <div className="flex-1 flex flex-col justify-center px-12 h-full">
         <h1 className="text-3xl font-bold mb-8">Sign Up</h1>
