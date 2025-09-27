@@ -15,7 +15,7 @@ export default function Hero() {
       {/* Banner Image */}
       <div>
         <Image
-          src="https://res.cloudinary.com/dk06cndku/image/upload/v1758747694/image1_kij58k.png"
+          src="https://res.cloudinary.com/dk06cndku/image/upload/v1758747694/banner_eokjjm.png"
           alt="banner image"
           height={400}
           width={1500}
@@ -49,7 +49,7 @@ export default function Hero() {
       </div>
 
       {/* Modern Search Bar */}
-      <div className="flex justify-center mx-6 p-4 animate-fadeUp lg:px-0">
+      <div className="mx-6 p-4 animate-fadeUp lg:px-0">
         <div className="relative w-full lg:w-1/2">
           <FiSearch className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400" />
           <input

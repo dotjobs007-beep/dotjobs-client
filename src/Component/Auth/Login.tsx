@@ -2,8 +2,9 @@
 import { useState } from "react";
 import Image from "next/image";
 import toast from "react-hot-toast";
-import { signInWithPopup, signInWithEmailAndPassword } from "firebase/auth";
+import { signInWithPopup, signInWithEmailAndPassword, signInWithRedirect } from "firebase/auth";
 import { auth, googleProvider, twitterProvider } from "@/Firebase/firebase";
+import { isMobile } from "@/utils/isMobile";
 import { FcGoogle } from "react-icons/fc";
 import { SiX } from "react-icons/si"; // X icon
 import { useRouter } from "next/navigation";
@@ -24,7 +25,14 @@ export default function Login() {
   // ✅ Google Login
   const handleGoogleLogin = async () => {
     try {
-      const result = await signInWithPopup(auth, googleProvider);
+      let result;
+      if (isMobile()) {
+        // Use redirect flow on mobile
+        result = await signInWithRedirect(auth, googleProvider);
+        return;
+      } else {
+        result = await signInWithPopup(auth, googleProvider);
+      }
       const user = result.user;
       const token = await user.getIdToken();
       await handleAuthentication(token);
@@ -36,7 +44,13 @@ export default function Login() {
   // ✅ X (Twitter) Login
   const handleTwitterLogin = async () => {
     try {
-      const result = await signInWithPopup(auth, twitterProvider);
+      let result;
+      if (isMobile()) {
+        result = await signInWithRedirect(auth, twitterProvider);
+        return;
+      } else {
+        result = await signInWithPopup(auth, twitterProvider);
+      }
       const user = result.user;
       const token = await user.getIdToken();
       await handleAuthentication(token);

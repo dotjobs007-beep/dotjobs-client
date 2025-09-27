@@ -37,9 +37,27 @@ class ServiceHelper {
       return response.data;
     } catch (error: any) {
       // Return backend error if available
-      if (axios.isAxiosError(error) && error.response?.data) {
-        console.error("ServiceHelper.fetcher AxiosError:", error.response.data);
-        return error.response.data as IApiResponse<T>;
+      if (axios.isAxiosError(error)) {
+        // If server responded with data, return it
+        if (error.response?.data) {
+          console.error("ServiceHelper.fetcher AxiosError (response.data):", error.response.data);
+          return error.response.data as IApiResponse<T>;
+        }
+
+        // Network / CORS / no response case — log full axios error for debugging
+        console.error("ServiceHelper.fetcher AxiosError (no response). message:", error.message);
+        console.error("Axios error details:", {
+          message: error.message,
+          code: error.code,
+          config: error.config && {
+            url: error.config.url,
+            method: error.config.method,
+            headers: error.config.headers,
+          },
+        });
+      } else {
+        // Non-axios error
+        console.error("ServiceHelper.fetcher non-Axios error:", error);
       }
 
       const err: IApiResponse<null> = {
@@ -49,7 +67,7 @@ class ServiceHelper {
         status: "error",
       };
 
-      console.error("ServiceHelper.fetcher unknown error:", err);
+      console.error("ServiceHelper.fetcher returning error object:", err);
       return err as IApiResponse<T>;
     }
   }

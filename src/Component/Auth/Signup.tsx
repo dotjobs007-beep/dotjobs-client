@@ -1,8 +1,9 @@
 "use client";
 import { useState } from "react";
 import Image from "next/image";
-import { signInWithPopup, createUserWithEmailAndPassword } from "firebase/auth";
+import { signInWithPopup, createUserWithEmailAndPassword, signInWithRedirect } from "firebase/auth";
 import { auth, googleProvider, twitterProvider } from "@/Firebase/firebase";
+import { isMobile } from "@/utils/isMobile";
 import { FcGoogle } from "react-icons/fc";
 import { SiX } from "react-icons/si"; // X logo
 import service from "@/helper/service.helper";
@@ -21,6 +22,10 @@ export default function Signup() {
   const [isLoading, setIsLoading] = useState(false);
 
   const handleGoogleSignup = async () => {
+    if (isMobile()) {
+      await signInWithRedirect(auth, googleProvider);
+      return;
+    }
     const result = await signInWithPopup(auth, googleProvider);
     const user = result.user;
     const token = await user.getIdToken();
@@ -28,6 +33,10 @@ export default function Signup() {
   };
 
   const handleTwitterSignup = async () => {
+    if (isMobile()) {
+      await signInWithRedirect(auth, twitterProvider);
+      return;
+    }
     const result = await signInWithPopup(auth, twitterProvider);
     const user = result.user;
     const token = await user.getIdToken();
