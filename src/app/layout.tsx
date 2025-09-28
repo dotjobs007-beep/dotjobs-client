@@ -1,4 +1,3 @@
-import ThemeToggle from "@/Component/ThemeToggle";
 import "./globals.css";
 import type { Metadata } from "next";
 import { Unbounded } from "next/font/google";

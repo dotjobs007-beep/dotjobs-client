@@ -1,23 +1,53 @@
 "use client";
 
-export function openInNovaWallet() {
+export type WalletType = "nova" | "subwallet" | "polkadot";
+
+export function openWallet(wallet: WalletType) {
   const dappUrl = encodeURIComponent("https://dotjob-i4y3.onrender.com");
-
-  const userAgent =
-    navigator.userAgent || navigator.vendor || (window as any).opera;
-
-  // iOS detection
+  const userAgent = navigator.userAgent || navigator.vendor || (window as any).opera;
   const isiOS = /iPad|iPhone|iPod/.test(userAgent) && !("MSStream" in window);
 
-  if (isiOS) {
-    const timeout = setTimeout(() => {
-      alert("Could not open Nova Wallet. Please install the app or try again.");
-      window.location.href = `https://app.novawallet.io/`;
-    }, 2000);
+  const openDeepLink = (scheme: string, iosStore: string, androidStore: string) => {
+    if (isiOS) {
+      // iOS deep link
+      window.location.href = `${scheme}://open?url=${dappUrl}`;
+      // fallback to App Store if not installed
+      setTimeout(() => {
+        window.location.href = iosStore;
+      }, 2000);
+    } else {
+      // Android deep link
+      window.location.href = `${scheme}://open?url=${dappUrl}`;
+      // fallback to Play Store
+      setTimeout(() => {
+        window.location.href = androidStore;
+      }, 1500);
+    }
+  };
 
-    window.location.href = `novawallet://open?url=${dappUrl}`;
-  } else {
-    // Android / fallback
-    window.location.href = `https://app.novawallet.io/open?url=${dappUrl}`;
+  switch (wallet) {
+    case "nova":
+      openDeepLink(
+        "novawallet",
+        "https://apps.apple.com/ng/app/nova-polkadot-wallet/id1597119355",
+        "https://play.google.com/store/apps/details?id=io.novafoundation.nova.market"
+      );
+      break;
+
+    case "subwallet":
+      openDeepLink(
+        "subwallet",
+        "https://apps.apple.com/ng/app/subwallet-polkadot-wallet/id1633050285",
+        "https://play.google.com/store/apps/details?id=app.subwallet.mobile" // replace with actual link
+      );
+      break;
+
+    case "polkadot":
+      alert("Please use Polkadot.js extension in your browser to connect.");
+      break;
+
+    default:
+      console.error("Unknown wallet type:", wallet);
+      break;
   }
 }

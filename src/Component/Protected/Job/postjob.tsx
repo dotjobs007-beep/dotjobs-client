@@ -1,12 +1,14 @@
 "use client";
 
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import toast from "react-hot-toast";
 import { motion, AnimatePresence } from "framer-motion";
 import { IApiResponse, IJob } from "@/interface/interface";
 import service from "@/helper/service.helper";
 import { useRouter } from "next/navigation";
+import { useAuth } from "@/app/context/authcontext";
+import ConnectWalletModal from "../ConnectWalletModal";
 
 export default function PostJob() {
   const [step, setStep] = useState(1);
@@ -27,6 +29,8 @@ export default function PostJob() {
 
   const [uploading, setUploading] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
+  // const [showWalletModal, setShowWalletModal] = useState(true);
+  const {isWalletConnected } = useAuth();
   const router = useRouter();
 
   // Handlers
@@ -170,6 +174,12 @@ export default function PostJob() {
     return true;
   };
 
+  // 👉 Handle Wallet Connect
+  // useEffect(() => {
+  //   if (walletAddress) return setShowWalletModal(false);
+  //   setShowWalletModal(true);
+  // }, [walletAddress]);
+
   return (
     <div className="max-w-3xl mx-auto p-6 lg:p-12">
       <h1 className="text-3xl lg:text-4xl font-extrabold text-center bg-gradient-to-r from-[#FF2670] to-[#A64FA0] bg-clip-text text-transparent mb-2">
@@ -177,242 +187,248 @@ export default function PostJob() {
       </h1>
       <p className="text-center text-gray-600 mb-8">Step {step} of 3</p>
 
-      <form
-        onSubmit={handleSubmit}
-        className="relative bg-gradient-to-b from-[#A64FA0] to-[#7A2E7A] rounded-3xl p-8 shadow-2xl overflow-hidden text-sm text-white"
-      >
-        <AnimatePresence mode="wait">
-          {step === 1 && (
-            <motion.div
-              key="step1"
-              variants={variants}
-              initial="initial"
-              animate="animate"
-              exit="exit"
-              transition={{ duration: 0.4 }}
-            >
-              <h2 className="text-xl font-semibold mb-6">Job Details</h2>
+      {isWalletConnected && (
+        <form
+          onSubmit={handleSubmit}
+          className="relative bg-gradient-to-b from-[#A64FA0] to-[#7A2E7A] rounded-3xl p-8 shadow-2xl overflow-hidden text-sm text-white"
+        >
+          <AnimatePresence mode="wait">
+            {step === 1 && (
+              <motion.div
+                key="step1"
+                variants={variants}
+                initial="initial"
+                animate="animate"
+                exit="exit"
+                transition={{ duration: 0.4 }}
+              >
+                <h2 className="text-xl font-semibold mb-6">Job Details</h2>
 
-              <label className="block mb-2">Job Title</label>
-              <input
-                name="jobTitle"
-                value={formData.jobTitle}
-                onChange={handleChange}
-                placeholder="e.g. Senior Software Engineer"
-                className="w-full bg-[#FCE9FC] text-gray-800 rounded-lg p-3 mb-6 focus:outline-none"
-              />
+                <label className="block mb-2">Job Title</label>
+                <input
+                  name="jobTitle"
+                  value={formData.jobTitle}
+                  onChange={handleChange}
+                  placeholder="e.g. Senior Software Engineer"
+                  className="w-full bg-[#FCE9FC] text-gray-800 rounded-lg p-3 mb-6 focus:outline-none"
+                />
 
-              <label className="block mb-2">Job Description</label>
-              <textarea
-                name="jobDescription"
-                value={formData.jobDescription}
-                onChange={handleChange}
-                rows={4}
-                placeholder="Responsibilities, requirements, benefits..."
-                className="w-full bg-[#FCE9FC] text-gray-800 rounded-lg p-3 mb-6 focus:outline-none"
-              />
+                <label className="block mb-2">Job Description</label>
+                <textarea
+                  name="jobDescription"
+                  value={formData.jobDescription}
+                  onChange={handleChange}
+                  rows={4}
+                  placeholder="Responsibilities, requirements, benefits..."
+                  className="w-full bg-[#FCE9FC] text-gray-800 rounded-lg p-3 mb-6 focus:outline-none"
+                />
 
-              <div className="grid md:grid-cols-2 gap-6">
-                <div>
-                  <label className="block mb-2">Employment Type</label>
-                  <select
-                    name="employmentType"
-                    value={formData.employmentType}
-                    onChange={handleChange}
-                    className="w-full bg-[#FCE9FC] text-gray-800 rounded-lg p-3 focus:outline-none"
-                  >
-                    <option value="">Select type</option>
-                    <option value="full-time">Full-time</option>
-                    <option value="part-time">Part-time</option>
-                    <option value="contract">Contract</option>
-                    <option value="internship">Internship</option>
-                  </select>
+                <div className="grid md:grid-cols-2 gap-6">
+                  <div>
+                    <label className="block mb-2">Employment Type</label>
+                    <select
+                      name="employmentType"
+                      value={formData.employmentType}
+                      onChange={handleChange}
+                      className="w-full bg-[#FCE9FC] text-gray-800 rounded-lg p-3 focus:outline-none"
+                    >
+                      <option value="">Select type</option>
+                      <option value="full-time">Full-time</option>
+                      <option value="part-time">Part-time</option>
+                      <option value="contract">Contract</option>
+                      <option value="internship">Internship</option>
+                    </select>
+                  </div>
+
+                  <div>
+                    <label className="block mb-2">Work Arrangement</label>
+                    <select
+                      name="workArrangement"
+                      value={formData.workArrangement}
+                      onChange={handleChange}
+                      className="w-full bg-[#FCE9FC] text-gray-800 rounded-lg p-3 focus:outline-none"
+                    >
+                      <option value="">Select arrangement</option>
+                      <option value="remote">Remote</option>
+                      <option value="hybrid">Hybrid</option>
+                      <option value="on-site">On-site</option>
+                    </select>
+                  </div>
                 </div>
 
-                <div>
-                  <label className="block mb-2">Work Arrangement</label>
-                  <select
-                    name="workArrangement"
-                    value={formData.workArrangement}
-                    onChange={handleChange}
-                    className="w-full bg-[#FCE9FC] text-gray-800 rounded-lg p-3 focus:outline-none"
-                  >
-                    <option value="">Select arrangement</option>
-                    <option value="remote">Remote</option>
-                    <option value="hybrid">Hybrid</option>
-                    <option value="on-site">On-site</option>
-                  </select>
-                </div>
-              </div>
+                <div className="grid md:grid-cols-2 gap-6 mt-6">
+                  <div>
+                    <label className="block mb-2">Salary Type</label>
+                    <select
+                      name="salaryType"
+                      value={formData.salaryType}
+                      onChange={handleChange}
+                      className="w-full bg-[#FCE9FC] text-gray-800 rounded-lg p-3 focus:outline-none"
+                    >
+                      <option value="">Choose salary type</option>
+                      <option value="hourly">Hourly</option>
+                      <option value="monthly">Monthly</option>
+                      <option value="yearly">Yearly</option>
+                      <option value="commission">Commission</option>
+                    </select>
+                  </div>
 
-              <div className="grid md:grid-cols-2 gap-6 mt-6">
-                <div>
-                  <label className="block mb-2">Salary Type</label>
-                  <select
-                    name="salaryType"
-                    value={formData.salaryType}
-                    onChange={handleChange}
-                    className="w-full bg-[#FCE9FC] text-gray-800 rounded-lg p-3 focus:outline-none"
-                  >
-                    <option value="">Choose salary type</option>
-                    <option value="hourly">Hourly</option>
-                    <option value="monthly">Monthly</option>
-                    <option value="yearly">Yearly</option>
-                    <option value="commission">Commission</option>
-                  </select>
+                  <div>
+                    <label className="block mb-2">Salary Range</label>
+                    <input
+                      name="salaryRange"
+                      value={formData.salaryRange}
+                      onChange={handleChange}
+                      placeholder="e.g. 800-2000"
+                      pattern="^[0-9]+-[0-9]+$"
+                      required
+                      className="w-full bg-[#FCE9FC] text-gray-800 rounded-lg p-3 focus:outline-none"
+                    />
+                  </div>
                 </div>
+              </motion.div>
+            )}
 
-                <div>
-                  <label className="block mb-2">Salary Range</label>
+            {step === 2 && (
+              <motion.div
+                key="step2"
+                variants={variants}
+                initial="initial"
+                animate="animate"
+                exit="exit"
+                transition={{ duration: 0.4 }}
+              >
+                <h2 className="text-xl font-semibold mb-6">Company Details</h2>
+
+                <label className="block mb-2">Company Name</label>
+                <input
+                  name="companyName"
+                  value={formData.companyName}
+                  onChange={handleChange}
+                  placeholder="e.g. Acme Corp"
+                  className="w-full bg-[#FCE9FC] text-gray-800 rounded-lg p-3 mb-6 focus:outline-none"
+                />
+
+                <label className="block mb-2">Company Website (optional)</label>
+                <input
+                  name="companyWebsite"
+                  value={formData.companyWebsite}
+                  onChange={handleChange}
+                  placeholder="e.g. www.acme.com"
+                  className="w-full bg-[#FCE9FC] text-gray-800 rounded-lg p-3 mb-6 focus:outline-none"
+                />
+
+                <label className="block mb-2">Company Location</label>
+                <input
+                  name="companyLocation"
+                  value={formData.companyLocation}
+                  onChange={handleChange}
+                  placeholder="e.g. New York, NY"
+                  className="w-full bg-[#FCE9FC] text-gray-800 rounded-lg p-3 mb-6 focus:outline-none"
+                />
+
+                <label className="block mb-2">Company Description</label>
+                <textarea
+                  name="companyDescription"
+                  value={formData.companyDescription}
+                  onChange={handleChange}
+                  rows={4}
+                  placeholder="Briefly describe your company"
+                  className="w-full bg-[#FCE9FC] text-gray-800 rounded-lg p-3 mb-6 focus:outline-none"
+                />
+
+                <div className="flex flex-col items-center mt-4">
+                  <p className="text-sm mb-2">Company Logo</p>
+                  <div
+                    onClick={handleAvatarClick}
+                    className="relative w-28 h-28 rounded-full bg-white/20 border-2 border-dashed border-white flex items-center justify-center cursor-pointer hover:bg-white/30 transition"
+                  >
+                    {formData.companyLogo ? (
+                      <img
+                        src={formData.companyLogo}
+                        alt="Company Logo"
+                        className="w-full h-full rounded-full object-cover"
+                      />
+                    ) : (
+                      <span className="text-xs text-center px-2">
+                        {uploading ? "Uploading..." : "Click to upload"}
+                      </span>
+                    )}
+                  </div>
                   <input
-                    name="salaryRange"
-                    value={formData.salaryRange}
-                    onChange={handleChange}
-                    placeholder="e.g. 800-2000"
-                    pattern="^[0-9]+-[0-9]+$"
-                    required
-                    className="w-full bg-[#FCE9FC] text-gray-800 rounded-lg p-3 focus:outline-none"
+                    type="file"
+                    ref={fileInputRef}
+                    accept="image/*"
+                    onChange={handleUpload}
+                    className="hidden"
                   />
                 </div>
-              </div>
-            </motion.div>
-          )}
+              </motion.div>
+            )}
 
-          {step === 2 && (
-            <motion.div
-              key="step2"
-              variants={variants}
-              initial="initial"
-              animate="animate"
-              exit="exit"
-              transition={{ duration: 0.4 }}
-            >
-              <h2 className="text-xl font-semibold mb-6">Company Details</h2>
-
-              <label className="block mb-2">Company Name</label>
-              <input
-                name="companyName"
-                value={formData.companyName}
-                onChange={handleChange}
-                placeholder="e.g. Acme Corp"
-                className="w-full bg-[#FCE9FC] text-gray-800 rounded-lg p-3 mb-6 focus:outline-none"
-              />
-
-              <label className="block mb-2">Company Website (optional)</label>
-              <input
-                name="companyWebsite"
-                value={formData.companyWebsite}
-                onChange={handleChange}
-                placeholder="e.g. www.acme.com"
-                className="w-full bg-[#FCE9FC] text-gray-800 rounded-lg p-3 mb-6 focus:outline-none"
-              />
-
-              <label className="block mb-2">Company Location</label>
-              <input
-                name="companyLocation"
-                value={formData.companyLocation}
-                onChange={handleChange}
-                placeholder="e.g. New York, NY"
-                className="w-full bg-[#FCE9FC] text-gray-800 rounded-lg p-3 mb-6 focus:outline-none"
-              />
-
-              <label className="block mb-2">Company Description</label>
-              <textarea
-                name="companyDescription"
-                value={formData.companyDescription}
-                onChange={handleChange}
-                rows={4}
-                placeholder="Briefly describe your company"
-                className="w-full bg-[#FCE9FC] text-gray-800 rounded-lg p-3 mb-6 focus:outline-none"
-              />
-
-              <div className="flex flex-col items-center mt-4">
-                <p className="text-sm mb-2">Company Logo</p>
-                <div
-                  onClick={handleAvatarClick}
-                  className="relative w-28 h-28 rounded-full bg-white/20 border-2 border-dashed border-white flex items-center justify-center cursor-pointer hover:bg-white/30 transition"
-                >
-                  {formData.companyLogo ? (
-                    <img
-                      src={formData.companyLogo}
-                      alt="Company Logo"
-                      className="w-full h-full rounded-full object-cover"
-                    />
-                  ) : (
-                    <span className="text-xs text-center px-2">
-                      {uploading ? "Uploading..." : "Click to upload"}
-                    </span>
-                  )}
-                </div>
-                <input
-                  type="file"
-                  ref={fileInputRef}
-                  accept="image/*"
-                  onChange={handleUpload}
-                  className="hidden"
-                />
-              </div>
-            </motion.div>
-          )}
-
-          {step === 3 && (
-            <motion.div
-              key="step3"
-              variants={variants}
-              initial="initial"
-              animate="animate"
-              exit="exit"
-              transition={{ duration: 0.4 }}
-            >
-              <h2 className="text-xl font-semibold mb-4">Verification</h2>
-              <p className="text-xs mb-6">
-                To maintain quality, we require identity verification through
-                Polka Identity or Polkassembly.
-              </p>
-              <Link
-                href="/jobs/verify_identity"
-                className="block w-full text-center bg-white text-[#7A2E7A] font-semibold rounded-lg py-2 hover:bg-gray-100 transition"
+            {step === 3 && (
+              <motion.div
+                key="step3"
+                variants={variants}
+                initial="initial"
+                animate="animate"
+                exit="exit"
+                transition={{ duration: 0.4 }}
               >
-                Verify Identity
-              </Link>
-            </motion.div>
-          )}
-        </AnimatePresence>
+                <h2 className="text-xl font-semibold mb-4">Verification</h2>
+                <p className="text-xs mb-6">
+                  To maintain quality, we require identity verification through
+                  Polka Identity or Polkassembly.
+                </p>
+                <Link
+                  href="/jobs/verify_identity"
+                  className="block w-full text-center bg-white text-[#7A2E7A] font-semibold rounded-lg py-2 hover:bg-gray-100 transition"
+                >
+                  Verify Identity
+                </Link>
+              </motion.div>
+            )}
+          </AnimatePresence>
 
-        {/* ===== Navigation Buttons ===== */}
-        <div className="flex justify-between mt-10">
-          {step > 1 && (
-            <button
-              type="button"
-              onClick={(e) => {
-                prevStep();
-              }}
-              className="px-6 py-2 rounded-full font-semibold bg-gradient-to-r from-white/90 to-white/70 text-[#7A2E7A] shadow hover:scale-105 hover:shadow-lg transition"
-            >
-              ← Back
-            </button>
-          )}
+          {/* ===== Navigation Buttons ===== */}
+          <div className="flex justify-between mt-10">
+            {step > 1 && (
+              <button
+                type="button"
+                onClick={(e) => {
+                  prevStep();
+                }}
+                className="px-6 py-2 rounded-full font-semibold bg-gradient-to-r from-white/90 to-white/70 text-[#7A2E7A] shadow hover:scale-105 hover:shadow-lg transition"
+              >
+                ← Back
+              </button>
+            )}
 
-          {step < 3 && (
-            <button
-              type="button"
-              onClick={nextStep}
-              className="ml-auto px-8 py-2 rounded-full font-semibold bg-gradient-to-r from-[#FF2670] to-[#FF4B92] shadow hover:scale-105 hover:shadow-lg transition"
-            >
-              Next →
-            </button>
-          )}
-          {step == 3 && (
-            <button
-              type="submit"
-              disabled={uploading}
-              className="ml-auto px-8 py-2 rounded-full font-semibold bg-gradient-to-r from-[#FF2670] to-[#FF4B92] shadow hover:scale-105 hover:shadow-lg transition disabled:opacity-60"
-            >
-              {loading ? "Uploading..." : "Post Job"}
-            </button>
-          )}
-        </div>
-      </form>
+            {step < 3 && (
+              <button
+                type="button"
+                onClick={nextStep}
+                className="ml-auto px-8 py-2 rounded-full font-semibold bg-gradient-to-r from-[#FF2670] to-[#FF4B92] shadow hover:scale-105 hover:shadow-lg transition"
+              >
+                Next →
+              </button>
+            )}
+            {step == 3 && (
+              <button
+                type="submit"
+                disabled={uploading}
+                className="ml-auto px-8 py-2 rounded-full font-semibold bg-gradient-to-r from-[#FF2670] to-[#FF4B92] shadow hover:scale-105 hover:shadow-lg transition disabled:opacity-60"
+              >
+                {loading ? "Uploading..." : "Post Job"}
+              </button>
+            )}
+          </div>
+        </form>
+      )}
+
+      <ConnectWalletModal
+        open={isWalletConnected ? false : true}
+      />
     </div>
   );
 }

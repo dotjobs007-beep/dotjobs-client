@@ -7,7 +7,7 @@ export default function Hero() {
 
   return (
     <div
-      className="w-full relative overflow-hidden"
+      className="w-full relative overflow-hidden mt-[4rem]"
       style={{
         background: "linear-gradient(90deg, #CE1F73 0%, #724B99 100%)",
       }}
@@ -36,16 +36,6 @@ export default function Hero() {
           </p>
         </div>
 
-        {/* Image */}
-        <div className="flex-shrink-0 lg:w-1/5 animate-fadeUp delay-300">
-          <Image
-            src="/images/image1.png"
-            alt="banner image"
-            height={80}
-            width={800}
-            className=""
-          />
-        </div>
       </div>
 
       {/* Modern Search Bar */}

@@ -3,112 +3,122 @@ import { createContext, useContext, useEffect, useState } from "react";
 import { getRedirectResult, onAuthStateChanged } from "firebase/auth";
 import { auth } from "@/Firebase/firebase";
 import service from "@/helper/service.helper";
-import { IApiResponse } from "@/interface/interface";
+import { IApiResponse, IUserDetails } from "@/interface/interface";
 import clientLogger from "@/utils/clientLogger";
 import { useRouter } from "next/navigation";
+import router from "next/dist/shared/lib/router/router";
+import { toast } from "react-hot-toast/headless";
+import { usePolkadotWallet } from "@/hooks/usePolkadotWallet";
 
 interface AuthContextType {
   isLoggedIn: boolean;
   setIsLoggedIn: (value: boolean) => void;
-  logout: () => void;
+  setUserDetails: (details: IUserDetails | null) => void;
+  userDetails?: IUserDetails | null;
+  ctxWalletAddress?: string | null;
+  setWalletAddress?: (address: string | null) => void;
+  disconnectWallet: () => Promise<void> | (() => void);
+  connectingWallet: boolean;
+  isWalletConnected?: boolean;
+  showMobileWalletConnect: boolean;
+  setShowMobileWalletConnect: (value: boolean) => void;
+  polkadotWalletConnect: () => Promise<void>;
 }
 
 const AuthContext = createContext<AuthContextType | null>(null);
 
-export function AuthProvider({ children}: { children: React.ReactNode}) {
+export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [userDetails, setUserDetails] = useState<IUserDetails | null>(null);
+  const [connectingWallet, setConnectingWallet] = useState(false);
+  const [isWalletConnected, setIsWalletConnected] = useState(false);
+  const [ctxWalletAddress, setCtxWalletAddress] = useState<string | null>(null);
+  const {
+    connectWallet,
+    walletAddress,
+    walletMissing,
+    isMobile,
+    disconnectWallet,
+  } = usePolkadotWallet();
+  const [showMobileWalletConnect, setShowMobileWalletConnect] = useState(false);
   const router = useRouter();
-
   // Load login state from localStorage
   useEffect(() => {
     const stored = localStorage.getItem("isLoggedIn");
     setIsLoggedIn(stored === "true");
   }, []);
 
-  // If the user was redirected back from an OAuth provider (mobile), process the result
-  // useEffect(() => {
-  //   async function handleRedirect() {
-  //     clientLogger.sendLog("info", "handleRedirect start");
-  //     try {
-  //       const result = await getRedirectResult(auth);
-  //       clientLogger.sendLog("info", "getRedirectResult returned", { resultPresent: !!result });
-  //       if (result && result.user) {
-  //         // We have a logged in user from redirect flow
-  //         const token = await result.user.getIdToken();
-  //         clientLogger.sendLog("info", "got token from redirect result", { hasToken: !!token });
-  //         if (token) {
-  //           // Send token to backend to register/login user
-  //           try {
-  //             const headers = { authorization: `Bearer ${token}` };
-  //             const res: IApiResponse<null> = await service.fetcher("/user/auth", "POST", { headers });
-  //             clientLogger.sendLog("info", "backend /user/auth response", { code: res?.code, message: res?.message });
-  //             if (res && (res.code === 200 || res.code === 201)) {
-  //               setIsLoggedIn(true);
-  //               localStorage.setItem("isLoggedIn", "true");
-  //               // redirect mobile user to dashboard after successful backend auth
-  //               try {
-  //                 router.replace("/dashboard/profile");
-  //               } catch (e) {
-  //                 console.debug("router.replace failed:", e);
-  //               }
-  //             }
-  //           } catch (e) {
-  //             clientLogger.sendLog("error", "backend call after redirect failed", { error: String(e) });
-  //             console.debug("Failed to call backend after redirect", e);
-  //           }
-  //         }
-  //       } else {
-  //         clientLogger.sendLog("info", "getRedirectResult returned null, attaching onAuthStateChanged");
-  //         // Sometimes getRedirectResult returns null but the user is signed in.
-  //         // Listen once for auth state change and handle token exchange.
-  //         const unsubscribe = onAuthStateChanged(auth, async (user) => {
-  //           clientLogger.sendLog("info", "onAuthStateChanged fired", { userPresent: !!user });
-  //           if (user) {
-  //             try {
-  //               const token = await user.getIdToken();
-  //               clientLogger.sendLog("info", "onAuthStateChanged got token", { hasToken: !!token });
-  //               const headers = { authorization: `Bearer ${token}` };
-  //               const res: IApiResponse<null> = await service.fetcher("/user/auth", "POST", { headers });
-  //               clientLogger.sendLog("info", "backend /user/auth response (onAuth)", { code: res?.code, message: res?.message });
-  //               if (res && (res.code === 200 || res.code === 201)) {
-  //                 setIsLoggedIn(true);
-  //                 localStorage.setItem("isLoggedIn", "true");
-  //                 try {
-  //                   router.replace("/dashboard/profile");
-  //                 } catch (e) {
-  //                   console.debug("router.replace failed:", e);
-  //                 }
-  //               }
-  //             } catch (e) {
-  //               clientLogger.sendLog("error", "onAuthStateChanged handler failed", { error: String(e) });
-  //               console.debug("onAuthStateChanged handler failed:", e);
-  //             }
-  //           }
-  //           unsubscribe();
-  //         });
-  //       }
-  //     } catch (err) {
-  //       clientLogger.sendLog("error", "getRedirectResult threw", { error: String(err) });
-  //       // ignore - redirect may have been cancelled
-  //       console.debug("Redirect result not available:", err);
-  //     }
-  //   }
-  //   handleRedirect();
-  // }, []);
-
-  // Sync login state to localStorage
-  
   useEffect(() => {
     localStorage.setItem("isLoggedIn", String(isLoggedIn));
-  }, [isLoggedIn]);
+  }, [isLoggedIn, userDetails]);
 
-  const logout = () => {
-    setIsLoggedIn(false);
-    localStorage.removeItem("isLoggedIn");
+  const polkadotWalletConnect = async () => {
+    if (walletAddress) {
+      // If already connected, disconnect and clear ctx state
+      await disconnectWallet();
+      setCtxWalletAddress(null);
+      setIsWalletConnected(false);
+      setShowMobileWalletConnect(false);
+      return;
+    }
+
+    await connectWallet();
+    if (!walletAddress && walletMissing && !isMobile) {
+      // Desktop without extension
+      setShowMobileWalletConnect(true);
+    }
+  };
+
+  useEffect(() => {
+    // When walletAddress becomes available, handle post-connection steps
+    if (walletAddress) {
+      handleWalletConnected();
+    } else {
+      // If the hook reports no wallet, clear context state so UI updates
+      setCtxWalletAddress(null);
+      setIsWalletConnected(false);
+    }
+    console.log("Wallet address changed:", walletAddress);
+  }, [walletAddress]);
+
+  const handleWalletConnected = async () => {
+    if (!walletAddress) return;
+    setConnectingWallet(true);
+    const response: IApiResponse<IUserDetails> = await service.fetcher(
+      `/user/connect-wallet/${walletAddress}`,
+      "PATCH",
+      { withCredentials: true }
+    );
+
+    if (response.code === 401) {
+      router.push("/auth/signin");
+    } else if (response.status === "error") {
+      toast.error(response.message);
+    }
+
+    console.log("Wallet connected response:", response);
+    setConnectingWallet(false);
+    setIsWalletConnected(true);
+    setCtxWalletAddress(walletAddress);
+    
   };
 
   return (
-    <AuthContext.Provider value={{ isLoggedIn, setIsLoggedIn, logout }}>
+    <AuthContext.Provider
+      value={{
+        isLoggedIn,
+        setIsLoggedIn,
+        userDetails,
+        setUserDetails,
+        ctxWalletAddress,
+        disconnectWallet,
+        connectingWallet,
+        isWalletConnected,
+        showMobileWalletConnect,
+        setShowMobileWalletConnect,
+        polkadotWalletConnect,
+      }}
+    >
       {children}
     </AuthContext.Provider>
   );

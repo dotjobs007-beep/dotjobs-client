@@ -11,6 +11,8 @@ import { formatDate } from "@/helper/date_formatter";
 import Card from "../Card";
 import { updateProfile } from "firebase/auth";
 import { auth } from "@/Firebase/firebase";
+import { useAuth } from "@/app/context/authcontext";
+import ConnectWalletModal from "./ConnectWalletModal";
 
 export default function ProfilePage() {
   const [isLoading, setIsLoading] = useState(false);
@@ -28,6 +30,7 @@ export default function ProfilePage() {
   const [showAvatarModal, setShowAvatarModal] = useState(false);
   const [newName, setNewName] = useState("");
   const [uploadedUrl, setUploadedUrl] = useState("");
+  const { setUserDetails} = useAuth();
 
   const router = useRouter();
 
@@ -53,6 +56,7 @@ export default function ProfilePage() {
 
     setUserData(res.data || null);
     setUploadedUrl(res.data?.avatar || "");
+    setUserDetails(res.data || null);
     setIsLoading(false);
   };
 
@@ -175,6 +179,8 @@ export default function ProfilePage() {
       setUploading(false);
     }
   };
+
+
 
   return (
     <div>
