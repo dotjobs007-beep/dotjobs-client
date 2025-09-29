@@ -23,7 +23,8 @@ export default function ApplyPage() {
 
   const handleUpload = async () => {
     if (!file) return alert("Please select a file to upload");
-
+    const token = localStorage.getItem("dottoken");
+    if (!token) return toast.error("User not authenticated");
     setUploading(true);
 
     try {
@@ -31,11 +32,12 @@ export default function ApplyPage() {
       formData.append("file", file);
 
       const res = await fetch(
-        `${process.env.NEXT_BASE_URL}/job/upload-resume`,
+        `${process.env.NEXT_PUBLIC_BASE_URL}/job/upload-file`,
         {
           method: "POST",
           headers: {
             secret: process.env.NEXT_PUBLIC_SECRET_KEY || "",
+            authorization: "Bearer " + token,
           },
           body: formData,
         }
@@ -47,8 +49,14 @@ export default function ApplyPage() {
         throw new Error(data.message || "Upload failed");
       }
 
-      setResumeURL(data.url || null);
-      await handleResumeSubmit(data.url || "");
+      if (data.status === "error") {
+        toast.error(data.message || "Upload failed");
+        return;
+      }
+
+      const fileUrl = data.data;
+      // setResumeURL(data.url || null);
+      await handleResumeSubmit(fileUrl);
 
       // Show success modal
       setShowSuccessModal(true);
@@ -74,6 +82,7 @@ export default function ApplyPage() {
   };
 
   const handleResumeSubmit = async (url: string) => {
+    console.log("Submitting resume URL:", url);
     const body = {
       jobId: jobDetails?._id,
       resume: url,
