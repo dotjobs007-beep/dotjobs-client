@@ -11,16 +11,20 @@ import { useAuth } from "@/app/context/authcontext";
 import ConnectWalletModal from "../ConnectWalletModal";
 import WalletModal from "@/Component/WalletModal";
 import MobileWalletModal from "../MobileWalletModal";
+import { div } from "framer-motion/m";
 
 export default function PostJob() {
   const [step, setStep] = useState(1);
   const [formData, setFormData] = useState({
     jobTitle: "",
     jobDescription: "",
+    jobRequirement: "",
     employmentType: "",
     workArrangement: "",
     salaryType: "",
     salaryRange: "",
+    category: "",
+    salaryToken: "dot",
     companyName: "",
     companyWebsite: "",
     companyLocation: "",
@@ -33,11 +37,9 @@ export default function PostJob() {
   const { userDetails } = useAuth();
   const fileInputRef = useRef<HTMLInputElement>(null);
   // const [showWalletModal, setShowWalletModal] = useState(true);
-  const {
-    isWalletConnected,
-  } = useAuth();
+  const { isWalletConnected } = useAuth();
   const router = useRouter();
-  const [showConnectModal , setShowConnectModal] = useState(true);
+  const [showConnectModal, setShowConnectModal] = useState(true);
 
   // Handlers
   const handleChange = (
@@ -98,6 +100,7 @@ export default function PostJob() {
     const body: IJob = {
       title: formData.jobTitle,
       description: formData.jobDescription,
+      requirements: formData.jobRequirement,
       employment_type: formData.employmentType as IJob["employment_type"],
       work_arrangement: formData.workArrangement as IJob["work_arrangement"],
       salary_type: formData.salaryType as IJob["salary_type"],
@@ -105,11 +108,14 @@ export default function PostJob() {
         min: parseInt(formData.salaryRange.split("-")[0], 10),
         max: parseInt(formData.salaryRange.split("-")[1], 10),
       },
+      // additional metadata
+      category: formData.category,
+      salary_token: formData.salaryToken,
       company_name: formData.companyName,
       company_website: formData.companyWebsite,
       company_description: formData.companyDescription,
       company_location: formData.companyLocation,
-      logo: formData.companyLogo || userDetails?.avatar,
+      logo: formData.companyLogo ? formData.companyLogo : userDetails?.avatar,
     };
 
     setLoading(true);
@@ -140,7 +146,7 @@ export default function PostJob() {
     // TODO: Redirect to job listings or dashboard
   };
 
-  const nextStep = () => setStep((s) => Math.min(s + 1, 3));
+  const nextStep = () => setStep((s) => Math.min(s + 1, 4));
   const prevStep = () => setStep((s) => Math.max(s - 1, 1));
 
   // Animation Variants
@@ -171,6 +177,10 @@ export default function PostJob() {
       toast.error("Salary Type is required");
       return false;
     }
+    if (formData.jobRequirement.trim().length < 10) {
+      toast.error("Job Requirement must be at least 10 characters");
+      return false;
+    }
     if (!/^[0-9]+-[0-9]+$/.test(formData.salaryRange)) {
       toast.error("Salary Range must be in format min-max");
       return false;
@@ -183,6 +193,10 @@ export default function PostJob() {
       toast.error("Company Location is required");
       return false;
     }
+    if (!formData.category || formData.category === "") {
+      toast.error("Job Category is required");
+      return false;
+    }
     return true;
   };
 
@@ -191,7 +205,7 @@ export default function PostJob() {
       <h1 className="text-3xl lg:text-4xl font-extrabold text-center bg-gradient-to-r from-[#FF2670] to-[#A64FA0] bg-clip-text text-transparent mb-2">
         Post a New Job
       </h1>
-      <p className="text-center text-gray-600 mb-8">Step {step} of 3</p>
+      <p className="text-center text-gray-600 mb-8">Step {step} of 4</p>
 
       {isWalletConnected && (
         <form
@@ -225,7 +239,17 @@ export default function PostJob() {
                   value={formData.jobDescription}
                   onChange={handleChange}
                   rows={4}
-                  placeholder="Responsibilities, requirements, benefits..."
+                  placeholder="Responsibilities, benefits..."
+                  className="w-full bg-[#FCE9FC] text-gray-800 rounded-lg p-3 mb-6 focus:outline-none"
+                />
+
+                <label className="block mb-2">Job Requirement</label>
+                <textarea
+                  name="jobRequirement"
+                  value={formData.jobRequirement}
+                  onChange={handleChange}
+                  rows={4}
+                  placeholder="Requirement, Qualifications..."
                   className="w-full bg-[#FCE9FC] text-gray-800 rounded-lg p-3 mb-6 focus:outline-none"
                 />
 
@@ -262,7 +286,194 @@ export default function PostJob() {
                   </div>
                 </div>
 
-                <div className="grid md:grid-cols-2 gap-6 mt-6">
+                {/* Category (left in step 1) */}
+                <div className="grid md:grid-cols-1 gap-6 mt-6">
+                  <div>
+                    <label className="block mb-2">Job Category</label>
+                    <select
+                      name="category"
+                      value={formData.category}
+                      onChange={handleChange}
+                      className="w-full bg-[#FCE9FC] text-gray-800 rounded-lg p-3 focus:outline-none"
+                    >
+                      <option value="">Select category</option>
+                      <optgroup label="Business & Marketing">
+                        <option value="marketing_advertising">
+                          Marketing & Advertising
+                        </option>
+                        <option value="digital_marketing">
+                          Digital Marketing
+                        </option>
+                        <option value="social_media">
+                          Social Media Management
+                        </option>
+                        <option value="public_relations">
+                          Public Relations (PR)
+                        </option>
+                        <option value="brand_management">
+                          Brand Management
+                        </option>
+                        <option value="sales">
+                          Sales & Business Development
+                        </option>
+                        <option value="market_research">Market Research</option>
+                        <option value="product_management">
+                          Product Management
+                        </option>
+                      </optgroup>
+                      <optgroup label="Technology & Development">
+                        <option value="web_development">Web Development</option>
+                        <option value="mobile_app">
+                          Mobile App Development
+                        </option>
+                        <option value="software_engineering">
+                          Software Engineering
+                        </option>
+                        <option value="data_science">
+                          Data Science & Analytics
+                        </option>
+                        <option value="ai_ml">AI & Machine Learning</option>
+                        <option value="cybersecurity">Cybersecurity</option>
+                        <option value="cloud_devops">
+                          Cloud Computing & DevOps
+                        </option>
+                        <option value="it_support">
+                          IT Support & Networking
+                        </option>
+                        <option value="blockchain">
+                          Blockchain Development
+                        </option>
+                      </optgroup>
+                      <optgroup label="Creative & Design">
+                        <option value="graphic_design">Graphic Design</option>
+                        <option value="uiux">UI/UX Design</option>
+                        <option value="video_editing">
+                          Video Production & Editing
+                        </option>
+                        <option value="animation">
+                          Animation & Motion Graphics
+                        </option>
+                        <option value="photography">
+                          Photography & Photo Editing
+                        </option>
+                        <option value="game_design">
+                          Game Design & Development
+                        </option>
+                        <option value="interior_design">Interior Design</option>
+                        <option value="fashion_design">Fashion Design</option>
+                      </optgroup>
+                      <optgroup label="Content & Media">
+                        <option value="content_writing">
+                          Content Writing & Copywriting
+                        </option>
+                        <option value="blogging">Blogging & Editing</option>
+                        <option value="journalism">Journalism</option>
+                        <option value="seo">SEO & Content Strategy</option>
+                        <option value="podcasting">Podcasting</option>
+                        <option value="voice_acting">Voice Acting</option>
+                      </optgroup>
+                      <optgroup label="Finance & Accounting">
+                        <option value="accounting">Accounting</option>
+                        <option value="financial_analysis">
+                          Financial Analysis
+                        </option>
+                        <option value="investment_banking">
+                          Investment Banking
+                        </option>
+                        <option value="insurance">
+                          Insurance & Risk Management
+                        </option>
+                        <option value="tax_audit">Tax & Audit</option>
+                        <option value="bookkeeping">Bookkeeping</option>
+                      </optgroup>
+                      <optgroup label="Human Resources & Management">
+                        <option value="hr_recruitment">HR & Recruitment</option>
+                        <option value="talent_acquisition">
+                          Talent Acquisition
+                        </option>
+                        <option value="training_development">
+                          Training & Development
+                        </option>
+                        <option value="project_management">
+                          Project Management
+                        </option>
+                        <option value="operations">
+                          Operations Management
+                        </option>
+                        <option value="executive">Executive Leadership</option>
+                      </optgroup>
+                      <optgroup label="Science & Healthcare">
+                        <option value="medical">
+                          Medical & Healthcare Services
+                        </option>
+                        <option value="nursing">Nursing & Patient Care</option>
+                        <option value="pharma">Pharmaceuticals</option>
+                        <option value="rnd">
+                          Research & Development (R&D)
+                        </option>
+                        <option value="biotech">Biotechnology</option>
+                        <option value="environmental">
+                          Environmental Science
+                        </option>
+                      </optgroup>
+                      <optgroup label="Education & Training">
+                        <option value="teaching">Teaching & Tutoring</option>
+                        <option value="elearning">
+                          E-Learning & Instructional Design
+                        </option>
+                        <option value="academic_research">
+                          Academic Research
+                        </option>
+                        <option value="corporate_training">
+                          Corporate Training
+                        </option>
+                      </optgroup>
+                      <optgroup label="Legal & Government">
+                        <option value="legal">Legal Services & Law</option>
+                        <option value="compliance">
+                          Compliance & Regulatory Affairs
+                        </option>
+                        <option value="public_administration">
+                          Public Administration
+                        </option>
+                        <option value="policy">Policy & Governance</option>
+                      </optgroup>
+                      <optgroup label="Others / Emerging Fields">
+                        <option value="ecommerce">
+                          E-commerce & Online Business
+                        </option>
+                        <option value="customer_support">
+                          Customer Support & Service
+                        </option>
+                        <option value="logistics">
+                          Logistics & Supply Chain
+                        </option>
+                        <option value="real_estate">Real Estate</option>
+                        <option value="hospitality">
+                          Hospitality & Tourism
+                        </option>
+                        <option value="renewable">Renewable Energy</option>
+                        <option value="space">Space & Aerospace</option>
+                        <option value="esports">Esports & Gaming</option>
+                      </optgroup>
+                    </select>
+                  </div>
+                </div>
+              </motion.div>
+            )}
+
+            {step === 2 && (
+              <motion.div
+                key="step2"
+                variants={variants}
+                initial="initial"
+                animate="animate"
+                exit="exit"
+                transition={{ duration: 0.4 }}
+              >
+                <h2 className="text-xl font-semibold mb-6">Salary</h2>
+
+                <div className="grid md:grid-cols-2 gap-6">
                   <div>
                     <label className="block mb-2">Salary Type</label>
                     <select
@@ -292,12 +503,26 @@ export default function PostJob() {
                     />
                   </div>
                 </div>
+
+                <div className="mt-6">
+                  <label className="block mb-2">Salary Token</label>
+                  <select
+                    name="salaryToken"
+                    value={formData.salaryToken}
+                    onChange={handleChange}
+                    className="w-full bg-[#FCE9FC] text-gray-800 rounded-lg p-3 focus:outline-none"
+                  >
+                    <option value="dot">DOT</option>
+                    <option value="usdc">USDC</option>
+                    <option value="usdt">USDT</option>
+                  </select>
+                </div>
               </motion.div>
             )}
 
-            {step === 2 && (
+            {step === 3 && (
               <motion.div
-                key="step2"
+                key="step3"
                 variants={variants}
                 initial="initial"
                 animate="animate"
@@ -372,9 +597,9 @@ export default function PostJob() {
               </motion.div>
             )}
 
-            {step === 3 && (
+            {step === 4 && (
               <motion.div
-                key="step3"
+                key="step4"
                 variants={variants}
                 initial="initial"
                 animate="animate"
@@ -416,7 +641,7 @@ export default function PostJob() {
               </button>
             )}
 
-            {step < 3 && (
+            {step < 4 && (
               <button
                 type="button"
                 onClick={nextStep}
@@ -425,7 +650,7 @@ export default function PostJob() {
                 Next →
               </button>
             )}
-            {step == 3 && (
+            {step === 4 && (
               <button
                 type="submit"
                 disabled={uploading}

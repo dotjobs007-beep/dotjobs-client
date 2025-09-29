@@ -11,6 +11,7 @@ import {
 } from "@/interface/interface";
 import service from "@/helper/service.helper";
 import { useRouter } from "next/navigation";
+import { useJob } from "@/app/context/jobcontext";
 
 export default function Jobs() {
   const [query, setQuery] = useState("");
@@ -83,6 +84,12 @@ export default function Jobs() {
   const nextPage = () =>
     pagination && page < pagination.totalPages && fetchJobs(page + 1);
   const prevPage = () => page > 1 && fetchJobs(page - 1);
+  const { setJobDetails } = useJob();
+
+  const handleDisplayJobDetails = (job: IJob) => {
+    setJobDetails(job);
+    router.push(`/jobs/${job._id}`);
+  };
 
   return (
     <div className="my-24 px-4 flex flex-col items-center lg:px-[8rem]">
@@ -211,7 +218,9 @@ export default function Jobs() {
                 job.salary_type,
                 job.work_arrangement,
               ]}
+              salaryType={job.salary_token}
               salaryRange={job.salary_range}
+              onClick={() => handleDisplayJobDetails(job)}
             />
           ))
         ) : (

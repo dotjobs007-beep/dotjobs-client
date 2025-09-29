@@ -3,15 +3,22 @@
 import { useState } from "react";
 import Modal from "../../Modal";
 import { useRouter } from "next/navigation";
+import { useJob } from "@/app/context/jobcontext";
+import service from "@/helper/service.helper";
+import { toast } from "react-hot-toast/headless";
+import { url } from "inspector/promises";
+import Spinner from "@/Component/Spinner";
 
 export default function ApplyPage() {
   const [showApplyModal, setShowApplyModal] = useState(false);
   const [showUploadModal, setShowUploadModal] = useState(false);
   const [showSuccessModal, setShowSuccessModal] = useState(false); // ✅ success modal
-  const [name, setName] = useState("");
   const [file, setFile] = useState<File | null>(null);
   const [uploading, setUploading] = useState(false);
-  const [downloadURL, setDownloadURL] = useState<string | null>(null);
+  const [resumeURL, setResumeURL] = useState<string | null>(null);
+  const { jobDetails } = useJob();
+  const [isLoading, setIsLoading] = useState(false);
+  console.log("job", jobDetails);
 
   const router = useRouter();
 
@@ -24,13 +31,16 @@ export default function ApplyPage() {
       const formData = new FormData();
       formData.append("file", file);
 
-      const res = await fetch(`${process.env.NEXT_BASE_URL}/job/upload-resume`, {
-        method: "POST",
-        headers: {
-          secret: process.env.NEXT_PUBLIC_SECRET_KEY || "",
-        },
-        body: formData,
-      });
+      const res = await fetch(
+        `${process.env.NEXT_BASE_URL}/job/upload-resume`,
+        {
+          method: "POST",
+          headers: {
+            secret: process.env.NEXT_PUBLIC_SECRET_KEY || "",
+          },
+          body: formData,
+        }
+      );
 
       const data = await res.json();
 
@@ -38,7 +48,8 @@ export default function ApplyPage() {
         throw new Error(data.message || "Upload failed");
       }
 
-      setDownloadURL(data.url || null);
+      setResumeURL(data.url || null);
+      await handleResumeSubmit(data.url || "");
 
       // Show success modal
       setShowSuccessModal(true);
@@ -53,16 +64,41 @@ export default function ApplyPage() {
     }
   };
 
-  const handleApplySubmit = () => {
-    if (!name) return alert("Please enter your name");
-    setShowSuccessModal(true);
-    setTimeout(() => setShowSuccessModal(false), 3000);
-    setShowApplyModal(false);
+  const handleApplySubmit = async () => {
+    if (!resumeURL) return alert("Please enter your resume URL");
+    await handleResumeSubmit(resumeURL);
   };
 
   const handleGoback = () => {
     setShowSuccessModal(false);
     router.push("/jobs");
+  };
+
+  const handleResumeSubmit = async (url: string) => {
+    const body = {
+      jobId: jobDetails?._id,
+      resume: url,
+    };
+
+    setIsLoading(true);
+    const res = await service.fetcher(`/job/job-application`, "POST", {
+      data: body,
+      withCredentials: true,
+    });
+
+    if (res.code === 401) {
+      router.replace("/auth/signin");
+      setIsLoading(false);
+      return;
+    }
+
+    if (res.status === "error") {
+      alert(res.message);
+      setIsLoading(false);
+      return;
+    }
+    setIsLoading(false);
+    setShowSuccessModal(true);
   };
 
   return (
@@ -102,9 +138,9 @@ export default function ApplyPage() {
       >
         <input
           type="text"
-          placeholder="Enter your name"
-          value={name}
-          onChange={(e) => setName(e.target.value)}
+          placeholder="Enter your resume url"
+          value={resumeURL || ""}
+          onChange={(e) => setResumeURL(e.target.value)}
           className="border p-2 w-full rounded mb-4"
         />
         <button
@@ -133,10 +169,10 @@ export default function ApplyPage() {
         >
           {uploading ? "Uploading..." : "Submit"}
         </button>
-        {downloadURL && (
+        {resumeURL && (
           <p className="mt-3 text-sm text-green-600">
             File saved:{" "}
-            <a href={downloadURL} target="_blank" rel="noreferrer">
+            <a href={resumeURL} target="_blank" rel="noreferrer">
               View File
             </a>
           </p>
@@ -146,7 +182,7 @@ export default function ApplyPage() {
       {/* Success Modal */}
       <Modal
         isOpen={showSuccessModal}
-        onClose={() => setShowSuccessModal(false)}
+        onClose={() => router.push(`/jobs/${jobDetails?._id}`)}
         title="Success"
       >
         <h1 className="text-[#FF2670] font-bold text-[20px] mb-5">
@@ -165,6 +201,8 @@ export default function ApplyPage() {
           Back to Jobs
         </button>
       </Modal>
+
+      <Spinner isLoading={isLoading} />
     </main>
   );
 }

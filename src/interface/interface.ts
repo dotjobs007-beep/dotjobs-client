@@ -27,7 +27,10 @@ export interface IJob {
   _id?: string;
   title: string;
   description: string;
+  requirements: string;
   is_active?: boolean;
+  category: string;
+  salary_token: string; // e.g., "USD", "DOT", etc.
 
   employment_type:
     | "full-time"
@@ -51,6 +54,8 @@ export interface IJob {
   company_description?: string;
   company_location: string;
   logo?: string;
+  createdAt?: string;
+  updatedAt?: string;
 }
 
 export interface JobApplication {

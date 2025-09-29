@@ -6,6 +6,7 @@ import Header from "@/Component/Header/Header";
 import { Toaster } from "react-hot-toast";
 import { AuthProvider } from "./context/authcontext";
 import Script from "next/script";
+import { JobProvider } from "./context/jobcontext";
 export const metadata: Metadata = {
   title: "Tailwind v4 Dark Mode",
   description: "Manual toggle with Tailwind v4",
@@ -23,6 +24,7 @@ export default function RootLayout({
     <html lang="en">
       <body  className={unbounded.className}>
         <AuthProvider>
+          <JobProvider>
         <Header />
         {/* <header className="p-4 flex justify-end">
         </header> */}
@@ -64,6 +66,7 @@ export default function RootLayout({
           </>
         )}
         </main>
+        </JobProvider>
         </AuthProvider>
       </body>
     </html>

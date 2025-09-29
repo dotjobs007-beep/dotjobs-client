@@ -8,6 +8,7 @@ interface JobCardProps {
   description: string;
   tags: string[];
   salaryRange?: { min?: number; max?: number };
+  salaryType?: string;
   onClick?: () => void;
   buttonText?: string;
 }
@@ -18,15 +19,11 @@ export default function JobCard({
   description,
   tags,
   salaryRange,
+  salaryType,
   onClick = () => {},
   buttonText = "Apply Now",
 }: JobCardProps) {
-  const salaryText =
-    salaryRange && (salaryRange.min || salaryRange.max)
-      ? `${salaryRange.min ? `${salaryRange.min.toLocaleString()}` : ""}${
-          salaryRange.min && salaryRange.max ? " - " : ""
-        }${salaryRange.max ? `${salaryRange.max.toLocaleString()}` : ""}`
-      : "Not specified";
+
 
   return (
     <Card
@@ -37,15 +34,17 @@ export default function JobCard({
         shadow-sm
       "
     >
-      {/* Avatar Logo */}
+      {/* ✅ Avatar Logo */}
       <div className="flex justify-center md:justify-start">
-        <Image
-          src={logo}
-          alt={`${title} company logo`}
-          width={48}
-          height={48}
-          className="rounded-full object-cover bg-gray-100"
-        />
+        <div className="w-12 h-12 rounded-full overflow-hidden bg-gray-100">
+          <Image
+            src={logo}
+            alt={`${title} company logo`}
+            width={48}
+            height={48}
+            className="object-cover w-full h-full"
+          />
+        </div>
       </div>
 
       {/* Details + Button */}
@@ -60,7 +59,7 @@ export default function JobCard({
 
           {/* Salary Range */}
           <p className="text-[12px] text-gray-600 font-medium">
-            Salary: {salaryText}
+            Salary: {salaryRange ? `${salaryRange.min} - ${salaryRange.max} ${salaryType}` : "Not specified"}
           </p>
 
           {/* Job Tags */}
