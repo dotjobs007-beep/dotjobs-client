@@ -19,39 +19,38 @@ export default function MyJobs() {
   const [loading, setLoading] = useState<boolean>(false);
   const router = useRouter();
 
-const fetchMyJobs = async (pageNum: number) => {
-  if (loading || (!hasMore && pageNum !== 1)) return;
+  const fetchMyJobs = async (pageNum: number) => {
+    if (loading || (!hasMore && pageNum !== 1)) return;
 
-  setLoading(true);
-  const res: IApiResponse<IJobResponse> = await service.fetcher(
-    `/job/fetch-job-by-user?page=${pageNum}&limit=10`,
-    "GET",
-    { withCredentials: true }
-  );
+    setLoading(true);
+    const res: IApiResponse<IJobResponse> = await service.fetcher(
+      `/job/fetch-job-by-user?page=${pageNum}&limit=10`,
+      "GET",
+      { withCredentials: true }
+    );
 
-  if (res.code === 401) {
-    router.replace("/auth/signin");
+    if (res.code === 401) {
+      router.replace("/auth/signin");
+      setLoading(false);
+      return;
+    }
+
+    if (!res.data || res.status === "error") {
+      setHasMore(false);
+      setLoading(false);
+      return;
+    }
+
+    const newJobs: IJob[] = res.data.data;
+    const pagination: IPagination = res.data.pagination;
+
+    // ✅ If it's the first page, REPLACE instead of append
+    setJobs((prev) => (pageNum === 1 ? newJobs : [...prev, ...newJobs]));
+
+    setHasMore(pageNum < pagination.totalPages);
+    setPage(pageNum);
     setLoading(false);
-    return;
-  }
-
-  if (!res.data || res.status === "error") {
-    setHasMore(false);
-    setLoading(false);
-    return;
-  }
-
-  const newJobs: IJob[] = res.data.data;
-  const pagination: IPagination = res.data.pagination;
-
-  // ✅ If it's the first page, REPLACE instead of append
-  setJobs((prev) => (pageNum === 1 ? newJobs : [...prev, ...newJobs]));
-
-  setHasMore(pageNum < pagination.totalPages);
-  setPage(pageNum);
-  setLoading(false);
-};
-
+  };
 
   // ✅ Initial fetch
   useEffect(() => {
@@ -81,6 +80,8 @@ const fetchMyJobs = async (pageNum: number) => {
               el.work_arrangement,
               el.company_location,
             ]}
+            salaryType={el.salary_token}
+            salaryRange={el.salary_range}
             buttonText="View Details"
             onClick={() => router.push(`/jobs/my_jobs/${el._id}`)}
           />

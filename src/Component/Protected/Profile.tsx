@@ -16,9 +16,8 @@ import Card from "../Card";
 import { updateProfile } from "firebase/auth";
 import { auth } from "@/Firebase/firebase";
 import { useAuth } from "@/app/context/authcontext";
-import ConnectWalletModal from "./ConnectWalletModal";
-import { label } from "framer-motion/client";
 import { Verified } from "lucide-react";
+import { isTrustedUrl } from "@/helper/validate_link";
 
 export default function ProfilePage() {
   const [isLoading, setIsLoading] = useState(false);
@@ -83,10 +82,40 @@ export default function ProfilePage() {
 
   const handleAvatarClick = () => fileInputRef.current?.click();
 
+  const validateProfileUrl = (): boolean => {
+    if (formData.githubProfile != "") {
+      const isValidUrl = isTrustedUrl(formData.githubProfile ?? "");
+      if (!isValidUrl) {
+        toast.error("Please enter a valid and trusted GitHub profile URL.");
+        return false;
+      }
+    }
+
+    if (formData.linkedInProfile != "") {
+      const isValidUrl = isTrustedUrl(formData.linkedInProfile ?? "");
+      if (!isValidUrl) {
+        toast.error("Please enter a valid and trusted LinkedIn profile URL.");
+        return false;
+      }
+    }
+    if (formData.xProfile != "") {
+      const isValidUrl = isTrustedUrl(formData.xProfile ?? "");
+      if (!isValidUrl) {
+        toast.error("Please enter a valid and trusted X profile URL.");
+        return false;
+      }
+    }
+    return true;
+  };
+
   // 👉 Handle About/Skills Save
   const handleSave = async () => {
     setIsLoading(true);
     const skillsArray = formData.skills?.split(",").map((s) => s.trim());
+    const isValid = validateProfileUrl();
+    if (!isValid) {
+      return;
+    }
     const response: IApiResponse<IUserDetails> = await service.fetcher(
       "/user/update-profile",
       "PATCH",
@@ -268,7 +297,12 @@ export default function ProfilePage() {
                   </tr>
                   <tr>
                     <td className="font-semibold">Email</td>
-                    <td>{userData.email} {userData.email_verified && <Verified className="inline-block ml-1 text-green-500" />}</td>
+                    <td>
+                      {userData.email}{" "}
+                      {userData.email_verified && (
+                        <Verified className="inline-block ml-1 text-green-500" />
+                      )}
+                    </td>
                   </tr>
                   <tr>
                     <td className="font-semibold">Location</td>

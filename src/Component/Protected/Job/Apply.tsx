@@ -5,9 +5,9 @@ import Modal from "../../Modal";
 import { useRouter } from "next/navigation";
 import { useJob } from "@/app/context/jobcontext";
 import service from "@/helper/service.helper";
-import { toast } from "react-hot-toast/headless";
-import { url } from "inspector/promises";
 import Spinner from "@/Component/Spinner";
+import { isTrustedUrl } from "@/helper/validate_link";
+import toast from "react-hot-toast";
 
 export default function ApplyPage() {
   const [showApplyModal, setShowApplyModal] = useState(false);
@@ -72,7 +72,7 @@ export default function ApplyPage() {
   };
 
   const handleApplySubmit = async () => {
-    if (!resumeURL) return alert("Please enter your resume URL");
+    if (!resumeURL) return toast.error("Please enter your resume URL");
     await handleResumeSubmit(resumeURL);
   };
 
@@ -82,11 +82,15 @@ export default function ApplyPage() {
   };
 
   const handleResumeSubmit = async (url: string) => {
-    console.log("Submitting resume URL:", url);
     const body = {
       jobId: jobDetails?._id,
       resume: url,
     };
+
+    const isTrusted = isTrustedUrl(url);
+    if (!isTrusted) {
+      return toast.error("Please provide a valid and trusted URL");
+    }
 
     setIsLoading(true);
     const res = await service.fetcher(`/job/job-application`, "POST", {
@@ -101,7 +105,7 @@ export default function ApplyPage() {
     }
 
     if (res.status === "error") {
-      alert(res.message);
+      toast.error(res.message);
       setIsLoading(false);
       return;
     }
@@ -151,6 +155,19 @@ export default function ApplyPage() {
           onChange={(e) => setResumeURL(e.target.value)}
           className="border p-2 w-full rounded mb-4"
         />
+
+        <div className="text-sm text-gray-600 mb-4">
+          <b>Note:</b>
+          <p>
+            Please ensure your resume is in PDF format and does not exceed 5MB
+            in size.
+          </p>
+          <p>
+            We recommend using trusted platforms like Google Drive, Dropbox,
+            Cloudinary or OneDrive to host your resume. Make sure the link is
+            publicly accessible.
+          </p>
+        </div>
         <button
           onClick={handleApplySubmit}
           className="bg-purple-600 text-white px-4 py-2 rounded hover:bg-purple-700"
@@ -167,6 +184,7 @@ export default function ApplyPage() {
       >
         <input
           type="file"
+          accept="application/pdf"
           onChange={(e) => setFile(e.target.files?.[0] || null)}
           className="mb-4"
         />
