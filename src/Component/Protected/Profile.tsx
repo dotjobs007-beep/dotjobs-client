@@ -1,6 +1,10 @@
 "use client";
 import service from "@/helper/service.helper";
-import { IApiResponse, IUserDetails } from "@/interface/interface";
+import {
+  IApiResponse,
+  IUpdateProfile,
+  IUserDetails,
+} from "@/interface/interface";
 import Image from "next/image";
 import { useEffect, useRef, useState } from "react";
 import { FaTwitter, FaLinkedin, FaGithub, FaInstagram } from "react-icons/fa";
@@ -13,6 +17,8 @@ import { updateProfile } from "firebase/auth";
 import { auth } from "@/Firebase/firebase";
 import { useAuth } from "@/app/context/authcontext";
 import ConnectWalletModal from "./ConnectWalletModal";
+import { label } from "framer-motion/client";
+import { Verified } from "lucide-react";
 
 export default function ProfilePage() {
   const [isLoading, setIsLoading] = useState(false);
@@ -23,14 +29,25 @@ export default function ProfilePage() {
 
   // 🔧 State for Edit About/Skills
   const [showEdit, setShowEdit] = useState(false);
-  const [about, setAbout] = useState("");
-  const [skills, setSkills] = useState("");
+  // const [about, setAbout] = useState("");
+  // const [skills, setSkills] = useState("");
+  // const [lin]
+
+  const [formData, setFormData] = useState<IUpdateProfile>({
+    about: "",
+    skills: "",
+    location: "",
+    linkedInProfile: "",
+    xProfile: "",
+    githubProfile: "",
+    jobSeeker: false,
+  });
 
   // 🔧 State for Avatar + Name update
   const [showAvatarModal, setShowAvatarModal] = useState(false);
   const [newName, setNewName] = useState("");
   const [uploadedUrl, setUploadedUrl] = useState("");
-  const { setUserDetails} = useAuth();
+  const { setUserDetails } = useAuth();
 
   const router = useRouter();
 
@@ -69,12 +86,20 @@ export default function ProfilePage() {
   // 👉 Handle About/Skills Save
   const handleSave = async () => {
     setIsLoading(true);
-    const skillsArray = skills.split(",").map((s) => s.trim());
+    const skillsArray = formData.skills?.split(",").map((s) => s.trim());
     const response: IApiResponse<IUserDetails> = await service.fetcher(
       "/user/update-profile",
       "PATCH",
       {
-        data: { about, skills: skillsArray },
+        data: {
+          about: formData.about,
+          skills: skillsArray,
+          location: formData.location,
+          linkedInProfile: formData.linkedInProfile,
+          xProfile: formData.xProfile,
+          githubProfile: formData.githubProfile,
+          jobSeeker: formData.jobSeeker,
+        },
         withCredentials: true,
       }
     );
@@ -98,8 +123,17 @@ export default function ProfilePage() {
 
   const handleEditOpen = () => {
     if (!userData) return;
-    setAbout(userData.about || "");
-    setSkills(userData.skill.join(", "));
+    const skillsString = (userData.skill || []).join(", ");
+    setFormData((prev) => ({
+      ...prev,
+      jobSeeker: userData.jobSeeker || false,
+      linkedInProfile: userData.linkedInProfile || "",
+      xProfile: userData.xProfile || "",
+      githubProfile: userData.githubProfile || "",
+      about: userData.about || "",
+      skills: skillsString || "",
+      location: userData.location || "",
+    }));
     setShowEdit(true);
   };
 
@@ -180,7 +214,12 @@ export default function ProfilePage() {
     }
   };
 
-
+  const handleFormChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+  ) => {
+    const { name, value } = e.target;
+    setFormData((prev) => ({ ...prev, [name]: value }));
+  };
 
   return (
     <div>
@@ -188,47 +227,80 @@ export default function ProfilePage() {
         <div className="lg:h-[89vh] px-6 py-10 flex justify-center items-center">
           <div className="w-full max-w-6xl grid grid-cols-1 md:grid-cols-2 gap-6">
             {/* 🟣 Card 1 – User Info */}
-            <div className="rounded-2xl p-6 shadow-lg text-white bg-gradient-to-r from-[#DB2F7B] to-[#724B99] flex flex-col items-center text-center">
-              <div
-                onClick={() => {
-                  setNewName(userData.name);
-                  setShowAvatarModal(true);
-                }}
-                className="cursor-pointer"
-              >
+            <div className="rounded-2xl p-6 shadow-lg text-white bg-gradient-to-r from-[#DB2F7B] to-[#724B99]">
+              {/* Avatar + Edit */}
+              <div className="flex flex-col items-center text-center mb-6">
+                <div
+                  onClick={() => {
+                    setNewName(userData.name);
+                    setShowAvatarModal(true);
+                  }}
+                  className="cursor-pointer"
+                >
+                  <Image
+                    src={userData.avatar}
+                    alt="User Avatar"
+                    width={120}
+                    height={120}
+                    className="rounded-full border-4 border-white/30 mb-4 cursor-pointer"
+                  />
+                </div>
+
                 <Image
-                  src={userData.avatar}
-                  alt="User Avatar"
-                  width={120}
-                  height={120}
-                  className="rounded-full border-4 border-white/30 mb-4 cursor-pointer"
+                  src={
+                    userData.verified_onchain
+                      ? "https://res.cloudinary.com/dk06cndku/image/upload/v1758747697/verified_p2oyti.png"
+                      : "https://res.cloudinary.com/dk06cndku/image/upload/v1758747695/not_verified_k1ybbw.png"
+                  }
+                  alt="Verification Status"
+                  width={90}
+                  height={90}
+                  className="rounded-full -mt-4 border-4 border-white/30 bg-gray-500"
                 />
               </div>
-              <Image
-                src={
-                  userData.verified_onchain
-                    ? "https://res.cloudinary.com/dk06cndku/image/upload/v1758747697/verified_p2oyti.png"
-                    : "https://res.cloudinary.com/dk06cndku/image/upload/v1758747695/not_verified_k1ybbw.png"
-                }
-                alt="Verification Status"
-                width={100}
-                height={100}
-                className="rounded-full mt-[-30px] border-4 border-white/30 bg-gray-500"
-              />
-              <h2 className="text-2xl font-bold">{userData.name}</h2>
-              <p className="text-sm text-white/80 mt-1">{userData.email}</p>
-              <p className="text-xs text-white/70 mt-3">
-                Joined on:{" "}
-                <span className="font-medium">
-                  {formatDate(userData.createdAt)}
-                </span>
-              </p>
-              <button
-                onClick={handleEditOpen}
-                className="mt-4 px-4 py-2 rounded-full bg-white text-pink-600 font-semibold hover:bg-pink-50 transition"
-              >
-                Edit Profile
-              </button>
+
+              {/* Info Table */}
+              <table className="w-full text-left border-separate border-spacing-y-3">
+                <tbody>
+                  <tr>
+                    <td className="w-1/3 font-semibold">Full Name</td>
+                    <td>{userData.name}</td>
+                  </tr>
+                  <tr>
+                    <td className="font-semibold">Email</td>
+                    <td>{userData.email} {userData.email_verified && <Verified className="inline-block ml-1 text-green-500" />}</td>
+                  </tr>
+                  <tr>
+                    <td className="font-semibold">Location</td>
+                    <td>{userData.location || "Not specified"}</td>
+                  </tr>
+                  <tr>
+                    <td className="font-semibold">Job Seeking</td>
+                    <td
+                      className={
+                        userData.jobSeeker
+                          ? "text-green-400 font-bold text-[15px]"
+                          : "text-red-400 font-bold text-[15px]"
+                      }
+                    >
+                      {userData.jobSeeker ? "Yes" : "No"}
+                    </td>
+                  </tr>
+                  <tr>
+                    <td className="font-semibold">Joined</td>
+                    <td>{formatDate(userData.createdAt)}</td>
+                  </tr>
+                </tbody>
+              </table>
+
+              <div className="flex justify-center mt-6">
+                <button
+                  onClick={handleEditOpen}
+                  className="px-4 py-2 rounded-full bg-white text-pink-600 font-semibold hover:bg-pink-50 transition"
+                >
+                  Edit Profile
+                </button>
+              </div>
             </div>
 
             {/* 🟣 About */}
@@ -265,28 +337,28 @@ export default function ProfilePage() {
               </h3>
               <div className="flex gap-6 mt-2">
                 <a
-                  href="#"
+                  href={userData.xProfile || "#"}
+                  target="_blank"
+                  rel="noopener noreferrer"
                   className="p-2 bg-white/20 rounded-full hover:bg-white/30 transition"
                 >
                   <FaTwitter size={20} />
                 </a>
                 <a
-                  href="#"
+                  href={userData.linkedInProfile || "#"}
+                  target="_blank"
+                  rel="noopener noreferrer"
                   className="p-2 bg-white/20 rounded-full hover:bg-white/30 transition"
                 >
                   <FaLinkedin size={20} />
                 </a>
                 <a
-                  href="#"
+                  href={userData.githubProfile || "#"}
+                  target="_blank"
+                  rel="noopener noreferrer"
                   className="p-2 bg-white/20 rounded-full hover:bg-white/30 transition"
                 >
                   <FaGithub size={20} />
-                </a>
-                <a
-                  href="#"
-                  className="p-2 bg-white/20 rounded-full hover:bg-white/30 transition"
-                >
-                  <FaInstagram size={20} />
                 </a>
               </div>
             </div>
@@ -304,8 +376,10 @@ export default function ProfilePage() {
               About
             </label>
             <textarea
-              value={about}
-              onChange={(e) => setAbout(e.target.value)}
+              value={formData.about}
+              onChange={(e) =>
+                setFormData({ ...formData, about: e.target.value })
+              }
               className="w-full border-gray-300 p-3 rounded-lg border bg-[#FDD7FD] mb-4 text-gray-800"
               rows={4}
             />
@@ -314,10 +388,72 @@ export default function ProfilePage() {
               Skills (comma separated)
             </label>
             <input
-              value={skills}
-              onChange={(e) => setSkills(e.target.value)}
+              value={formData.skills}
+              onChange={(e) =>
+                setFormData({ ...formData, skills: e.target.value })
+              }
               className="w-full border-gray-300 p-3 rounded-lg border bg-[#FDD7FD] mb-4 text-gray-800"
               placeholder="e.g. React, Node.js"
+            />
+
+            <label className="block text-sm font-medium text-gray-700 mb-1">
+              LinkedIn Profile
+            </label>
+            <input
+              value={formData.linkedInProfile}
+              onChange={handleFormChange}
+              name="linkedInProfile"
+              className="w-full border-gray-300 p-3 rounded-lg border bg-[#FDD7FD] mb-4 text-gray-800"
+              placeholder="e.g. React, Node.js"
+            />
+
+            <label className="block text-sm font-medium text-gray-700 mb-1">
+              x Profile
+            </label>
+            <input
+              value={formData.xProfile}
+              onChange={handleFormChange}
+              name="xProfile"
+              className="w-full border-gray-300 p-3 rounded-lg border bg-[#FDD7FD] mb-4 text-gray-800"
+              placeholder="e.g. React, Node.js"
+            />
+
+            <label className="block text-sm font-medium text-gray-700 mb-1">
+              GitHub Profile
+            </label>
+            <input
+              value={formData.githubProfile}
+              onChange={handleFormChange}
+              name="githubProfile"
+              className="w-full border-gray-300 p-3 rounded-lg border bg-[#FDD7FD] mb-4 text-gray-800"
+              placeholder="e.g. React, Node.js"
+            />
+
+            <label className="block text-sm font-medium text-gray-700 mb-1">
+              Job Seeker
+            </label>
+            <input
+              type="checkbox"
+              checked={formData.jobSeeker}
+              onChange={(e) =>
+                setFormData((prev) => ({
+                  ...prev,
+                  jobSeeker: e.target.checked,
+                }))
+              }
+              name="jobSeeker"
+              className="mr-2 leading-tight"
+            />
+
+            <label className="block text-sm font-medium text-gray-700 mb-1">
+              Location
+            </label>
+            <input
+              value={formData.location}
+              onChange={handleFormChange}
+              name="location"
+              className="w-full border-gray-300 p-3 rounded-lg border bg-[#FDD7FD] mb-4 text-gray-800"
+              placeholder="e.g. San Francisco, CA"
             />
 
             <div className="flex justify-end gap-3">

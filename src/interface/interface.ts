@@ -19,7 +19,12 @@ export interface IUserDetails {
   skill: string[];
   address: string;
   onchain_status: string;
+  linkedInProfile?: string;
+  xProfile?: string;
+  githubProfile?: string;
+  jobSeeker: boolean;
   createdAt: string;
+  location?: string;
   updatedAt: string;
 }
 
@@ -165,4 +170,14 @@ export interface IPagination {
 export interface IApplicantListResponse {
   data: IJobApplicant[];
   pagination: IPagination;
+}
+
+export interface IUpdateProfile {
+  about?: string;
+  skills?: string; // Array of skills
+  location?: string;
+  linkedInProfile?: string;
+  xProfile?: string;
+  githubProfile?: string;
+  jobSeeker?: boolean;
 }
