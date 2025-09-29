@@ -18,7 +18,6 @@ export default function ApplyPage() {
   const [resumeURL, setResumeURL] = useState<string | null>(null);
   const { jobDetails } = useJob();
   const [isLoading, setIsLoading] = useState(false);
-  console.log("job", jobDetails);
 
   const router = useRouter();
 

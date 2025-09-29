@@ -51,7 +51,7 @@ export default function Jobs() {
       if (maxSalary) params.append("maxSalary", maxSalary);
 
       const res: IApiResponse<IJobResponse> = await service.fetcher(
-        `/job/fetch-job-by-user?${params.toString()}`,
+        `/job/fetch-jobs`,
         "GET",
         { withCredentials: true }
       );
