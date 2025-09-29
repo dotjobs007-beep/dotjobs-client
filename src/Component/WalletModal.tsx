@@ -1,14 +1,26 @@
 "use client";
 
-import React from "react";
+import { useAuth } from "@/app/context/authcontext";
+import { usePolkadotWallet } from "@/hooks/usePolkadotWallet";
+import React, { useState } from "react";
 
 type WalletModalProps = {
-  show: boolean;
   onClose: () => void;
 };
 
-export default function WalletModal({ show, onClose }: WalletModalProps) {
-  if (!show) return null;
+export default function WalletModal({ onClose }: WalletModalProps) {
+  const { showMobileWalletConnect, isWalletMissing } = useAuth();
+  const { isMobile } = usePolkadotWallet();
+  const [showModal, setShowModal] = useState(true);
+
+  // Only show this desktop modal when:
+  // - the device is not mobile, and
+  // - the wallet is missing, and
+  // - the mobile wallet modal is NOT showing
+  if (isMobile) return null;
+  if (!isWalletMissing) return null;
+  if (showMobileWalletConnect) return null;
+  if (!showModal) return null;
 
   return (
     <div className="fixed inset-0 flex items-center justify-center bg-black/50 z-50">
@@ -52,7 +64,10 @@ export default function WalletModal({ show, onClose }: WalletModalProps) {
           </li>
         </ul>
         <button
-          onClick={onClose}
+          onClick={() => {
+             setShowModal(false);
+             onClose();
+          }}
           className="mt-4 w-full py-2 rounded-lg bg-gray-300 dark:bg-gray-700 text-gray-800 dark:text-white font-medium hover:bg-gray-400 dark:hover:bg-gray-600 transition-colors"
         >
           Close

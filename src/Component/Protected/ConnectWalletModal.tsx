@@ -4,19 +4,28 @@ import { useAuth } from "@/app/context/authcontext";
 import { motion, AnimatePresence } from "framer-motion";
 import { FiX } from "react-icons/fi";
 import WalletModal from "../WalletModal";
+import MobileWalletModal from "./MobileWalletModal";
+import { useRouter } from "next/navigation";  
 
 interface ConnectWalletModalProps {
   open: boolean;
 }
 
 export default function ConnectWalletModal({ open }: ConnectWalletModalProps) {
-  const { connectingWallet, polkadotWalletConnect, showMobileWalletConnect, setShowMobileWalletConnect } = useAuth();
-
+  const { connectingWallet, polkadotWalletConnect, showMobileWalletConnect, setShowMobileWalletConnect, isWalletConnected } = useAuth();
+  const router = useRouter();
   return (
     <>
       <AnimatePresence>
         {open && (
-          <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm">
+          <div
+            className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm"
+            onClick={() => {
+              // Close overlay click: hide mobile wallet connect and redirect to profile
+              setShowMobileWalletConnect(false);
+              router.push("/dashboard/profile");
+            }}
+          >
             <motion.div
               initial={{ opacity: 0, scale: 0.9 }}
               animate={{ opacity: 1, scale: 1 }}
@@ -45,9 +54,16 @@ export default function ConnectWalletModal({ open }: ConnectWalletModalProps) {
         )}
       </AnimatePresence>
       <WalletModal
-        show={showMobileWalletConnect}
-        onClose={() => setShowMobileWalletConnect(false)}
+        onClose={() => {
+          setShowMobileWalletConnect(false);
+          router.push("/dashboard/profile"); // Redirect to home or any other page
+        }}
       />
+
+      <MobileWalletModal closeMenu={() => {
+         setShowMobileWalletConnect(false);
+         router.push("/dashboard/profile"); // Redirect to home or any other page
+      }} />
     </>
   );
 }

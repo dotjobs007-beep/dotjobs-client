@@ -9,6 +9,8 @@ import service from "@/helper/service.helper";
 import { useRouter } from "next/navigation";
 import { useAuth } from "@/app/context/authcontext";
 import ConnectWalletModal from "../ConnectWalletModal";
+import WalletModal from "@/Component/WalletModal";
+import MobileWalletModal from "../MobileWalletModal";
 
 export default function PostJob() {
   const [step, setStep] = useState(1);
@@ -30,7 +32,11 @@ export default function PostJob() {
   const [uploading, setUploading] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
   // const [showWalletModal, setShowWalletModal] = useState(true);
-  const {isWalletConnected } = useAuth();
+  const {
+    isWalletConnected,
+    setShowMobileWalletConnect,
+    showMobileWalletConnect,
+  } = useAuth();
   const router = useRouter();
 
   // Handlers
@@ -426,9 +432,24 @@ export default function PostJob() {
         </form>
       )}
 
-      <ConnectWalletModal
-        open={isWalletConnected ? false : true}
-      />
+      {!isWalletConnected && (
+        <>
+          <WalletModal
+            onClose={() => {
+              setShowMobileWalletConnect(false);
+              router.replace("/dashboard/profile"); // Redirect to home or any other page
+            }}
+          />
+          {showMobileWalletConnect && (
+            <MobileWalletModal
+              closeMenu={() => {
+                setShowMobileWalletConnect(false);
+                router.replace("/dashboard/profile"); // Redirect to home or any other page
+              }}
+            />
+          )}
+        </>
+      )}
     </div>
   );
 }

@@ -1,3 +1,5 @@
+"use client";
+
 import { auth } from "@/Firebase/firebase";
 import { openWallet } from "../OpenNovaWallet";
 import Spinner from "../Spinner";
@@ -6,6 +8,8 @@ import { signOut } from "firebase/auth";
 import toast from "react-hot-toast";
 import { AppRouterInstance } from "next/dist/shared/lib/app-router-context.shared-runtime";
 import { useEffect, useState } from "react";
+import { usePolkadotWallet } from "@/hooks/usePolkadotWallet";
+import MobileWalletModal from "../Protected/MobileWalletModal";
 
 export default function ActionButtons({
   isLoggedIn,
@@ -25,7 +29,11 @@ export default function ActionButtons({
     disconnectWallet,
     showMobileWalletConnect,
     polkadotWalletConnect,
+    setShowMobileWalletConnect,
   } = useAuth();
+
+  // Do not call usePolkadotWallet here (it creates another independent hook instance).
+  // Instead, use the context flag `showMobileWalletConnect` to determine whether to show mobile options.
   const handleLogout = async () => {
     setIsLoading(true);
     await signOut(auth);
@@ -34,6 +42,7 @@ export default function ActionButtons({
     localStorage.removeItem("dottoken");
     toast.success("Logged out successfully");
     router.push("/auth/signin");
+    setShowMobileWalletConnect(false);
     setUserDetails(null);
     setIsLoggedIn(false);
     setIsLoading(false);
@@ -53,7 +62,7 @@ export default function ActionButtons({
     closeMenu(); // Close menu on navigation
   };
 
-  if (isLoggedIn) {
+  if (!isLoggedIn) {
     return (
       <div className="flex justify-between gap-3">
         <div
@@ -64,31 +73,13 @@ export default function ActionButtons({
         </div>
 
         {showMobileWalletConnect ? (
-          <div className="absolute flex flex-col justify-start bg-[#A83182] p-10 gap-2 shadow-lg rounded-lg mt-16">
-            <button
-              onClick={() => openWallet("nova")}
-              className="px-4 py-2 rounded-lg bg-purple-600 text-[12px] text-white font-medium hover:bg-purple-700 transition-colors"
-            >
-              Open in Nova Wallet
-            </button>
-
-            <button
-              onClick={() => openWallet("subwallet")}
-              className="px-4 py-2 rounded-lg bg-blue-600 text-[12px] text-white font-medium hover:bg-blue-700 transition-colors"
-            >
-              Open in SubWallet
-            </button>
-
-            <button
-              onClick={() => openWallet("polkadot")}
-              className="px-4 py-2 rounded-lg bg-gray-600 text-[12px] text-white font-medium hover:bg-gray-700 transition-colors"
-            >
-              Polkadot.js Wallet
-            </button>
-          </div>
+          <MobileWalletModal closeMenu={closeMenu} />
         ) : (
           <button
-            onClick={polkadotWalletConnect}
+            onClick={() => {
+                console.log("Connect Wallet button clicked");
+                polkadotWalletConnect();
+            }}
             className="px-4 py-2 rounded-lg bg-purple-600 text-[12px] text-white font-medium hover:bg-purple-700 transition-colors"
           >
             {ctxWalletAddress

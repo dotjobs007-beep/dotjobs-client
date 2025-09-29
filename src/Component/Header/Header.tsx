@@ -89,7 +89,6 @@ export default function Header() {
     isLoggedIn,
     userDetails,
     connectingWallet,
-    showMobileWalletConnect,
     setShowMobileWalletConnect,
   } = useAuth();
   // const [isLoading, setIsLoading] = useState(false);
@@ -222,7 +221,6 @@ export default function Header() {
       </div>
 
       <WalletModal
-        show={showMobileWalletConnect}
         onClose={() => setShowMobileWalletConnect(false)}
       />
       <Spinner isLoading={connectingWallet} />

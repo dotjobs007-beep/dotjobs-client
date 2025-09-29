@@ -23,6 +23,7 @@ interface AuthContextType {
   showMobileWalletConnect: boolean;
   setShowMobileWalletConnect: (value: boolean) => void;
   polkadotWalletConnect: () => Promise<void>;
+  isWalletMissing: boolean;
 }
 
 const AuthContext = createContext<AuthContextType | null>(null);
@@ -33,6 +34,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [connectingWallet, setConnectingWallet] = useState(false);
   const [isWalletConnected, setIsWalletConnected] = useState(false);
   const [ctxWalletAddress, setCtxWalletAddress] = useState<string | null>(null);
+  const [isWalletMissing, setIsWalletMissing] = useState(false);
   const {
     connectWallet,
     walletAddress,
@@ -53,19 +55,27 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   }, [isLoggedIn, userDetails]);
 
   const polkadotWalletConnect = async () => {
-    if (walletAddress) {
-      // If already connected, disconnect and clear ctx state
-      await disconnectWallet();
-      setCtxWalletAddress(null);
-      setIsWalletConnected(false);
+    console.log("Polkadot wallet connect clicked");
+    // Use the result returned by connectWallet to avoid stale state
+    const result = await connectWallet();
+    console.log("connectWallet result:", result);
+
+    if (result.walletAddress) {
+      // Handled by effect that watches walletAddress in the hook; we still update context state here
+      setCtxWalletAddress(result.walletAddress);
+      setIsWalletConnected(true);
       setShowMobileWalletConnect(false);
       return;
     }
 
-    await connectWallet();
-    if (!walletAddress && walletMissing && !isMobile) {
-      // Desktop without extension
+    // If no wallet address and mobile with wallet missing — show mobile deep link options
+    if (!result.walletAddress && result.walletMissing && result.isMobile) {
+      console.log("Mobile with no wallet - show mobile connect options");
       setShowMobileWalletConnect(true);
+    }
+
+    if (result.walletMissing && !result.isMobile) {
+      setIsWalletMissing(true);
     }
   };
 
@@ -117,6 +127,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         showMobileWalletConnect,
         setShowMobileWalletConnect,
         polkadotWalletConnect,
+        isWalletMissing,
       }}
     >
       {children}
