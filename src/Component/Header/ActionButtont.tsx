@@ -21,7 +21,6 @@ export default function ActionButtons({
   closeMenu: () => void;
 }) {
   const [isLoading, setIsLoading] = useState(false);
-  const [isOpen, setIsOpen] = useState(false);
   const {
     setIsLoggedIn,
     setUserDetails,
@@ -30,6 +29,7 @@ export default function ActionButtons({
     showMobileWalletConnect,
     polkadotWalletConnect,
     setShowMobileWalletConnect,
+    setIsWalletConnected,
   } = useAuth();
 
   // Do not call usePolkadotWallet here (it creates another independent hook instance).
@@ -43,6 +43,7 @@ export default function ActionButtons({
     toast.success("Logged out successfully");
     router.push("/auth/signin");
     setShowMobileWalletConnect(false);
+    setIsWalletConnected(false);
     setUserDetails(null);
     setIsLoggedIn(false);
     setIsLoading(false);
@@ -62,7 +63,7 @@ export default function ActionButtons({
     closeMenu(); // Close menu on navigation
   };
 
-  if (!isLoggedIn) {
+  if (isLoggedIn) {
     return (
       <div className="flex justify-between gap-3">
         <div

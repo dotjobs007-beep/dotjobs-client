@@ -30,14 +30,14 @@ export default function PostJob() {
   const [loading, setLoading] = useState(false);
 
   const [uploading, setUploading] = useState(false);
+  const { userDetails } = useAuth();
   const fileInputRef = useRef<HTMLInputElement>(null);
   // const [showWalletModal, setShowWalletModal] = useState(true);
   const {
     isWalletConnected,
-    setShowMobileWalletConnect,
-    showMobileWalletConnect,
   } = useAuth();
   const router = useRouter();
+  const [showConnectModal , setShowConnectModal] = useState(true);
 
   // Handlers
   const handleChange = (
@@ -56,6 +56,9 @@ export default function PostJob() {
     const file = e.target.files?.[0];
     if (!file) return;
     setUploading(true);
+
+    const token = localStorage.getItem("dottoken");
+    if (!token) return toast.error("User not authenticated");
     try {
       const fd = new FormData();
       fd.append("file", file);
@@ -64,7 +67,10 @@ export default function PostJob() {
         `${process.env.NEXT_PUBLIC_BASE_URL}/job/upload-file`,
         {
           method: "POST",
-          headers: { secret: process.env.NEXT_PUBLIC_SECRET_KEY || "" },
+          headers: {
+            authorization: "Bearer " + token,
+            secret: process.env.NEXT_PUBLIC_SECRET_KEY || "",
+          },
           body: fd,
           credentials: "include",
         }
@@ -103,7 +109,7 @@ export default function PostJob() {
       company_website: formData.companyWebsite,
       company_description: formData.companyDescription,
       company_location: formData.companyLocation,
-      logo: formData.companyLogo,
+      logo: formData.companyLogo || userDetails?.avatar,
     };
 
     setLoading(true);
@@ -179,12 +185,6 @@ export default function PostJob() {
     }
     return true;
   };
-
-  // 👉 Handle Wallet Connect
-  // useEffect(() => {
-  //   if (walletAddress) return setShowWalletModal(false);
-  //   setShowWalletModal(true);
-  // }, [walletAddress]);
 
   return (
     <div className="max-w-3xl mx-auto p-6 lg:p-12">
@@ -386,12 +386,18 @@ export default function PostJob() {
                   To maintain quality, we require identity verification through
                   Polka Identity or Polkassembly.
                 </p>
-                <Link
-                  href="/jobs/verify_identity"
-                  className="block w-full text-center bg-white text-[#7A2E7A] font-semibold rounded-lg py-2 hover:bg-gray-100 transition"
-                >
-                  Verify Identity
-                </Link>
+                {!userDetails?.verified_onchain ? (
+                  <Link
+                    href="/jobs/verify_identity"
+                    className="block w-full text-center bg-white text-[#7A2E7A] font-semibold rounded-lg py-2 hover:bg-gray-100 transition"
+                  >
+                    Verify Identity
+                  </Link>
+                ) : (
+                  <div className="block w-full text-center bg-white/10 text-green-600 font-semibold rounded-lg py-2">
+                    You are verified onchain ✅
+                  </div>
+                )}
               </motion.div>
             )}
           </AnimatePresence>
@@ -432,22 +438,9 @@ export default function PostJob() {
         </form>
       )}
 
-      {!isWalletConnected && (
+      {!isWalletConnected && showConnectModal && (
         <>
-          <WalletModal
-            onClose={() => {
-              setShowMobileWalletConnect(false);
-              router.replace("/dashboard/profile"); // Redirect to home or any other page
-            }}
-          />
-          {showMobileWalletConnect && (
-            <MobileWalletModal
-              closeMenu={() => {
-                setShowMobileWalletConnect(false);
-                router.replace("/dashboard/profile"); // Redirect to home or any other page
-              }}
-            />
-          )}
+          <ConnectWalletModal closeModal={() => setShowConnectModal(false)} />
         </>
       )}
     </div>

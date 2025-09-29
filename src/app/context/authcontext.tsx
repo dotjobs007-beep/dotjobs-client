@@ -20,6 +20,7 @@ interface AuthContextType {
   disconnectWallet: () => Promise<void> | (() => void);
   connectingWallet: boolean;
   isWalletConnected?: boolean;
+  setIsWalletConnected: (value: boolean) => void;
   showMobileWalletConnect: boolean;
   setShowMobileWalletConnect: (value: boolean) => void;
   polkadotWalletConnect: () => Promise<void>;
@@ -55,10 +56,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   }, [isLoggedIn, userDetails]);
 
   const polkadotWalletConnect = async () => {
-    console.log("Polkadot wallet connect clicked");
     // Use the result returned by connectWallet to avoid stale state
     const result = await connectWallet();
-    console.log("connectWallet result:", result);
 
     if (result.walletAddress) {
       // Handled by effect that watches walletAddress in the hook; we still update context state here
@@ -124,6 +123,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         disconnectWallet,
         connectingWallet,
         isWalletConnected,
+        setIsWalletConnected,
         showMobileWalletConnect,
         setShowMobileWalletConnect,
         polkadotWalletConnect,

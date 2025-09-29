@@ -9,10 +9,9 @@ type WalletModalProps = {
 };
 
 export default function WalletModal({ onClose }: WalletModalProps) {
-  const { showMobileWalletConnect, isWalletMissing } = useAuth();
+  const { showMobileWalletConnect, isWalletMissing} = useAuth();
   const { isMobile } = usePolkadotWallet();
   const [showModal, setShowModal] = useState(true);
-
   // Only show this desktop modal when:
   // - the device is not mobile, and
   // - the wallet is missing, and
