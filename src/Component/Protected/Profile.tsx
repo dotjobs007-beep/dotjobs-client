@@ -127,6 +127,9 @@ export default function ProfilePage() {
           linkedInProfile: formData.linkedInProfile,
           xProfile: formData.xProfile,
           githubProfile: formData.githubProfile,
+          gender: formData.gender,
+          ethnicity: formData.ethnicity,
+          primaryLanguage: formData.primaryLanguage,
           jobSeeker: formData.jobSeeker,
         },
         withCredentials: true,
@@ -162,6 +165,9 @@ export default function ProfilePage() {
       about: userData.about || "",
       skills: skillsString || "",
       location: userData.location || "",
+      gender: userData.gender || "",
+      ethnicity: userData.ethnicity || "",
+      primaryLanguage: userData.primaryLanguage || "",
     }));
     setShowEdit(true);
   };
@@ -251,12 +257,16 @@ export default function ProfilePage() {
   };
 
   return (
-    <div>
+    <div className="bg-gradient-to-b from-white to-pink-50">
       {!isLoading && userData && (
-        <div className="lg:h-[89vh] px-6 py-10 flex justify-center items-center">
-          <div className="w-full max-w-6xl grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div className="px-6 lg:px-0 flex justify-center">
+          <div className="w-full max-w-6xl grid grid-cols-1 lg:grid-cols-2 gap-8 items-start">
             {/* 🟣 Card 1 – User Info */}
-            <div className="rounded-2xl p-6 shadow-lg text-white bg-gradient-to-r from-[#DB2F7B] to-[#724B99]">
+            <div className="rounded-2xl p-6 shadow-xl text-white bg-gradient-to-r from-[#DB2F7B] to-[#724B99]">
+              <div className="flex items-center justify-between mb-4">
+                <h3 className="text-lg font-semibold">Profile</h3>
+                <span className="text-sm bg-white/20 px-3 py-1 rounded-full">Member</span>
+              </div>
               {/* Avatar + Edit */}
               <div className="flex flex-col items-center text-center mb-6">
                 <div
@@ -266,13 +276,15 @@ export default function ProfilePage() {
                   }}
                   className="cursor-pointer"
                 >
-                  <Image
-                    src={userData.avatar}
-                    alt="User Avatar"
-                    width={120}
-                    height={120}
-                    className="rounded-full border-4 border-white/30 mb-4 cursor-pointer"
-                  />
+                  <div className="relative w-28 h-28 rounded-full overflow-hidden border-4 border-white/30 mb-4 shadow-md">
+                    <Image
+                      src={userData.avatar}
+                      alt="User Avatar"
+                      fill
+                      className="object-cover"
+                    />
+                    <div className="absolute inset-0 ring-2 ring-white/20 rounded-full pointer-events-none" />
+                  </div>
                 </div>
 
                 <Image
@@ -286,46 +298,51 @@ export default function ProfilePage() {
                   height={90}
                   className="rounded-full -mt-4 border-4 border-white/30 bg-gray-500"
                 />
-              </div>
 
-              {/* Info Table */}
-              <table className="w-full text-left border-separate border-spacing-y-3">
-                <tbody>
-                  <tr>
-                    <td className="w-1/3 font-semibold">Full Name</td>
-                    <td>{userData.name}</td>
-                  </tr>
-                  <tr>
-                    <td className="font-semibold">Email</td>
-                    <td>
-                      {userData.email}{" "}
+                {/* Info Grid */}
+                <div className="grid grid-cols-1 gap-3 text-left mt-4">
+                  <div className="flex justify-between">
+                    <span className="font-medium">Full name</span>
+                    <span className="text-sm">{userData.name}</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="font-medium">Email</span>
+                    <span className="text-sm flex items-center gap-2">
+                      {userData.email}
                       {userData.email_verified && (
-                        <Verified className="inline-block ml-1 text-green-500" />
+                        <Verified className="inline-block ml-1 text-green-400" />
                       )}
-                    </td>
-                  </tr>
-                  <tr>
-                    <td className="font-semibold">Location</td>
-                    <td>{userData.location || "Not specified"}</td>
-                  </tr>
-                  <tr>
-                    <td className="font-semibold">Job Seeking</td>
-                    <td
-                      className={
-                        userData.jobSeeker
-                          ? "text-green-400 font-bold text-[15px]"
-                          : "text-red-400 font-bold text-[15px]"
-                      }
-                    >
-                      {userData.jobSeeker ? "Yes" : "No"}
-                    </td>
-                  </tr>
-                  <tr>
-                    <td className="font-semibold">Joined</td>
-                    <td>{formatDate(userData.createdAt)}</td>
-                  </tr>
-                </tbody>
-              </table>
+                    </span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="font-medium">Gender</span>
+                    <span className="text-sm">{userData.gender || "—"}</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="font-medium">Ethnicity</span>
+                    <span className="text-sm">{userData.ethnicity || "—"}</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="font-medium">Primary language</span>
+                    <span className="text-sm">{userData.primaryLanguage || "—"}</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="font-medium">Location</span>
+                    <span className="text-sm">{userData.location || "—"}</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="font-medium">Job seeking</span>
+                    <span className={`text-sm font-semibold ${userData.jobSeeker ? 'text-green-400' : 'text-red-400'}`}>
+                      {userData.jobSeeker ? 'Yes' : 'No'}
+                    </span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="font-medium">Member since</span>
+                    <span className="text-sm">{formatDate(userData.createdAt)}</span>
+                  </div>
+                </div>
+
+              </div>
 
               <div className="flex justify-center mt-6">
                 <button
@@ -337,63 +354,57 @@ export default function ProfilePage() {
               </div>
             </div>
 
-            {/* 🟣 About */}
-            <div className="rounded-2xl p-6 shadow-lg text-white bg-gradient-to-r from-[#DB2F7B] to-[#724B99]">
-              <h3 className="text-xl font-semibold mb-3 border-b border-white/30 pb-2">
-                About
-              </h3>
-              <p className="leading-relaxed text-white/90">
-                {userData.about || "No description provided."}
-              </p>
-            </div>
-
-            {/* 🟣 Skills */}
-            <div className="rounded-2xl p-6 shadow-lg text-white bg-gradient-to-r from-[#DB2F7B] to-[#724B99]">
-              <h3 className="text-xl font-semibold mb-3 border-b border-white/30 pb-2">
-                Skills
-              </h3>
-              <div className="flex flex-wrap gap-3 mt-2">
-                {userData.skill.map((skill, idx) => (
-                  <span
-                    key={idx}
-                    className="px-4 py-1 rounded-full bg-white/20 hover:bg-white/30 font-medium transition"
-                  >
-                    {skill}
-                  </span>
-                ))}
+            {/* Right column stack */}
+            <div className="space-y-6">
+              <div className="rounded-2xl p-6 shadow-md bg-white">
+                <h3 className="text-lg font-semibold mb-2 text-pink-600">About</h3>
+                <p className="text-gray-700 leading-relaxed">
+                  {userData.about || "No description provided."}
+                </p>
               </div>
-            </div>
 
-            {/* 🟣 Social */}
-            <div className="rounded-2xl p-6 shadow-lg text-white bg-gradient-to-r from-[#DB2F7B] to-[#724B99]">
-              <h3 className="text-xl font-semibold mb-3 border-b border-white/30 pb-2">
-                Connect
-              </h3>
-              <div className="flex gap-6 mt-2">
-                <a
-                  href={userData.xProfile || "#"}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="p-2 bg-white/20 rounded-full hover:bg-white/30 transition"
-                >
-                  <FaTwitter size={20} />
-                </a>
-                <a
-                  href={userData.linkedInProfile || "#"}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="p-2 bg-white/20 rounded-full hover:bg-white/30 transition"
-                >
-                  <FaLinkedin size={20} />
-                </a>
-                <a
-                  href={userData.githubProfile || "#"}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="p-2 bg-white/20 rounded-full hover:bg-white/30 transition"
-                >
-                  <FaGithub size={20} />
-                </a>
+              <div className="rounded-2xl p-6 shadow-md bg-white">
+                <h3 className="text-lg font-semibold mb-3 text-pink-600">Skills</h3>
+                <div className="flex flex-wrap gap-3 mt-2">
+                  {userData.skill.map((skill, idx) => (
+                    <span
+                      key={idx}
+                      className="px-3 py-1 rounded-full bg-pink-50 text-pink-700 font-medium"
+                    >
+                      {skill}
+                    </span>
+                  ))}
+                </div>
+              </div>
+
+              <div className="rounded-2xl p-6 shadow-md bg-white">
+                <h3 className="text-lg font-semibold mb-3 text-pink-600">Connect</h3>
+                <div className="flex gap-3 mt-2 items-center">
+                  <a
+                    href={userData.xProfile || "#"}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="p-2 bg-pink-50 rounded-full hover:bg-pink-100 transition text-pink-600"
+                  >
+                    <FaTwitter size={18} />
+                  </a>
+                  <a
+                    href={userData.linkedInProfile || "#"}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="p-2 bg-pink-50 rounded-full hover:bg-pink-100 transition text-pink-600"
+                  >
+                    <FaLinkedin size={18} />
+                  </a>
+                  <a
+                    href={userData.githubProfile || "#"}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="p-2 bg-pink-50 rounded-full hover:bg-pink-100 transition text-pink-600"
+                  >
+                    <FaGithub size={18} />
+                  </a>
+                </div>
               </div>
             </div>
           </div>
@@ -402,8 +413,8 @@ export default function ProfilePage() {
 
       {/* ✅ Edit About/Skills Modal */}
       {showEdit && (
-        <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50">
-          <Card className="bg-white rounded-xl p-6 w-full max-w-md shadow-2xl border border-gray-100">
+        <div className="fixed inset-0 bg-black/50 backdrop-blur-sm overflow-auto flex items-center justify-center z-50">
+          <Card className="bg-white rounded-xl p-6 w-full max-w-md shadow-2xl border border-gray-100 max-h-[90vh] overflow-y-auto">
             <h2 className="text-xl font-bold mb-4">Edit Profile</h2>
 
             <label className="block text-sm font-medium text-gray-700 mb-1">
@@ -490,6 +501,68 @@ export default function ProfilePage() {
               placeholder="e.g. San Francisco, CA"
             />
 
+            {/* Gender */}
+            <label className="block text-sm font-medium text-gray-700 mb-1">
+              Gender
+            </label>
+            <select
+              name="gender"
+              value={formData.gender}
+              onChange={(e) =>
+                setFormData((prev) => ({ ...prev, gender: e.target.value }))
+              }
+              className="w-full border-gray-300 p-3 rounded-lg border bg-[#FDD7FD] mb-4 text-gray-800"
+            >
+              <option value="">Select</option>
+              <option value="female">Female</option>
+              <option value="male">Male</option>
+              <option value="non-binary">Non-binary</option>
+              <option value="other">Other</option>
+              <option value="prefer_not">Prefer not to say</option>
+            </select>
+
+            {/* Ethnicity / Race (optional) */}
+            <label className="block text-sm font-medium text-gray-700 mb-1">
+              Race / Ethnicity (optional)
+            </label>
+            <select
+              name="ethnicity"
+              value={formData.ethnicity}
+              onChange={(e) =>
+                setFormData((prev) => ({ ...prev, ethnicity: e.target.value }))
+              }
+              className="w-full border-gray-300 p-3 rounded-lg border bg-[#FDD7FD] mb-1 text-gray-800"
+            >
+              <option value="">Select an option</option>
+              <option value="black_african">Black / African</option>
+              <option value="white_caucasian">White / Caucasian</option>
+              <option value="asian">Asian</option>
+              <option value="hispanic_latino">Hispanic / Latino</option>
+              <option value="mideast_northafrican">
+                Middle Eastern / North African
+              </option>
+              <option value="indigenous_native">Indigenous / Native</option>
+              <option value="mixed_multiracial">Mixed / Multiracial</option>
+              <option value="prefer_not">Prefer not to say</option>
+            </select>
+            <p className="text-xs text-gray-500 mb-4">
+              Select the option that best describes you. This information is
+              collected only for diversity and inclusion purposes and will not
+              affect your application.
+            </p>
+
+            {/* Primary Language */}
+            <label className="block text-sm font-medium text-gray-700 mb-1">
+              Primary Language
+            </label>
+            <input
+              value={formData.primaryLanguage}
+              onChange={handleFormChange}
+              name="primaryLanguage"
+              className="w-full border-gray-300 p-3 rounded-lg border bg-[#FDD7FD] mb-4 text-gray-800"
+              placeholder="e.g. English"
+            />
+
             <div className="flex justify-end gap-3">
               <button
                 onClick={() => setShowEdit(false)}
@@ -510,8 +583,8 @@ export default function ProfilePage() {
 
       {/* ✅ Avatar + Name Modal */}
       {showAvatarModal && (
-        <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50">
-          <Card className="bg-white rounded-xl p-6 w-full max-w-md shadow-2xl border border-gray-100">
+        <div className="fixed inset-0 bg-black/50 backdrop-blur-sm overflow-auto flex items-center justify-center z-50">
+          <Card className="bg-white rounded-xl p-6 w-full max-w-md shadow-2xl border border-gray-100 max-h-[90vh] overflow-y-auto">
             <h2 className="text-xl font-bold mb-4">Update Name & Avatar</h2>
 
             <label className="block text-sm font-medium text-gray-700 mb-1">

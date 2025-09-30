@@ -22,6 +22,10 @@ export interface IUserDetails {
   linkedInProfile?: string;
   xProfile?: string;
   githubProfile?: string;
+  // Demographic fields
+  gender?: string;
+  ethnicity?: string;
+  primaryLanguage?: string;
   jobSeeker: boolean;
   createdAt: string;
   location?: string;
@@ -136,6 +140,9 @@ export interface IApplicantUser {
   skill?: string[];
   verified_onchain: boolean;
   linkedInProfile?: string;
+  gender?: string;
+  ethnicity?: string;
+  primaryLanguage?: string;
   xProfile?: string;
 }
 
@@ -189,4 +196,8 @@ export interface IUpdateProfile {
   xProfile?: string;
   githubProfile?: string;
   jobSeeker?: boolean;
+  // Demographic fields to allow updating from profile UI
+  gender?: string;
+  ethnicity?: string;
+  primaryLanguage?: string;
 }

@@ -92,26 +92,26 @@ export default function MyJobDetails() {
     applicantId: string,
     status: "accepted" | "rejected"
   ) => {
-      setIsUpdating(true);
-      const res = await service.fetcher(
-        `/job/update-job-application/${applicantId}/${status}`,
-        "PATCH",
-        { withCredentials: true }
+    setIsUpdating(true);
+    const res = await service.fetcher(
+      `/job/update-job-application/${applicantId}/${status}`,
+      "PATCH",
+      { withCredentials: true }
+    );
+    if (res.code === 200) {
+      toast.success(res.message || "Status updated");
+      setApplicants((prev) =>
+        prev.map((a) => (a._id === applicantId ? { ...a, status } : a))
       );
-      if (res.code === 200) {
-        toast.success(res.message || "Status updated");
-        setApplicants((prev) =>
-          prev.map((a) => (a._id === applicantId ? { ...a, status } : a))
-        );
-        if (selected?._id === applicantId) {
-          setSelected({ ...selected, status });
-        }
-        setIsUpdating(false);
-        setSelected(null);
-      } else {
-        toast.error("Failed to update status");
-        setIsUpdating(false);
+      if (selected?._id === applicantId) {
+        setSelected({ ...selected, status });
       }
+      setIsUpdating(false);
+      setSelected(null);
+    } else {
+      toast.error("Failed to update status");
+      setIsUpdating(false);
+    }
   };
 
   // Download resume helper: tries to fetch the file and save it locally, falls back to opening the URL
@@ -321,83 +321,142 @@ export default function MyJobDetails() {
               ✕
             </button>
 
-            <div className="flex flex-col items-center text-center">
-              <img
-                src={selected.applicantId.avatar || "/default-avatar.png"}
-                alt={selected.applicantId.name}
-                className="w-24 h-24 rounded-full border mb-3"
-              />
-              <h3 className="text-lg font-semibold text-gray-900">
-                Applicant — {selected.fullName || selected.applicantId.name}
-              </h3>
-              <p className="text-sm text-gray-600">{selected.applicantId.title || "Candidate"}</p>
-              <p className="text-xs text-gray-500 mt-1">
-                Applied on {new Date(selected.appliedAt).toLocaleDateString()}
-              </p>
+            <div className="rounded-2xl p-6 shadow-lg bg-white max-w-md mx-auto">
+              <div className="flex flex-col items-center text-center mb-4">
+                <img
+                  src={selected.applicantId.avatar || "/default-avatar.png"}
+                  alt={selected.applicantId.name}
+                  className="w-24 h-24 rounded-full border mb-3"
+                />
+                <h3 className="text-lg font-semibold text-gray-900">
+                  Applicant — {selected.fullName || selected.applicantId.name}
+                </h3>
+                <p className="text-sm text-gray-600">
+                  {selected.applicantId.title || "Candidate"}
+                </p>
+              </div>
+
+              <table className="w-full text-left border-separate border-spacing-y-2">
+                <tbody>
+                  <tr>
+                    <td className="font-semibold w-1/3">Gender</td>
+                    <td>{selected.applicantId.gender || "Not specified"}</td>
+                  </tr>
+                  <tr>
+                    <td className="font-semibold">Ethnicity</td>
+                    <td>{selected.applicantId.ethnicity || "Not specified"}</td>
+                  </tr>
+                  <tr>
+                    <td className="font-semibold">Primary Language</td>
+                    <td>
+                      {selected.applicantId.primaryLanguage || "Not specified"}
+                    </td>
+                  </tr>
+                  <tr>
+                    <td className="font-semibold">Applied On</td>
+                    <td>{new Date(selected.appliedAt).toLocaleDateString()}</td>
+                  </tr>
+                </tbody>
+              </table>
             </div>
-
-            <div className="mt-4 space-y-4 text-gray-700 text-sm">
+            <div className="mt-4 space-y-6 text-gray-700 text-sm max-w-3xl mx-auto">
               {/* Profile Summary */}
-              <div>
-                <h4 className="text-sm font-medium text-gray-800">Profile summary</h4>
-                <p className="mt-1 whitespace-pre-line">
-                  {selected.applicantId.about || "The applicant has not provided a profile summary."}
-                </p>
-                {Array.isArray(selected.applicantId.skill) && selected.applicantId.skill.length > 0 ? (
-                  <p className="mt-2 text-sm">
-                    <strong>Key skills:</strong> {selected.applicantId.skill.join(", ")}
-                  </p>
-                ) : (
-                  <p className="mt-2 text-sm text-gray-500">No skills listed.</p>
-                )}
-              </div>
-
-              {/* Contact information */}
-              <div>
-                <h4 className="text-sm font-medium text-gray-800">Contact information</h4>
-                <div className="mt-1 text-sm text-gray-600">
-                  <div>
-                    <span className="font-medium">Preferred method:</span>{" "}
-                    <span className="capitalize">{selected.contactMethod || "Not specified"}</span>
-                  </div>
-                  <div className="mt-1">
-                    <span className="font-medium">Contact details:</span>
-                    <div className="mt-1">
-                      {selected.contactHandle ? (
-                        selected.contactHandle.startsWith("http") ? (
-                          <a href={selected.contactHandle} target="_blank" rel="noreferrer" className="underline text-purple-600">
-                            Open link
-                          </a>
+              <div className="rounded-lg p-4 bg-white shadow-sm">
+                <h4 className="text-sm font-medium text-gray-800 mb-2">
+                  Profile summary
+                </h4>
+                <table className="w-full text-left border-separate border-spacing-y-2">
+                  <tbody>
+                    <tr>
+                      <td className="font-medium w-1/3 align-top">About</td>
+                      <td className="whitespace-pre-line">
+                        {selected.applicantId.about ||
+                          "The applicant has not provided a profile summary."}
+                      </td>
+                    </tr>
+                    <tr>
+                      <td className="font-medium align-top">Key skills</td>
+                      <td>
+                        {Array.isArray(selected.applicantId.skill) &&
+                        selected.applicantId.skill.length > 0 ? (
+                          selected.applicantId.skill.join(", ")
                         ) : (
-                          <div className="text-gray-700">{selected.contactHandle}</div>
-                        )
-                      ) : selected.applicantId.email ? (
-                        <div className="text-gray-700">{selected.applicantId.email}</div>
-                      ) : (
-                        <div className="text-gray-500">No contact details provided.</div>
-                      )}
-                    </div>
-                  </div>
-                </div>
+                          <span className="text-gray-500">
+                            No skills listed.
+                          </span>
+                        )}
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
               </div>
 
-              {/* Application message / Cover Letter */}
-              <div>
-                <h4 className="text-sm font-medium text-gray-800">Application message</h4>
-                <p className="mt-1 whitespace-pre-line text-gray-700">
-                  {selected.coverLetter || "The applicant did not include a cover letter."}
+              {/* Contact Information */}
+              <div className="rounded-lg p-4 bg-white shadow-sm">
+                <h4 className="text-sm font-medium text-gray-800 mb-2">
+                  Contact information
+                </h4>
+                <table className="w-full text-left border-separate border-spacing-y-2">
+                  <tbody>
+                    <tr>
+                      <td className="font-medium w-1/3">Preferred method</td>
+                      <td className="capitalize">
+                        {selected.contactMethod || "Not specified"}
+                      </td>
+                    </tr>
+                    <tr>
+                      <td className="font-medium align-top">Contact details</td>
+                      <td>
+                        {selected.contactHandle ? (
+                          selected.contactHandle.startsWith("http") ? (
+                            <a
+                              href={selected.contactHandle}
+                              target="_blank"
+                              rel="noreferrer"
+                              className="underline text-purple-600"
+                            >
+                              Open link
+                            </a>
+                          ) : (
+                            <span>{selected.contactHandle}</span>
+                          )
+                        ) : selected.applicantId.email ? (
+                          <span>{selected.applicantId.email}</span>
+                        ) : (
+                          <span className="text-gray-500">
+                            No contact details provided.
+                          </span>
+                        )}
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+
+              {/* Application Message */}
+              <div className="rounded-lg p-4 bg-white shadow-sm">
+                <h4 className="text-sm font-medium text-gray-800 mb-2">
+                  Application message
+                </h4>
+                <p className="whitespace-pre-line">
+                  {selected.coverLetter ||
+                    "The applicant did not include a cover letter."}
                 </p>
               </div>
 
-              {/* Polkadot / Kusama experience */}
-              <div>
-                <h4 className="text-sm font-medium text-gray-800">Polkadot / Kusama experience</h4>
-                <p className="mt-1 text-gray-700">
+              {/* Polkadot / Kusama Experience */}
+              <div className="rounded-lg p-4 bg-white shadow-sm">
+                <h4 className="text-sm font-medium text-gray-800 mb-2">
+                  Polkadot / Kusama experience
+                </h4>
+                <p>
                   {selected.polkadotExperience ? (
                     <>
                       This applicant has experience with Polkadot/Kusama.
                       {selected.polkadotDescription && (
-                        <div className="mt-2 text-gray-700">{selected.polkadotDescription}</div>
+                        <div className="mt-2">
+                          {selected.polkadotDescription}
+                        </div>
                       )}
                     </>
                   ) : (
@@ -406,41 +465,83 @@ export default function MyJobDetails() {
                 </p>
               </div>
 
-              {/* Portfolio, external profiles and resume grouped */}
-              <div>
-                <h4 className="text-sm font-medium text-gray-800">Portfolio & links</h4>
-                <div className="mt-1 space-y-1">
-                  {selected.portfolioLink ? (
-                    <a href={selected.portfolioLink} target="_blank" rel="noreferrer" className="block underline text-purple-600">
-                      View portfolio
-                    </a>
-                  ) : (
-                    <div className="text-gray-500">No portfolio link provided.</div>
-                  )}
-
-                  {selected.applicantId.linkedInProfile ? (
-                    <a href={selected.applicantId.linkedInProfile} target="_blank" rel="noreferrer" className="block underline">
-                      View LinkedIn profile
-                    </a>
-                  ) : null}
-
-                  {selected.xProfile ? (
-                    <a href={selected.xProfile} target="_blank" rel="noreferrer" className="block underline">
-                      View X / Twitter profile
-                    </a>
-                  ) : null}
-
-                  {selected.resume ? (
-                    <button
-                      onClick={() => handleDownloadResume(selected.resume)}
-                      className="block text-green-600 underline"
-                    >
-                      Download resume
-                    </button>
-                  ) : (
-                    <div className="text-gray-500">No resume uploaded.</div>
-                  )}
-                </div>
+              {/* Portfolio & Links */}
+              <div className="rounded-lg p-4 bg-white shadow-sm">
+                <h4 className="text-sm font-medium text-gray-800 mb-2">
+                  Portfolio & links
+                </h4>
+                <table className="w-full text-left border-separate border-spacing-y-2">
+                  <tbody>
+                    <tr>
+                      <td className="font-medium w-1/3">Portfolio</td>
+                      <td>
+                        {selected.portfolioLink ? (
+                          <a
+                            href={selected.portfolioLink}
+                            target="_blank"
+                            rel="noreferrer"
+                            className="underline text-purple-600"
+                          >
+                            View portfolio
+                          </a>
+                        ) : (
+                          <span className="text-gray-500">
+                            No portfolio link provided.
+                          </span>
+                        )}
+                      </td>
+                    </tr>
+                    {selected.applicantId.linkedInProfile && (
+                      <tr>
+                        <td className="font-medium">LinkedIn</td>
+                        <td>
+                          <a
+                            href={selected.applicantId.linkedInProfile}
+                            target="_blank"
+                            rel="noreferrer"
+                            className="underline"
+                          >
+                            View LinkedIn profile
+                          </a>
+                        </td>
+                      </tr>
+                    )}
+                    {selected.xProfile && (
+                      <tr>
+                        <td className="font-medium">X / Twitter</td>
+                        <td>
+                          <a
+                            href={selected.xProfile}
+                            target="_blank"
+                            rel="noreferrer"
+                            className="underline"
+                          >
+                            View X / Twitter profile
+                          </a>
+                        </td>
+                      </tr>
+                    )}
+                    <tr>
+                      <td className="font-medium">Resume</td>
+                      <td>
+                        {selected.resume ? (
+                          <button
+                            onClick={() =>
+                              handleDownloadResume(selected.resume)
+                            }
+                            className="text-green-600 underline"
+                          >
+                            Download resume
+                          </button>
+                        ) : (
+                          <span className="text-gray-500">
+                            No resume uploaded.
+                          </span>
+                        )}
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
               </div>
             </div>
 
