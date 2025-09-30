@@ -131,22 +131,31 @@ export interface IApplicantUser {
   email: string;
   avatar?: string;
   about?: string;
+  title?: string;
   address?: string;
   skill?: string[];
   verified_onchain: boolean;
+  linkedInProfile?: string;
+  xProfile?: string;
 }
 
 // -----------------------------
 // ✅ Job Applicant Record
 // -----------------------------
 export type ApplicationStatus = "pending" | "accepted" | "rejected";
-
 export interface IJobApplicant {
   _id: string;
   jobId: string;
   applicantId: IApplicantUser;
   status: ApplicationStatus;
   linkedInProfile?: string;
+  coverLetter?: string;
+  fullName?: string;
+  contactMethod?: string;
+  contactHandle?: string;
+  polkadotExperience?: boolean;
+  polkadotDescription?: string;
+  portfolioLink?: string;
   xProfile?: string;
   resume?: string;
   appliedAt: string;

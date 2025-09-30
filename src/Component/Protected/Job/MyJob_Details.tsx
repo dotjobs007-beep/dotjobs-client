@@ -114,6 +114,39 @@ export default function MyJobDetails() {
       }
   };
 
+  // Download resume helper: tries to fetch the file and save it locally, falls back to opening the URL
+  const handleDownloadResume = async (url?: string) => {
+    if (!url) {
+      toast.error("No resume available to download.");
+      return;
+    }
+
+    try {
+      const res = await fetch(url);
+      if (!res.ok) throw new Error("Failed to fetch file");
+      const blob = await res.blob();
+      const pathname = (() => {
+        try {
+          return new URL(url).pathname.split("/").pop() || "resume";
+        } catch {
+          return "resume";
+        }
+      })();
+      const filename = pathname.includes(".") ? pathname : `${pathname}.pdf`;
+      const blobUrl = window.URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = blobUrl;
+      a.download = filename;
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      window.URL.revokeObjectURL(blobUrl);
+    } catch (err) {
+      // If fetch fails (CORS or network), open in new tab as a fallback
+      window.open(url, "_blank", "noopener,noreferrer");
+    }
+  };
+
   if (loading) {
     return (
       <div className="flex justify-center items-center min-h-screen">
@@ -295,55 +328,120 @@ export default function MyJobDetails() {
                 className="w-24 h-24 rounded-full border mb-3"
               />
               <h3 className="text-lg font-semibold text-gray-900">
-                {selected.applicantId.name}
+                Applicant — {selected.fullName || selected.applicantId.name}
               </h3>
-              <p className="text-sm text-gray-600">
-                {selected.applicantId.email}
-              </p>
+              <p className="text-sm text-gray-600">{selected.applicantId.title || "Candidate"}</p>
               <p className="text-xs text-gray-500 mt-1">
-                Applied: {new Date(selected.appliedAt).toLocaleDateString()}
+                Applied on {new Date(selected.appliedAt).toLocaleDateString()}
               </p>
             </div>
 
-            <div className="mt-4 space-y-2 text-gray-500 text-sm">
-              {selected.applicantId.about && (
-                <p>
-                  <strong>About:</strong> {selected.applicantId.about}
+            <div className="mt-4 space-y-4 text-gray-700 text-sm">
+              {/* Profile Summary */}
+              <div>
+                <h4 className="text-sm font-medium text-gray-800">Profile summary</h4>
+                <p className="mt-1 whitespace-pre-line">
+                  {selected.applicantId.about || "The applicant has not provided a profile summary."}
                 </p>
-              )}
-              {Array.isArray(selected.applicantId.skill) && selected.applicantId.skill.length > 0 && (
-                <p className="text-gray-500">
-                  <strong>Skills:</strong>{" "}
-                  {selected.applicantId.skill.join(", ")}
+                {Array.isArray(selected.applicantId.skill) && selected.applicantId.skill.length > 0 ? (
+                  <p className="mt-2 text-sm">
+                    <strong>Key skills:</strong> {selected.applicantId.skill.join(", ")}
+                  </p>
+                ) : (
+                  <p className="mt-2 text-sm text-gray-500">No skills listed.</p>
+                )}
+              </div>
+
+              {/* Contact information */}
+              <div>
+                <h4 className="text-sm font-medium text-gray-800">Contact information</h4>
+                <div className="mt-1 text-sm text-gray-600">
+                  <div>
+                    <span className="font-medium">Preferred method:</span>{" "}
+                    <span className="capitalize">{selected.contactMethod || "Not specified"}</span>
+                  </div>
+                  <div className="mt-1">
+                    <span className="font-medium">Contact details:</span>
+                    <div className="mt-1">
+                      {selected.contactHandle ? (
+                        selected.contactHandle.startsWith("http") ? (
+                          <a href={selected.contactHandle} target="_blank" rel="noreferrer" className="underline text-purple-600">
+                            Open link
+                          </a>
+                        ) : (
+                          <div className="text-gray-700">{selected.contactHandle}</div>
+                        )
+                      ) : selected.applicantId.email ? (
+                        <div className="text-gray-700">{selected.applicantId.email}</div>
+                      ) : (
+                        <div className="text-gray-500">No contact details provided.</div>
+                      )}
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Application message / Cover Letter */}
+              <div>
+                <h4 className="text-sm font-medium text-gray-800">Application message</h4>
+                <p className="mt-1 whitespace-pre-line text-gray-700">
+                  {selected.coverLetter || "The applicant did not include a cover letter."}
                 </p>
-              )}
-              {selected.linkedInProfile && (
-                <a
-                  href={selected.linkedInProfile}
-                  target="_blank"
-                  className="block text-blue-600 underline"
-                >
-                  LinkedIn Profile
-                </a>
-              )}
-              {selected.xProfile && (
-                <a
-                  href={selected.xProfile}
-                  target="_blank"
-                  className="block text-blue-500 underline"
-                >
-                  X/Twitter
-                </a>
-              )}
-              {selected.resume && (
-                <a
-                  href={selected.resume}
-                  target="_blank"
-                  className="block text-green-600 underline"
-                >
-                  Download Resume
-                </a>
-              )}
+              </div>
+
+              {/* Polkadot / Kusama experience */}
+              <div>
+                <h4 className="text-sm font-medium text-gray-800">Polkadot / Kusama experience</h4>
+                <p className="mt-1 text-gray-700">
+                  {selected.polkadotExperience ? (
+                    <>
+                      This applicant has experience with Polkadot/Kusama.
+                      {selected.polkadotDescription && (
+                        <div className="mt-2 text-gray-700">{selected.polkadotDescription}</div>
+                      )}
+                    </>
+                  ) : (
+                    "No Polkadot or Kusama experience reported."
+                  )}
+                </p>
+              </div>
+
+              {/* Portfolio, external profiles and resume grouped */}
+              <div>
+                <h4 className="text-sm font-medium text-gray-800">Portfolio & links</h4>
+                <div className="mt-1 space-y-1">
+                  {selected.portfolioLink ? (
+                    <a href={selected.portfolioLink} target="_blank" rel="noreferrer" className="block underline text-purple-600">
+                      View portfolio
+                    </a>
+                  ) : (
+                    <div className="text-gray-500">No portfolio link provided.</div>
+                  )}
+
+                  {selected.applicantId.linkedInProfile ? (
+                    <a href={selected.applicantId.linkedInProfile} target="_blank" rel="noreferrer" className="block underline">
+                      View LinkedIn profile
+                    </a>
+                  ) : null}
+
+                  {selected.xProfile ? (
+                    <a href={selected.xProfile} target="_blank" rel="noreferrer" className="block underline">
+                      View X / Twitter profile
+                    </a>
+                  ) : null}
+
+                  {selected.resume ? (
+                    <button
+                      onClick={() => handleDownloadResume(selected.resume)}
+                      className="block text-green-600 underline"
+                    >
+                      Download resume
+                    </button>
+                  ) : (
+                    <div className="text-gray-500">No resume uploaded.</div>
+                  )}
+                </div>
+              </div>
             </div>
 
             {/* Accept / Reject Buttons */}

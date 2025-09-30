@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Modal from "../../Modal";
 import { useRouter } from "next/navigation";
 import { useJob } from "@/app/context/jobcontext";
@@ -8,9 +8,38 @@ import service from "@/helper/service.helper";
 import Spinner from "@/Component/Spinner";
 import { isTrustedUrl } from "@/helper/validate_link";
 import toast from "react-hot-toast";
+import { useAuth } from "@/app/context/authcontext";
 
 export default function ApplyPage() {
   const [showApplyModal, setShowApplyModal] = useState(false);
+  const { userDetails } = useAuth();
+  // Applicant info state
+  const [fullName, setFullName] = useState(userDetails?.name || "");
+  const [contactMethod, setContactMethod] = useState<
+    "email" | "x" | "linkedin" | "other"
+  >("email");
+  const [contactHandle, setContactHandle] = useState<string>(
+    userDetails?.email || ""
+  );
+
+  // Prefill contactHandle when contactMethod or userDetails change
+  useEffect(() => {
+    if (contactMethod === "email") {
+      setContactHandle(userDetails?.email || "");
+    } else if (contactMethod === "x") {
+      setContactHandle(userDetails?.xProfile || "");
+    } else if (contactMethod === "linkedin") {
+      setContactHandle(userDetails?.linkedInProfile || "");
+    } else {
+      // keep existing contactHandle for 'other' or allow user to type
+      if (!contactHandle) setContactHandle("");
+    }
+  }, [contactMethod, userDetails]);
+  const [coverLetter, setCoverLetter] = useState("");
+  const [polkadotExperience, setPolkadotExperience] = useState<boolean | null>(
+    null
+  );
+  const [polkadotDescription, setPolkadotDescription] = useState("");
   const [showUploadModal, setShowUploadModal] = useState(false);
   const [showSuccessModal, setShowSuccessModal] = useState(false); // ✅ success modal
   const [file, setFile] = useState<File | null>(null);
@@ -55,8 +84,18 @@ export default function ApplyPage() {
       }
 
       const fileUrl = data.data;
-      // setResumeURL(data.url || null);
-      await handleResumeSubmit(fileUrl);
+      // Build payload with applicant fields and uploaded file URL
+      const payload = {
+        jobId: jobDetails?._id,
+        resume: fileUrl,
+        fullName,
+        contactMethod,
+        contactHandle,
+        coverLetter,
+        polkadotExperience,
+        polkadotDescription,
+      } as any;
+      await handleResumeSubmitWithPayload(payload);
 
       // Show success modal
       setShowSuccessModal(true);
@@ -72,8 +111,25 @@ export default function ApplyPage() {
   };
 
   const handleApplySubmit = async () => {
+    // Validate pre-application fields
+    if (!fullName || fullName.trim().length < 2)
+      return toast.error("Full name is required");
+    if (!contactHandle || contactHandle.trim().length < 1)
+      return toast.error("Please provide a preferred contact handle or link");
     if (!resumeURL) return toast.error("Please enter your resume URL");
-    await handleResumeSubmit(resumeURL);
+
+    const payload = {
+      jobId: jobDetails?._id,
+      resume: resumeURL,
+      fullName,
+      contactMethod,
+      contactHandle,
+      coverLetter,
+      polkadotExperience,
+      polkadotDescription,
+    } as any;
+
+    await handleResumeSubmitWithPayload(payload);
   };
 
   const handleGoback = () => {
@@ -81,13 +137,8 @@ export default function ApplyPage() {
     router.push("/jobs");
   };
 
-  const handleResumeSubmit = async (url: string) => {
-    const body = {
-      jobId: jobDetails?._id,
-      resume: url,
-    };
-
-    const isTrusted = isTrustedUrl(url);
+  const handleResumeSubmitWithPayload = async (body: any) => {
+    const isTrusted = isTrustedUrl(body.resume);
     if (!isTrusted) {
       return toast.error("Please provide a valid and trusted URL");
     }
@@ -148,6 +199,91 @@ export default function ApplyPage() {
         onClose={() => setShowApplyModal(false)}
         title="Apply with Resume Link"
       >
+        <label className="block mb-2">Full Name</label>
+        <input
+          type="text"
+          placeholder="Your full name"
+          value={fullName}
+          onChange={(e) => setFullName(e.target.value)}
+          className="border p-2 w-full rounded mb-3"
+        />
+
+        <label className="block mb-2">Preferred Contact Method</label>
+        <select
+          value={contactMethod}
+          onChange={(e) => setContactMethod(e.target.value as any)}
+          className="border p-2 w-full rounded mb-3 text-gray-700"
+        >
+          <option value="email">Email</option>
+          <option value="x">X</option>
+          <option value="linkedin">LinkedIn</option>
+          <option value="other">Other</option>
+        </select>
+
+        <label className="block mb-2">Contact Handle / Link</label>
+        <input
+          type="text"
+          placeholder="e.g. @username or https://t.me/username"
+          value={contactHandle}
+          onChange={(e) => setContactHandle(e.target.value)}
+          readOnly={contactMethod !== "other"}
+          aria-readonly={contactMethod !== "other"}
+          className={`border p-2 w-full rounded mb-3 ${
+            contactMethod !== "other"
+              ? "bg-gray-100 cursor-not-allowed text-gray-600"
+              : ""
+          }`}
+        />
+
+        <label className="block mb-2">Cover Letter (max 500 chars)</label>
+        <textarea
+          maxLength={500}
+          rows={4}
+          placeholder="Why are you interested in this role?"
+          value={coverLetter}
+          onChange={(e) => setCoverLetter(e.target.value)}
+          className="border p-2 w-full rounded mb-3"
+        />
+
+        <label className="block mb-2">
+          Have you worked on any Polkadot or Kusama project before?
+        </label>
+        <div className="flex gap-4 mb-3">
+          <label className="flex items-center gap-2">
+            <input
+              type="radio"
+              name="polk"
+              checked={polkadotExperience === true}
+              onChange={() => setPolkadotExperience(true)}
+            />{" "}
+            Yes
+          </label>
+          <label className="flex items-center gap-2">
+            <input
+              type="radio"
+              name="polk"
+              checked={polkadotExperience === false}
+              onChange={() => setPolkadotExperience(false)}
+            />{" "}
+            No
+          </label>
+        </div>
+        {polkadotExperience && (
+          <>
+            <label className="block mb-2">
+              If yes, briefly describe your role
+            </label>
+            <input
+              type="text"
+              placeholder="Brief description"
+              value={polkadotDescription}
+              onChange={(e) => setPolkadotDescription(e.target.value)}
+              className="border p-2 w-full rounded mb-3"
+            />
+          </>
+        )}
+
+        <label className="block mb-2">Resume URL</label>
         <input
           type="text"
           placeholder="Enter your resume url"
@@ -168,12 +304,23 @@ export default function ApplyPage() {
             publicly accessible.
           </p>
         </div>
-        <button
-          onClick={handleApplySubmit}
-          className="bg-purple-600 text-white px-4 py-2 rounded hover:bg-purple-700"
-        >
-          Submit
-        </button>
+        <div className="flex gap-3">
+          <button
+            onClick={handleApplySubmit}
+            className="bg-purple-600 text-white px-4 py-2 rounded hover:bg-purple-700"
+          >
+            Submit
+          </button>
+          <button
+            onClick={() => {
+              setShowApplyModal(false);
+              setShowUploadModal(true);
+            }}
+            className="border border-purple-600 text-purple-600 px-4 py-2 rounded hover:bg-purple-50"
+          >
+            Upload Resume Instead
+          </button>
+        </div>
       </Modal>
 
       {/* Upload Modal */}
@@ -182,6 +329,90 @@ export default function ApplyPage() {
         onClose={() => setShowUploadModal(false)}
         title="Upload Your Resume"
       >
+        <label className="block mb-2">Full Name</label>
+        <input
+          type="text"
+          placeholder="Your full name"
+          value={fullName}
+          onChange={(e) => setFullName(e.target.value)}
+          className="border p-2 w-full rounded mb-3"
+        />
+
+        <label className="block mb-2">Preferred Contact Method</label>
+        <select
+          value={contactMethod}
+          onChange={(e) => setContactMethod(e.target.value as any)}
+          className="border p-2 w-full rounded mb-3 text-gray-700"
+        >
+          <option value="email">Email</option>
+          <option value="x">X</option>
+          <option value="linkedin">LinkedIn</option>
+          <option value="other">Other</option>
+        </select>
+
+        <label className="block mb-2">Contact Handle / Link</label>
+        <input
+          type="text"
+          placeholder="e.g. @username or https://t.me/username"
+          value={contactHandle}
+          onChange={(e) => setContactHandle(e.target.value)}
+          readOnly={contactMethod !== "other"}
+          aria-readonly={contactMethod !== "other"}
+          className={`border p-2 w-full rounded mb-3 ${
+            contactMethod !== "other"
+              ? "bg-gray-100 cursor-not-allowed text-gray-600"
+              : ""
+          }`}
+        />
+
+        <label className="block mb-2">Cover Letter (max 500 chars)</label>
+        <textarea
+          maxLength={500}
+          rows={4}
+          placeholder="Why are you interested in this role?"
+          value={coverLetter}
+          onChange={(e) => setCoverLetter(e.target.value)}
+          className="border p-2 w-full rounded mb-3"
+        />
+
+        <label className="block mb-2">
+          Have you worked on any Polkadot or Kusama project before?
+        </label>
+        <div className="flex gap-4 mb-3">
+          <label className="flex items-center gap-2">
+            <input
+              type="radio"
+              name="polk"
+              checked={polkadotExperience === true}
+              onChange={() => setPolkadotExperience(true)}
+            />{" "}
+            Yes
+          </label>
+          <label className="flex items-center gap-2">
+            <input
+              type="radio"
+              name="polk"
+              checked={polkadotExperience === false}
+              onChange={() => setPolkadotExperience(false)}
+            />{" "}
+            No
+          </label>
+        </div>
+        {polkadotExperience && (
+          <>
+            <label className="block mb-2">
+              If yes, briefly describe your role
+            </label>
+            <input
+              type="text"
+              placeholder="Brief description"
+              value={polkadotDescription}
+              onChange={(e) => setPolkadotDescription(e.target.value)}
+              className="border p-2 w-full rounded mb-3"
+            />
+          </>
+        )}
+
         <input
           type="file"
           accept="application/pdf"
