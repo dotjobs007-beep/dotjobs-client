@@ -199,127 +199,132 @@ export default function ApplyPage() {
         onClose={() => setShowApplyModal(false)}
         title="Apply with Resume Link"
       >
-        <label className="block mb-2">Full Name</label>
-        <input
-          type="text"
-          placeholder="Your full name"
-          value={fullName}
-          onChange={(e) => setFullName(e.target.value)}
-          className="border p-2 w-full rounded mb-3"
-        />
-
-        <label className="block mb-2">Preferred Contact Method</label>
-        <select
-          value={contactMethod}
-          onChange={(e) => setContactMethod(e.target.value as any)}
-          className="border p-2 w-full rounded mb-3 text-gray-700"
-        >
-          <option value="email">Email</option>
-          <option value="x">X</option>
-          <option value="linkedin">LinkedIn</option>
-          <option value="other">Other</option>
-        </select>
-
-        <label className="block mb-2">Contact Handle / Link</label>
-        <input
-          type="text"
-          placeholder="e.g. @username or https://t.me/username"
-          value={contactHandle}
-          onChange={(e) => setContactHandle(e.target.value)}
-          readOnly={contactMethod !== "other"}
-          aria-readonly={contactMethod !== "other"}
-          className={`border p-2 w-full rounded mb-3 ${
-            contactMethod !== "other"
-              ? "bg-gray-100 cursor-not-allowed text-gray-600"
-              : ""
-          }`}
-        />
-
-        <label className="block mb-2">Cover Letter (max 500 chars)</label>
-        <textarea
-          maxLength={500}
-          rows={4}
-          placeholder="Why are you interested in this role?"
-          value={coverLetter}
-          onChange={(e) => setCoverLetter(e.target.value)}
-          className="border p-2 w-full rounded mb-3"
-        />
-
-        <label className="block mb-2">
-          Have you worked on any Polkadot or Kusama project before?
-        </label>
-        <div className="flex gap-4 mb-3">
-          <label className="flex items-center gap-2">
-            <input
-              type="radio"
-              name="polk"
-              checked={polkadotExperience === true}
-              onChange={() => setPolkadotExperience(true)}
-            />{" "}
-            Yes
-          </label>
-          <label className="flex items-center gap-2">
-            <input
-              type="radio"
-              name="polk"
-              checked={polkadotExperience === false}
-              onChange={() => setPolkadotExperience(false)}
-            />{" "}
-            No
-          </label>
-        </div>
-        {polkadotExperience && (
-          <>
-            <label className="block mb-2">
-              If yes, briefly describe your role
-            </label>
+        <div className="flex flex-col gap-4">
+          <div className="max-h-[60vh] overflow-y-auto pr-2">
+            <label className="block mb-2">Full Name</label>
             <input
               type="text"
-              placeholder="Brief description"
-              value={polkadotDescription}
-              onChange={(e) => setPolkadotDescription(e.target.value)}
+              placeholder="Your full name"
+              value={fullName}
+              onChange={(e) => setFullName(e.target.value)}
               className="border p-2 w-full rounded mb-3"
             />
-          </>
-        )}
 
-        <label className="block mb-2">Resume URL</label>
-        <input
-          type="text"
-          placeholder="Enter your resume url"
-          value={resumeURL || ""}
-          onChange={(e) => setResumeURL(e.target.value)}
-          className="border p-2 w-full rounded mb-4"
-        />
+            <label className="block mb-2">Preferred Contact Method</label>
+            <select
+              value={contactMethod}
+              onChange={(e) => setContactMethod(e.target.value as any)}
+              className="border p-2 w-full rounded mb-3 text-gray-700"
+            >
+              <option value="email">Email</option>
+              <option value="x">X</option>
+              <option value="linkedin">LinkedIn</option>
+              <option value="other">Other</option>
+            </select>
 
-        <div className="text-sm text-gray-600 mb-4">
-          <b>Note:</b>
-          <p>
-            Please ensure your resume is in PDF format and does not exceed 5MB
-            in size.
-          </p>
-          <p>
-            We recommend using trusted platforms like Google Drive, Dropbox,
-            Cloudinary or OneDrive to host your resume. Make sure the link is
-            publicly accessible.
-          </p>
-        </div>
-        <div className="flex gap-3">
-          <button
-            onClick={handleApplySubmit}
-            className="bg-purple-600 text-white px-4 py-2 rounded hover:bg-purple-700"
-          >
-            Submit
-          </button>
-          <button
-            onClick={() => {
-              setShowApplyModal(false);
-              setShowUploadModal(true);
-            }}
-            className="border border-purple-600 text-purple-600 px-4 py-2 rounded hover:bg-purple-50"
-          >
-            Upload Resume Instead
-          </button>
+            <label className="block mb-2">Contact Handle / Link</label>
+            <input
+              type="text"
+              placeholder="e.g. @username or https://t.me/username"
+              value={contactHandle}
+              onChange={(e) => setContactHandle(e.target.value)}
+              readOnly={contactMethod !== "other"}
+              aria-readonly={contactMethod !== "other"}
+              className={`border p-2 w-full rounded mb-3 ${
+                contactMethod !== "other"
+                  ? "bg-gray-100 cursor-not-allowed text-gray-600"
+                  : ""
+              }`}
+            />
+
+            <label className="block mb-2">Cover Letter (max 500 chars)</label>
+            <textarea
+              maxLength={500}
+              rows={4}
+              placeholder="Why are you interested in this role?"
+              value={coverLetter}
+              onChange={(e) => setCoverLetter(e.target.value)}
+              className="border p-2 w-full rounded mb-3"
+            />
+
+            <label className="block mb-2">
+              Have you worked on any Polkadot or Kusama project before?
+            </label>
+            <div className="flex gap-4 mb-3">
+              <label className="flex items-center gap-2">
+                <input
+                  type="radio"
+                  name="polk"
+                  checked={polkadotExperience === true}
+                  onChange={() => setPolkadotExperience(true)}
+                />{" "}
+                Yes
+              </label>
+              <label className="flex items-center gap-2">
+                <input
+                  type="radio"
+                  name="polk"
+                  checked={polkadotExperience === false}
+                  onChange={() => setPolkadotExperience(false)}
+                />{" "}
+                No
+              </label>
+            </div>
+            {polkadotExperience && (
+              <>
+                <label className="block mb-2">
+                  If yes, briefly describe your role
+                </label>
+                <input
+                  type="text"
+                  placeholder="Brief description"
+                  value={polkadotDescription}
+                  onChange={(e) => setPolkadotDescription(e.target.value)}
+                  className="border p-2 w-full rounded mb-3"
+                />
+              </>
+            )}
+
+            <label className="block mb-2">Resume URL</label>
+            <input
+              type="text"
+              placeholder="Enter your resume url"
+              value={resumeURL || ""}
+              onChange={(e) => setResumeURL(e.target.value)}
+              className="border p-2 w-full rounded mb-4"
+            />
+
+            <div className="text-sm text-gray-600 mb-4">
+              <b>Note:</b>
+              <p>
+                Please ensure your resume is in PDF format and does not exceed 5MB
+                in size.
+              </p>
+              <p>
+                We recommend using trusted platforms like Google Drive, Dropbox,
+                Cloudinary or OneDrive to host your resume. Make sure the link is
+                publicly accessible.
+              </p>
+            </div>
+          </div>
+
+          <div className="flex gap-3">
+            <button
+              onClick={handleApplySubmit}
+              className="bg-purple-600 text-white px-4 py-2 rounded hover:bg-purple-700"
+            >
+              Submit
+            </button>
+            <button
+              onClick={() => {
+                setShowApplyModal(false);
+                setShowUploadModal(true);
+              }}
+              className="border border-purple-600 text-purple-600 px-4 py-2 rounded hover:bg-purple-50"
+            >
+              Upload Resume Instead
+            </button>
+          </div>
         </div>
       </Modal>
 
@@ -329,111 +334,118 @@ export default function ApplyPage() {
         onClose={() => setShowUploadModal(false)}
         title="Upload Your Resume"
       >
-        <label className="block mb-2">Full Name</label>
-        <input
-          type="text"
-          placeholder="Your full name"
-          value={fullName}
-          onChange={(e) => setFullName(e.target.value)}
-          className="border p-2 w-full rounded mb-3"
-        />
-
-        <label className="block mb-2">Preferred Contact Method</label>
-        <select
-          value={contactMethod}
-          onChange={(e) => setContactMethod(e.target.value as any)}
-          className="border p-2 w-full rounded mb-3 text-gray-700"
-        >
-          <option value="email">Email</option>
-          <option value="x">X</option>
-          <option value="linkedin">LinkedIn</option>
-          <option value="other">Other</option>
-        </select>
-
-        <label className="block mb-2">Contact Handle / Link</label>
-        <input
-          type="text"
-          placeholder="e.g. @username or https://t.me/username"
-          value={contactHandle}
-          onChange={(e) => setContactHandle(e.target.value)}
-          readOnly={contactMethod !== "other"}
-          aria-readonly={contactMethod !== "other"}
-          className={`border p-2 w-full rounded mb-3 ${
-            contactMethod !== "other"
-              ? "bg-gray-100 cursor-not-allowed text-gray-600"
-              : ""
-          }`}
-        />
-
-        <label className="block mb-2">Cover Letter (max 500 chars)</label>
-        <textarea
-          maxLength={500}
-          rows={4}
-          placeholder="Why are you interested in this role?"
-          value={coverLetter}
-          onChange={(e) => setCoverLetter(e.target.value)}
-          className="border p-2 w-full rounded mb-3"
-        />
-
-        <label className="block mb-2">
-          Have you worked on any Polkadot or Kusama project before?
-        </label>
-        <div className="flex gap-4 mb-3">
-          <label className="flex items-center gap-2">
-            <input
-              type="radio"
-              name="polk"
-              checked={polkadotExperience === true}
-              onChange={() => setPolkadotExperience(true)}
-            />{" "}
-            Yes
-          </label>
-          <label className="flex items-center gap-2">
-            <input
-              type="radio"
-              name="polk"
-              checked={polkadotExperience === false}
-              onChange={() => setPolkadotExperience(false)}
-            />{" "}
-            No
-          </label>
-        </div>
-        {polkadotExperience && (
-          <>
-            <label className="block mb-2">
-              If yes, briefly describe your role
-            </label>
+        <div className="flex flex-col gap-4">
+          <div className="max-h-[60vh] overflow-y-auto pr-2">
+            <label className="block mb-2">Full Name</label>
             <input
               type="text"
-              placeholder="Brief description"
-              value={polkadotDescription}
-              onChange={(e) => setPolkadotDescription(e.target.value)}
+              placeholder="Your full name"
+              value={fullName}
+              onChange={(e) => setFullName(e.target.value)}
               className="border p-2 w-full rounded mb-3"
             />
-          </>
-        )}
 
-        <input
-          type="file"
-          accept="application/pdf"
-          onChange={(e) => setFile(e.target.files?.[0] || null)}
-          className="mb-4"
-        />
-        <button
-          onClick={handleUpload}
-          disabled={uploading}
-          className="bg-purple-600 text-white px-4 py-2 rounded hover:bg-purple-700 disabled:opacity-50"
-        >
-          {uploading ? "Uploading..." : "Submit"}
-        </button>
-        {resumeURL && (
-          <p className="mt-3 text-sm text-green-600">
-            File saved:{" "}
-            <a href={resumeURL} target="_blank" rel="noreferrer">
-              View File
-            </a>
-          </p>
-        )}
+            <label className="block mb-2">Preferred Contact Method</label>
+            <select
+              value={contactMethod}
+              onChange={(e) => setContactMethod(e.target.value as any)}
+              className="border p-2 w-full rounded mb-3 text-gray-700"
+            >
+              <option value="email">Email</option>
+              <option value="x">X</option>
+              <option value="linkedin">LinkedIn</option>
+              <option value="other">Other</option>
+            </select>
+
+            <label className="block mb-2">Contact Handle / Link</label>
+            <input
+              type="text"
+              placeholder="e.g. @username or https://t.me/username"
+              value={contactHandle}
+              onChange={(e) => setContactHandle(e.target.value)}
+              readOnly={contactMethod !== "other"}
+              aria-readonly={contactMethod !== "other"}
+              className={`border p-2 w-full rounded mb-3 ${
+                contactMethod !== "other"
+                  ? "bg-gray-100 cursor-not-allowed text-gray-600"
+                  : ""
+              }`}
+            />
+
+            <label className="block mb-2">Cover Letter (max 500 chars)</label>
+            <textarea
+              maxLength={500}
+              rows={4}
+              placeholder="Why are you interested in this role?"
+              value={coverLetter}
+              onChange={(e) => setCoverLetter(e.target.value)}
+              className="border p-2 w-full rounded mb-3"
+            />
+
+            <label className="block mb-2">
+              Have you worked on any Polkadot or Kusama project before?
+            </label>
+            <div className="flex gap-4 mb-3">
+              <label className="flex items-center gap-2">
+                <input
+                  type="radio"
+                  name="polk"
+                  checked={polkadotExperience === true}
+                  onChange={() => setPolkadotExperience(true)}
+                />{" "}
+                Yes
+              </label>
+              <label className="flex items-center gap-2">
+                <input
+                  type="radio"
+                  name="polk"
+                  checked={polkadotExperience === false}
+                  onChange={() => setPolkadotExperience(false)}
+                />{" "}
+                No
+              </label>
+            </div>
+            {polkadotExperience && (
+              <>
+                <label className="block mb-2">
+                  If yes, briefly describe your role
+                </label>
+                <input
+                  type="text"
+                  placeholder="Brief description"
+                  value={polkadotDescription}
+                  onChange={(e) => setPolkadotDescription(e.target.value)}
+                  className="border p-2 w-full rounded mb-3"
+                />
+              </>
+            )}
+
+            <input
+              type="file"
+              accept="application/pdf"
+              onChange={(e) => setFile(e.target.files?.[0] || null)}
+              className="mb-4"
+            />
+            {resumeURL && (
+              <p className="mt-3 text-sm text-green-600">
+                File saved: {" "}
+                <a href={resumeURL} target="_blank" rel="noreferrer">
+                  View File
+                </a>
+              </p>
+            )}
+          </div>
+
+          <div className="flex gap-3">
+            <button
+              onClick={handleUpload}
+              disabled={uploading}
+              className="bg-purple-600 text-white px-4 py-2 rounded hover:bg-purple-700 disabled:opacity-50"
+            >
+              {uploading ? "Uploading..." : "Submit"}
+            </button>
+          </div>
+        </div>
       </Modal>
 
       {/* Success Modal */}

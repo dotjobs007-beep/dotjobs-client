@@ -62,6 +62,7 @@ export interface IJob {
   company_website?: string;
   company_description?: string;
   company_location: string;
+  applicantCount?: number;
   logo?: string;
   createdAt?: string;
   updatedAt?: string;

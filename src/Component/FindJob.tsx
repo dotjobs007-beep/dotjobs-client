@@ -218,6 +218,7 @@ export default function Jobs() {
                 job.salary_type,
                 job.work_arrangement,
               ]}
+              applicantCount={job.applicantCount}
               salaryType={job.salary_token}
               salaryRange={job.salary_range}
               onClick={() => handleDisplayJobDetails(job)}

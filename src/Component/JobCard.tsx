@@ -9,6 +9,7 @@ interface JobCardProps {
   tags: string[];
   salaryRange?: { min?: number; max?: number };
   salaryType?: string;
+  applicantCount?: number;
   onClick?: () => void;
   buttonText?: string;
 }
@@ -20,11 +21,10 @@ export default function JobCard({
   tags,
   salaryRange,
   salaryType,
+  applicantCount,
   onClick = () => {},
   buttonText = "Apply Now",
 }: JobCardProps) {
-
-
   return (
     <Card
       className="
@@ -57,10 +57,24 @@ export default function JobCard({
             {description}
           </p>
 
-          {/* Salary Range */}
-          <p className="text-[12px] text-gray-600 font-medium">
-            Salary: {salaryRange ? `${salaryRange.min} - ${salaryRange.max} ${salaryType?.toLocaleUpperCase()}` : "Not specified"}
-          </p>
+          <div className="flex justify-between md:flex-row md:items-center gap-2 md:gap-4">
+            {/* Salary Range */}
+            <p className="text-[12px] text-gray-600 font-medium">
+              Salary:{" "}
+              {salaryRange
+                ? `${salaryRange.min} - ${
+                    salaryRange.max
+                  } ${salaryType?.toLocaleUpperCase()}`
+                : "Not specified"}
+            </p>
+
+            {/* Applicant Count */}
+            {applicantCount !== undefined && (
+              <p className="text-[12px] text-gray-600 font-medium">
+                Applicants: {applicantCount}
+              </p>
+            )}
+          </div>
 
           {/* Job Tags */}
           <div className="flex flex-wrap justify-center md:justify-start gap-2 text-[11px] font-medium">

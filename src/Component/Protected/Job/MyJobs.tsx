@@ -28,7 +28,6 @@ export default function MyJobs() {
       "GET",
       { withCredentials: true }
     );
-
     if (res.code === 401) {
       router.replace("/auth/signin");
       setLoading(false);

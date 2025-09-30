@@ -257,7 +257,7 @@ export default function ProfilePage() {
   };
 
   return (
-    <div className="bg-gradient-to-b from-white to-pink-50">
+    <div className="mt-20">
       {!isLoading && userData && (
         <div className="px-6 lg:px-0 flex justify-center">
           <div className="w-full max-w-6xl grid grid-cols-1 lg:grid-cols-2 gap-8 items-start">
@@ -265,7 +265,6 @@ export default function ProfilePage() {
             <div className="rounded-2xl p-6 shadow-xl text-white bg-gradient-to-r from-[#DB2F7B] to-[#724B99]">
               <div className="flex items-center justify-between mb-4">
                 <h3 className="text-lg font-semibold">Profile</h3>
-                <span className="text-sm bg-white/20 px-3 py-1 rounded-full">Member</span>
               </div>
               {/* Avatar + Edit */}
               <div className="flex flex-col items-center text-center mb-6">
@@ -276,7 +275,7 @@ export default function ProfilePage() {
                   }}
                   className="cursor-pointer"
                 >
-                  <div className="relative w-28 h-28 rounded-full overflow-hidden border-4 border-white/30 mb-4 shadow-md">
+                  <div className="relative w-22 h-22 rounded-full overflow-hidden border-4 border-white/30 mb-4 shadow-md">
                     <Image
                       src={userData.avatar}
                       alt="User Avatar"
