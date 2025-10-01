@@ -18,6 +18,7 @@ import { auth } from "@/Firebase/firebase";
 import { useAuth } from "@/app/context/authcontext";
 import { Verified } from "lucide-react";
 import { isTrustedUrl } from "@/helper/validate_link";
+import { FaSquareXTwitter } from "react-icons/fa6";
 
 export default function ProfilePage() {
   const [isLoading, setIsLoading] = useState(false);
@@ -46,7 +47,7 @@ export default function ProfilePage() {
   const [showAvatarModal, setShowAvatarModal] = useState(false);
   const [newName, setNewName] = useState("");
   const [uploadedUrl, setUploadedUrl] = useState("");
-  const { setUserDetails } = useAuth();
+  const { setUserDetails, theme } = useAuth();
 
   const router = useRouter();
 
@@ -256,13 +257,14 @@ export default function ProfilePage() {
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
+
   return (
     <div className="mt-20">
       {!isLoading && userData && (
         <div className="px-6 lg:px-0 flex justify-center">
           <div className="w-full max-w-6xl grid grid-cols-1 lg:grid-cols-2 gap-8 items-start">
             {/* 🟣 Card 1 – User Info */}
-            <div className="rounded-2xl p-6 shadow-xl text-white bg-gradient-to-r from-[#DB2F7B] to-[#724B99]">
+            <div className={`${theme === "dark" ? "bg-gradient-to-r from-[#261933] to-[#724B99]" : "bg-gradient-to-r from-[#DB2F7B] to-[#724B99]"} rounded-2xl p-6 shadow-xxl text-white `}>
               <div className="flex items-center justify-between mb-4">
                 <h3 className="text-lg font-semibold">Profile</h3>
               </div>
@@ -385,7 +387,7 @@ export default function ProfilePage() {
                     rel="noopener noreferrer"
                     className="p-2 bg-pink-50 rounded-full hover:bg-pink-100 transition text-pink-600"
                   >
-                    <FaTwitter size={18} />
+                    <FaSquareXTwitter size={18} />
                   </a>
                   <a
                     href={userData.linkedInProfile || "#"}
@@ -413,7 +415,7 @@ export default function ProfilePage() {
       {/* ✅ Edit About/Skills Modal */}
       {showEdit && (
         <div className="fixed inset-0 bg-black/50 backdrop-blur-sm overflow-auto flex items-center justify-center z-50">
-          <Card className="bg-white rounded-xl p-6 w-full max-w-md shadow-2xl border border-gray-100 max-h-[90vh] overflow-y-auto">
+          <Card className="rounded-xl p-6 w-full max-w-md shadow-2xl border border-gray-100 max-h-[90vh] overflow-y-auto">
             <h2 className="text-xl font-bold mb-4">Edit Profile</h2>
 
             <label className="block text-sm font-medium text-gray-700 mb-1">
@@ -448,7 +450,7 @@ export default function ProfilePage() {
               onChange={handleFormChange}
               name="linkedInProfile"
               className="w-full border-gray-300 p-3 rounded-lg border bg-[#FDD7FD] mb-4 text-gray-800"
-              placeholder="e.g. React, Node.js"
+              placeholder="e.g. https://www.linkedin.com/in/username"
             />
 
             <label className="block text-sm font-medium text-gray-700 mb-1">
@@ -459,7 +461,7 @@ export default function ProfilePage() {
               onChange={handleFormChange}
               name="xProfile"
               className="w-full border-gray-300 p-3 rounded-lg border bg-[#FDD7FD] mb-4 text-gray-800"
-              placeholder="e.g. React, Node.js"
+              placeholder="e.g. https://www.x.com/in/username"
             />
 
             <label className="block text-sm font-medium text-gray-700 mb-1">
@@ -470,7 +472,7 @@ export default function ProfilePage() {
               onChange={handleFormChange}
               name="githubProfile"
               className="w-full border-gray-300 p-3 rounded-lg border bg-[#FDD7FD] mb-4 text-gray-800"
-              placeholder="e.g. React, Node.js"
+              placeholder="e.g. https://www.github.com/in/username"
             />
 
             <label className="block text-sm font-medium text-gray-700 mb-1">

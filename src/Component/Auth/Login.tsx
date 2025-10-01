@@ -4,6 +4,7 @@ import { FcGoogle } from "react-icons/fc";
 import { SiX } from "react-icons/si";
 import Spinner from "../Spinner";
 import useSignInLogic from "./SiginLogic";
+import { useAuth } from "@/app/context/authcontext";
 
 export default function SignIn() {
   const {
@@ -17,6 +18,12 @@ export default function SignIn() {
     handleGoogleSignin,
     handleTwitterSignin,
   } = useSignInLogic();
+
+  const {theme} = useAuth();
+
+  const img = theme === "dark"
+    ? "/Images/auth_img_dark.png"
+    : "/Images/auth_img_light.png";
 
   return (
     <div className="flex lg:h-[89vh] overflow-hidden">
@@ -54,7 +61,7 @@ export default function SignIn() {
           <input
             type="password"
             placeholder="Password"
-            className="border border-gray-300 rounded-lg p-4 shadow-sm focus:ring-2 focus:ring-green-500 focus:outline-none transition"
+            className=""
             value={password}
             onChange={(e) => setPassword(e.target.value)}
             required
@@ -109,9 +116,10 @@ export default function SignIn() {
       </div>
 
       {/* Right Image */}
-      <div className="flex-1 hidden md:block relative h-full">
+      <div className="flex-1 hidden md:block relative h-full shadow-xl">
         <Image
-          src="https://res.cloudinary.com/dk06cndku/image/upload/v1758747694/auth_img_jkezhd.png"
+          // src="https://res.cloudinary.com/dk06cndku/image/upload/v1758747694/auth_img_jkezhd.png"
+          src={img}
           alt="Signup illustration"
           fill
           className="object-cover"

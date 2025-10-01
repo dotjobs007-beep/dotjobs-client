@@ -9,9 +9,7 @@ import service from "@/helper/service.helper";
 import { useRouter } from "next/navigation";
 import { useAuth } from "@/app/context/authcontext";
 import ConnectWalletModal from "../ConnectWalletModal";
-import WalletModal from "@/Component/WalletModal";
-import MobileWalletModal from "../MobileWalletModal";
-import { div } from "framer-motion/m";
+import Card from "@/Component/Card";
 
 export default function PostJob() {
   const [step, setStep] = useState(1);
@@ -96,6 +94,11 @@ export default function PostJob() {
     e.preventDefault();
     const isValid = validateForm();
     if (!isValid) return;
+
+    if(formData.companyWebsite && !/^https?:\/\//i.test(formData.companyWebsite)){
+      toast.error("Company Website must be a valid URL");
+      return;
+    }
 
     const body: IJob = {
       title: formData.jobTitle,
@@ -210,8 +213,9 @@ export default function PostJob() {
       {isWalletConnected && (
         <form
           onSubmit={handleSubmit}
-          className="relative bg-gradient-to-b from-[#A64FA0] to-[#7A2E7A] rounded-3xl p-8 shadow-2xl overflow-hidden text-sm text-white"
         >
+          <Card>
+          {/* <Card className="p-6"> */}
           <AnimatePresence mode="wait">
             {step === 1 && (
               <motion.div
@@ -222,6 +226,7 @@ export default function PostJob() {
                 exit="exit"
                 transition={{ duration: 0.4 }}
               >
+                
                 <h2 className="text-xl font-semibold mb-6">Job Details</h2>
 
                 <label className="block mb-2">Job Title</label>
@@ -660,6 +665,8 @@ export default function PostJob() {
               </button>
             )}
           </div>
+          {/* <Card />   */}
+          </Card>
         </form>
       )}
 

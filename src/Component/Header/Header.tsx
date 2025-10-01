@@ -95,6 +95,7 @@ export default function Header() {
   const router = useRouter();
 
   const closeMenu = () => setMenuOpen(false); // ✅ new helper
+  const {theme} = useAuth();
 
   useEffect(() => {
     setMenuOpen(false);
@@ -107,7 +108,7 @@ export default function Header() {
   };
 
   return (
-    <header className="fixed top-0 bg-white left-0 w-full z-50 flex items-center justify-between p-6 lg:px-15 bg-background text-foreground h-16">
+    <header className={`fixed top-0 left-0 w-full z-50 flex items-center justify-between p-6 lg:px-[6rem] text-foreground h-16 ${theme === "dark" ? "bg-[#261933]" : "bg-white"}`}>
       <div className="flex justify-between">
         <div
           className="text-2xl cursor-pointer font-bold"

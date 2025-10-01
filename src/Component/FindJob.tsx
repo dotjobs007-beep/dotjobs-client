@@ -104,13 +104,13 @@ export default function Jobs() {
       {/* FILTER CARD */}
       <Card className="p-6 w-full bg-white shadow-md rounded-xl space-y-6 sticky top-16 z-40">
         {/* SEARCH */}
-        <div className="flex flex-col lg:flex-row gap-4">
+        <div className="flex flex-col lg:flex-row gap-4 w-full">
           <input
             type="text"
             placeholder="Search by title or company..."
             value={query}
             onChange={(e) => setQuery(e.target.value)}
-            className="w-full px-4 text-gray-600 py-3 border border-gray-300 rounded-lg bg-[#FDD7FD]"
+            className="px-4 lg:w-[90%] w-full text-gray-600 py-3 border border-gray-300 rounded-lg bg-[#FDD7FD]"
           />
           <button
             onClick={handleApplyFilters}

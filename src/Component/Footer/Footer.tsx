@@ -1,11 +1,18 @@
+"use client";
+import { useAuth } from "@/app/context/authcontext";
 import { FaXTwitter, FaFacebookF, FaTelegram, FaGithub } from "react-icons/fa6";
 
 export default function Footer() {
+  const {theme} = useAuth();
+  
+  const backgroundStyle = theme === "dark"
+    ? "linear-gradient(to bottom, #dbdbdbff, #850335ff, #190330ff)"
+    : "linear-gradient(to bottom, #FFFDFE, #EC1166, #724B99)";
   return (
     <div
       className="text-white px-8 py-12 text-center mt-[6rem]"
       style={{
-        background: "linear-gradient(to bottom, #FFFDFE, #EC1166, #724B99)",
+        background: backgroundStyle,
       }}
     >
       {/* Top Section */}

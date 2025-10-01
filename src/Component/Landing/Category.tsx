@@ -1,5 +1,6 @@
 "use client";
 
+import { useAuth } from "@/app/context/authcontext";
 import Image from "next/image";
 import { useEffect, useRef, useState } from "react";
 
@@ -13,6 +14,7 @@ type CategoryCardProps = {
 export function CategoryCard({ imageSrc, alt, label, delay = 0 }: CategoryCardProps) {
   const ref = useRef<HTMLDivElement | null>(null);
   const [isVisible, setIsVisible] = useState(false);
+  const {theme } = useAuth();
 
   useEffect(() => {
     const observer = new IntersectionObserver(
@@ -36,7 +38,7 @@ export function CategoryCard({ imageSrc, alt, label, delay = 0 }: CategoryCardPr
   return (
     <div
       ref={ref}
-      className={`rounded-lg overflow-hidden flex flex-col items-center justify-between h-56 bg-[#724B99]
+      className={`rounded-lg overflow-hidden flex flex-col items-center justify-between h-56 ${theme === "dark" ? "bg-[#261933]" : "bg-[#734A98]"}
         transform transition-all duration-700 ease-out
         ${isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-8"}
         hover:scale-105 hover:shadow-2xl shadow-lg`}
@@ -80,7 +82,7 @@ export default function Category() {
         Browse By Category
       </h1>
 
-      <div className="grid gap-6 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-4">
+      <div className={`grid gap-6 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-4`}>
         {categories.map((cat, idx) => (
           <CategoryCard
             key={idx}

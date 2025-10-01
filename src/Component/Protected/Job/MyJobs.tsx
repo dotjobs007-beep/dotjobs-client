@@ -66,7 +66,7 @@ export default function MyJobs() {
       </p>
 
       {/* Job List */}
-      <div className="w-full mt-10 flex flex-col gap-6">
+      <div className="w-full mt-10 grid grid-cols-1 lg:grid-cols-2 gap-6">
         {jobs.map((el) => (
           <JobCard
             key={el._id}

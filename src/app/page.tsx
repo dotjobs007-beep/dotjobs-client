@@ -6,7 +6,7 @@ import Hero from "@/Component/Landing/Hero";
 export default function Home() {
   return (
     <>
-      <div className="lg:px-15 px-4">
+      <div className="lg:px-[6rem] px-4">
         <Hero />
         <Category />
         {/* <Authentication /> */}

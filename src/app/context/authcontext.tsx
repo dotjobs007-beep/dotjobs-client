@@ -25,6 +25,8 @@ interface AuthContextType {
   setShowMobileWalletConnect: (value: boolean) => void;
   polkadotWalletConnect: () => Promise<void>;
   isWalletMissing: boolean;
+  theme?: "light" | "dark";
+  setTheme: (theme: "light" | "dark") => void;
 }
 
 const AuthContext = createContext<AuthContextType | null>(null);
@@ -36,6 +38,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [isWalletConnected, setIsWalletConnected] = useState(false);
   const [ctxWalletAddress, setCtxWalletAddress] = useState<string | null>(null);
   const [isWalletMissing, setIsWalletMissing] = useState(false);
+  const [theme, setTheme] = useState<"light" | "dark">("light");
   const {
     connectWallet,
     walletAddress,
@@ -53,6 +56,10 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   useEffect(() => {
     localStorage.setItem("isLoggedIn", String(isLoggedIn));
+    const storedTheme = localStorage.getItem("theme");
+    if (storedTheme === "light" || storedTheme === "dark") {
+      setTheme(storedTheme);
+    }
   }, [isLoggedIn, userDetails]);
 
   const polkadotWalletConnect = async () => {
@@ -87,7 +94,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       setCtxWalletAddress(null);
       setIsWalletConnected(false);
     }
-    console.log("Wallet address changed:", walletAddress);
   }, [walletAddress]);
 
   const handleWalletConnected = async () => {
@@ -128,6 +134,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         setShowMobileWalletConnect,
         polkadotWalletConnect,
         isWalletMissing,
+        theme,
+        setTheme,
       }}
     >
       {children}

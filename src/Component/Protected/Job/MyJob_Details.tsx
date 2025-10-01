@@ -11,6 +11,7 @@ import {
   IJobApplicant,
   IApplicantListResponse,
 } from "@/interface/interface";
+import Card from "@/Component/Card";
 
 export default function MyJobDetails() {
   const params = useParams();
@@ -164,7 +165,7 @@ export default function MyJobDetails() {
   }
 
   return (
-    <div className="max-w-3xl mx-auto my-8 px-3">
+    <div className="max-w-3xl mx-auto my-8 px-3 lg:mt-[8rem]">
       {/* ✅ Job Header */}
       <div className="bg-white shadow-md rounded-md p-4 flex flex-col md:flex-row gap-4">
         <img
@@ -208,41 +209,41 @@ export default function MyJobDetails() {
       </div>
 
       {/* ✅ Job Details */}
-      <div className="bg-white shadow-sm rounded-md p-4 mt-4">
+      <Card className="bg-white shadow-sm rounded-md p-4 mt-4">
         <h2 className="text-base font-semibold text-gray-800 mb-2">
           Job Description
         </h2>
-        <p className="text-gray-700 text-sm">{job.description}</p>
+        <p className="text-white text-sm">{job.description}</p>
 
         <h2 className="text-base font-semibold text-gray-800 mt-4 mb-2">
           Company Description
         </h2>
-        <p className="text-gray-700 text-sm">{job.company_description}</p>
+        <p className="text-white text-sm">{job.company_description}</p>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-2 mt-4 text-sm">
-          <div className="p-2 bg-gray-50 rounded">
+          <div className="p-2 shadow-2xl rounded">
             <h3 className="text-gray-500 text-xs">Salary Range</h3>
-            <p className="text-gray-900 font-medium">
+            <p className="text-white font-medium">
               ${job.salary_range.min.toLocaleString()} – $
               {job.salary_range.max.toLocaleString()} / {job.salary_type}
             </p>
           </div>
-          <div className="p-2 bg-gray-50 rounded">
+          <div className="p-2 shadow-2xl rounded">
             <h3 className="text-gray-500 text-xs">Employment Type</h3>
-            <p className="text-gray-900 font-medium">{job.employment_type}</p>
+            <p className="text-white font-medium">{job.employment_type}</p>
           </div>
-          <div className="p-2 bg-gray-50 rounded">
+          <div className="p-2 shadow-2xl rounded">
             <h3 className="text-gray-500 text-xs">Work Arrangement</h3>
-            <p className="text-gray-900 font-medium">{job.work_arrangement}</p>
+            <p className="text-white font-medium">{job.work_arrangement}</p>
           </div>
-          <div className="p-2 bg-gray-50 rounded">
+          <div className="p-2 shadow-2xl rounded">
             <h3 className="text-gray-500 text-xs">Posted On</h3>
-            <p className="text-gray-900 font-medium">
+            <p className="text-white font-medium">
               {new Date(job.createdAt).toLocaleDateString()}
             </p>
           </div>
         </div>
-      </div>
+      </Card>
 
       {/* ✅ Applicants Modal */}
       {showModal && (
@@ -313,7 +314,7 @@ export default function MyJobDetails() {
       {/* ✅ Applicant Details Drawer */}
       {selected && (
         <div className="fixed inset-0 flex justify-end bg-black/40 z-50">
-          <div className="bg-white w-full sm:w-[400px] p-5 relative shadow-lg overflow-y-auto">
+          <Card className="w-full sm:w-[400px] p-5 relative shadow-lg overflow-y-auto">
             <button
               onClick={() => setSelected(null)}
               className="absolute top-3 right-3 text-gray-500 hover:text-gray-700"
@@ -336,7 +337,7 @@ export default function MyJobDetails() {
                 </p>
               </div>
 
-              <table className="w-full text-left border-separate border-spacing-y-2">
+              <table className="w-full text-gray-700 text-left border-separate border-spacing-y-2">
                 <tbody>
                   <tr>
                     <td className="font-semibold w-1/3">Gender</td>
@@ -560,7 +561,7 @@ export default function MyJobDetails() {
                 {isUpdating ? "Updating..." : "Reject"}
               </button>
             </div>
-          </div>
+          </Card>
         </div>
       )}
     </div>
