@@ -136,7 +136,7 @@ export default function Header() {
             My Jobs
           </li>
           <li
-            onClick={() => handleNavigate("/dashboard/my-applications")}
+            onClick={() => handleNavigate("/jobs/my_application")}
             className="cursor-pointer hover:underline"
           >
             My Applications

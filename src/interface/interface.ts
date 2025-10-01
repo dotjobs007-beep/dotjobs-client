@@ -202,3 +202,83 @@ export interface IUpdateProfile {
   ethnicity?: string;
   primaryLanguage?: string;
 }
+
+export interface IJobsAppliedResponse {
+  status: string; // e.g. "success"
+  code: number; // e.g. 200
+  message: string; // response message
+  data: {
+    data: IMyJobApplication[];
+    pagination: Pagination;
+  };
+}
+
+export interface Pagination {
+  totalJobs: number;
+  totalPages: number;
+  currentPage: number;
+  pageSize: number;
+}
+
+export interface IMyJobApplication {
+  _id: string;
+  jobId: IJob;
+  applicantId: string;
+  resume: string;
+  linkedInProfile: string;
+  fullName: string;
+  contactMethod: string; // e.g. "email"
+  contactHandle: string;
+  polkadotExperience: boolean;
+  polkadotDescription: string;
+  portfolioLink: string;
+  xProfile: string;
+  status: string; // e.g. "pending"
+  appliedAt: string; // ISO date string
+  createdAt: string; // ISO date string
+  updatedAt: string; // ISO date string
+  __v: number;
+}
+
+
+export interface IJob {
+  _id?: string;
+  title: string;
+  description: string;
+  requirements: string;
+  is_active?: boolean;
+  category: string;
+  salary_token: string; // e.g., "USD", "DOT", etc.
+
+  employment_type:
+    | "full-time"
+    | "part-time"
+    | "contract"
+    | "internship"
+    | "temporary"
+    | "freelance";
+
+  work_arrangement: "remote" | "hybrid" | "on-site";
+
+  salary_type: "hourly" | "monthly" | "yearly" | "commission";
+
+  salary_range: {
+    min?: number; // non-negative
+    max?: number; // non-negative
+  };
+
+  company_name: string;
+  company_website?: string;
+  company_description?: string;
+  company_location: string;
+  applicantCount?: number;
+  logo?: string;
+  createdAt?: string;
+  updatedAt?: string;
+}
+
+
+export interface SalaryRange {
+  min: number;
+  max: number;
+}
