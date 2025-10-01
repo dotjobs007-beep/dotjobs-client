@@ -64,9 +64,7 @@ export default function MyApplication() {
                 <h2 className="text-lg text-white font-semibold">
                   {app.jobId?.title || "Untitled Role"}
                 </h2>
-                <p className="text-sm text-white">
-                  {app.jobId?.company_name}
-                </p>
+                <p className="text-sm text-white">{app.jobId?.company_name}</p>
                 <p className="mt-2 text-sm text-white">
                   Applied on:{" "}
                   {new Date(
@@ -339,8 +337,7 @@ export default function MyApplication() {
                   <tr>
                     <td className="font-semibold">Salary type</td>
                     <td className="text-gray-400">
-                      {selectedApplication.jobId?.salary_type} —{" "}
-                      {selectedApplication.jobId?.salary_token}
+                      {selectedApplication.jobId?.salary_type}
                     </td>
                   </tr>
                   {selectedApplication.jobId?.salary_range && (
@@ -348,7 +345,8 @@ export default function MyApplication() {
                       <td className="font-semibold">Salary range</td>
                       <td className="text-gray-400">
                         {selectedApplication.jobId.salary_range.min ?? "—"} —{" "}
-                        {selectedApplication.jobId.salary_range.max ?? "—"}
+                        {selectedApplication.jobId.salary_range.max ?? "—"}{" "}
+                        {selectedApplication.jobId?.salary_token.toLocaleUpperCase()}
                       </td>
                     </tr>
                   )}
