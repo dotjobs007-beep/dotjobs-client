@@ -4,6 +4,7 @@ import { FcGoogle } from "react-icons/fc";
 import { SiX } from "react-icons/si";
 import Spinner from "../Spinner";
 import useSignupLogic from "./SignupLogic";
+import { useAuth } from "@/app/context/authcontext";
 
 export default function Signup() {
   const {
@@ -16,8 +17,14 @@ export default function Signup() {
     handleTwitterSignup,
   } = useSignupLogic(); 
 
+  const {theme} = useAuth();
+
+    const img = theme === "dark"
+    ? "/Images/auth_img_dark.png"
+    : "/Images/auth_img_light.png";
+
   return (
-    <div className="flex lg:h-[89vh] overflow-hidden">
+    <div className="flex lg:h-[89vh] overflow-hidden mt-5">
       {inApp && (
         <div className="w-full bg-yellow-100 text-yellow-900 p-3 text-center">
           It looks like you are in an in-app browser. For sign-up please
@@ -101,7 +108,7 @@ export default function Signup() {
       {/* Right Image */}
       <div className="flex-1 hidden md:block relative h-full">
         <Image
-          src="https://res.cloudinary.com/dk06cndku/image/upload/v1758747694/auth_img_jkezhd.png"
+          src={img}
           alt="Signup illustration"
           fill
           className="object-cover"

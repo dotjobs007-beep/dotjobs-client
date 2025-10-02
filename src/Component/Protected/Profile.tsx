@@ -338,8 +338,8 @@ export default function ProfilePage() {
                     </span>
                   </div>
                   <div className="flex justify-between">
-                    <span className="font-medium">Member since</span>
-                    <span className="text-sm">{formatDate(userData.createdAt)}</span>
+                    <span className="font-medium">Joined on:</span>
+                    <span className="text-sm ml-2">{formatDate(userData.createdAt)}</span>
                   </div>
                 </div>
 

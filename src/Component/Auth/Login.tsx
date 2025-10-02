@@ -26,7 +26,7 @@ export default function SignIn() {
     : "/Images/auth_img_light.png";
 
   return (
-    <div className="flex lg:h-[89vh] overflow-hidden">
+    <div className="flex lg:h-[89vh] overflow-hidden mt-5">
       {inApp && (
         <div className="w-full bg-yellow-100 text-yellow-900 p-3 text-center">
           It looks like you are in an in-app browser. For sign-up please
