@@ -8,7 +8,6 @@ export default function ThemeToggle() {
   // Read initial theme from localStorage or system preference. This runs on the client
   // because this is a client component ("use client").
   const getInitialTheme = (): "light" | "dark" => {
-    console.log("getInitialTheme called");
     if (typeof window === "undefined") return "light";
     const stored = localStorage.getItem("theme");
     if (stored === "light" || stored === "dark") return stored;

@@ -8,6 +8,7 @@ import { AuthProvider } from "./context/authcontext";
 import Script from "next/script";
 import { JobProvider } from "./context/jobcontext";
 import { UserProvider } from "./context/usercontext";
+import Footer from "@/Component/Footer/Footer";
 export const metadata: Metadata = {
   title: "Tailwind v4 Dark Mode",
   description: "Manual toggle with Tailwind v4",
@@ -25,14 +26,14 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-      <body className={unbounded.className}>
+      <body className={`${unbounded.className} min-h-screen relative`}>
         <AuthProvider>
           <JobProvider>
             <UserProvider>
               <Header />
               {/* <header className="p-4 flex justify-end">
         </header> */}
-              <main className="mt-[4rem]">
+              <main className="mt-[4rem] min-h-[calc(100vh-8rem)]">
                 {children}
                 <Toaster
                   position="top-right"
@@ -75,6 +76,7 @@ export default function RootLayout({
               </main>
             </UserProvider>
           </JobProvider>
+          <Footer />
         </AuthProvider>
       </body>
     </html>

@@ -91,7 +91,7 @@ export default function MyJobDetails() {
   // ✅ Accept / Reject Applicant
   const updateStatus = async (
     applicantId: string,
-    status: "accepted" | "rejected"
+    status: "accepted" | "rejected" | "reviewing"
   ) => {
     setIsUpdating(true);
     const res = await service.fetcher(
@@ -285,7 +285,7 @@ export default function MyJobDetails() {
                   </div>
                   <span
                     className={`text-xs px-2 py-0.5 rounded-full ${
-                      a.status === "pending"
+                      a.status === "pending" || a.status === "reviewing"
                         ? "bg-yellow-100 text-yellow-700"
                         : a.status === "accepted"
                         ? "bg-green-100 text-green-700"
@@ -559,6 +559,13 @@ export default function MyJobDetails() {
                 className="flex-1 bg-red-600 text-white py-2 rounded hover:bg-red-700 transition"
               >
                 {isUpdating ? "Updating..." : "Reject"}
+              </button>
+
+              <button
+                onClick={() => updateStatus(selected._id, "reviewing")}
+                className="flex-1 bg-red-600 text-white py-2 rounded hover:bg-red-700 transition"
+              >
+                {isUpdating ? "Reviewing..." : "Review"}
               </button>
             </div>
           </Card>

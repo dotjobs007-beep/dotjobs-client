@@ -64,7 +64,12 @@ function DropdownMenu({
         >
           Find Talents
         </li>
-        <li className="cursor-pointer hover:underline">About</li>
+        <li
+          className="cursor-pointer hover:underline"
+          onClick={() => handleNavigate("/about")}
+        >
+          About
+        </li>
       </ul>
 
       {/* 🔆 Dark Mode Toggle for Mobile */}
@@ -180,13 +185,15 @@ export default function Header() {
           title="My Profile"
         >
           {userDetails?.avatar ? (
-            <Image
-              src={userDetails.avatar}
-              alt="User Profile"
-              width={36}
-              height={36}
-              className="rounded-full object-cover border border-gray-300 dark:border-gray-700"
-            />
+            <div className="w-9 h-9 rounded-full overflow-hidden border border-gray-300 dark:border-gray-700">
+              <Image
+                src={userDetails.avatar}
+                alt="User Profile"
+                width={36}
+                height={36}
+                className="w-full h-full object-cover"
+              />
+            </div>
           ) : (
             <FiUser size={28} className="text-gray-600 dark:text-gray-300" />
           )}

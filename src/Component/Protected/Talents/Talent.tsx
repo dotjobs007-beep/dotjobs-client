@@ -86,7 +86,7 @@ export default function Talents() {
   };
 
   return (
-    <div className="my-12 px-4 lg:px-32">
+    <div className="my-12 px-4 lg:px-10">
       <div className="text-center mb-6">
         <h1 className="text-3xl font-bold">Browse Talents</h1>
         <p className="text-gray-600">
@@ -99,7 +99,7 @@ export default function Talents() {
           <input
             value={query}
             onChange={(e) => setQuery(e.target.value)}
-            placeholder="Search by name or email"
+            placeholder="Search by name"
             className="flex-1 px-4 py-2 border rounded"
           />
           <input
@@ -157,7 +157,7 @@ export default function Talents() {
                 <div className="flex items-center justify-between">
                   <div>
                     <h3 className="font-semibold">{u.name}</h3>
-                    <p className="text-sm text-gray-500">{u.location}</p>
+                    <p className="text-sm text-gray-500">location: {u.location}</p>
                   </div>
                   <div className="text-right">
                     <p className="text-sm text-gray-200">
@@ -178,36 +178,6 @@ export default function Talents() {
                   ))}
                 </div>
                 <div className="mt-3 flex gap-2">
-                  {u.linkedInProfile && (
-                    <a
-                      href={u.linkedInProfile}
-                      target="_blank"
-                      rel="noreferrer"
-                      className="text-sm text-blue-600"
-                    >
-                      LinkedIn
-                    </a>
-                  )}
-                  {u.githubProfile && (
-                    <a
-                      href={u.githubProfile}
-                      target="_blank"
-                      rel="noreferrer"
-                      className="text-sm text-blue-600"
-                    >
-                      GitHub
-                    </a>
-                  )}
-                  {u.xProfile && (
-                    <a
-                      href={u.xProfile}
-                      target="_blank"
-                      rel="noreferrer"
-                      className="text-sm text-blue-600"
-                    >
-                      X
-                    </a>
-                  )}
                   <button
                     onClick={() => handleNavigateToTalents(u)}
                     className="text-sm text-gray-700"

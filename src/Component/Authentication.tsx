@@ -36,14 +36,12 @@ useEffect(() => {
 
         // Get Firebase ID Token
         const token = await result.user.getIdToken();
-        console.log("Firebase ID Token (Email Link):", token);
 
         // Send token to your backend to get your JWT
         await sendTokenToBackend(token);
 
         setUser(result.user);
       } catch (err) {
-        console.error("Email link sign-in error:", err);
       }
     }
   };
@@ -77,10 +75,7 @@ useEffect(() => {
     try {
       const result = await signInWithPopup(auth, googleProvider);
       const token = await result.user.getIdToken();
-      console.log("Firebase ID Token (Google):", token);
             const res = await sendTokenToBackend(token);
-      console.log("response", res)
-      console.log(result)
       setUser(result.user);
     } catch (err) {
       console.error(err);
@@ -92,13 +87,9 @@ const handleTwitterLogin = async () => {
   try {
     const result = await signInWithPopup(auth, twitterProvider);
     const token = await result.user.getIdToken();
-    console.log("Firebase ID Token (Twitter):", token);
     const res = await sendTokenToBackend(token);
-    console.log("response", res);
     setUser(result.user);
-  } catch (err: any) {
-    console.error("Twitter login error:", err);
-    
+  } catch (err: any) {    
     if (err.code === 'auth/account-exists-with-different-credential') {
       // Extract the email from the error
       const email = err.customData?.email;
@@ -153,7 +144,6 @@ const sendTokenToBackend = async (firebaseToken: string) => {
         authorization: `Bearer ${firebaseToken}`,
       },
     });
-    console.log("Backend response:", response.data);
   } catch (err) {
     console.error("Backend error:", err);
   }

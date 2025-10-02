@@ -21,8 +21,6 @@ export function usePolkadotWallet() {
     try {
       const { web3Enable, web3Accounts } = await import("@polkadot/extension-dapp");
       const extensions = await web3Enable("My DApp");
-      console.log("Detected extensions:", extensions.length);
-
       if (extensions.length === 0) {
         setWalletMissing(true);
         return { walletAddress: null, walletMissing: true, isMobile };

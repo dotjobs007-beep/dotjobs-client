@@ -121,20 +121,23 @@ export default function Hero() {
       </div>
 
       {/* Hero Content */}
-      <div className="flex items-center justify-center gap-4 px-10 lg:pt-[8rem] pt-[4rem] text-white flex-col lg:flex-row animate-fadeUp">
+      <div className="flex items-center justify-center gap-4 px-2  lg:pt-[8rem] pt-[4rem] text-white flex-col lg:flex-row animate-fadeUp">
         <div className="flex-1 lg:w-4/5 text-center lg:text-left">
           <h1 className="lg:text-4xl text-[14px] font-bold mb-2 animate-fadeUp delay-100">
-            Find your dream job in <br /> Polkadot Ecosystem
+            Find your dream job in the
           </h1>
-          <p className="mt-2 animate-fadeUp delay-200">
-            Explore opportunities in the decentralised web, connecting talent
-            with innovative projects building future.
+          <h1 className="lg:text-4xl text-[14px] mt-4 font-bold mb-2 animate-fadeUp delay-100">
+            Polkadot and Kusama Ecosystem
+          </h1>
+          <p className="mt-4 text-sm animate-fadeUp delay-200">
+            Explore opportunities in the decentralized web, connecting talent
+            with innovative projects and teams building the future.
           </p>
         </div>
       </div>
 
       {/* Search Bar */}
-      <div className="mx-6 mb-4 p-4 animate-fadeUp lg:px-0 z-[999]">
+      <div className="mx-2 lg:mx-6 md:mx-4 mb-4 animate-fadeUp lg:px-0 z-[999]">
         <div className="relative w-full lg:w-1/2 mb-[4rem]">
           <FiSearch className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400" />
           <input
@@ -142,7 +145,7 @@ export default function Hero() {
             // value={query}
             onChange={(e) => fetchSearchResults(e.target.value)}
             placeholder="Search for jobs, talents, companies..."
-            className="w-full pl-12 pr-4 py-3 rounded-md text-14 text-gray-800 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-white shadow-lg bg-white"
+            className="w-full pl-12 pr-4 py-3 rounded-md my-10 text-14 text-gray-800 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-white shadow-lg bg-white"
           />
 
           {/* Dropdown */}

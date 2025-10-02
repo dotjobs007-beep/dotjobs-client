@@ -37,8 +37,6 @@ export default function useSignupLogic() {
       const res: IApiResponse<any> = await service.fetcher("/user/auth", "POST", {
         headers: { authorization: `Bearer ${token}` },
       });
-      console.log("[Auth] Server response:", res);
-
       if (res.code === 200 || res.code === 201) {
         const { token } = res.data || {};
         localStorage.setItem("dottoken", token);
@@ -92,8 +90,6 @@ export default function useSignupLogic() {
 
   /** ---------------- Twitter Signup ---------------- **/
   const handleTwitterSignup = async () => {
-    console.log("[Twitter] Signup start");
-
     if (inApp) {
       return toast.error("Please open this page in Safari/Chrome to sign up.");
     }

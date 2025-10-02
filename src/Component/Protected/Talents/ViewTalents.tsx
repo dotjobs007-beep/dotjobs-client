@@ -72,15 +72,6 @@ export default function TalentDetails() {
                     <span className="text-sm">{userDetails.name}</span>
                   </div>
                   <div className="flex justify-between">
-                    <span className="font-medium">Email</span>
-                    <span className="text-sm flex items-center gap-2">
-                      {userDetails.email}
-                      {userDetails.email_verified && (
-                        <Verified className="inline-block ml-1 text-green-400" />
-                      )}
-                    </span>
-                  </div>
-                  <div className="flex justify-between">
                     <span className="font-medium">Gender</span>
                     <span className="text-sm">{userDetails.gender || "—"}</span>
                   </div>
@@ -103,8 +94,8 @@ export default function TalentDetails() {
                     </span>
                   </div>
                   <div className="flex justify-between">
-                    <span className="font-medium">Member since</span>
-                    <span className="text-sm">{formatDate(userDetails.createdAt)}</span>
+                    <span className="font-medium">Joined on: </span>
+                    <span className="text-sm ml-2">{formatDate(userDetails.createdAt)}</span>
                   </div>
                 </div>
 

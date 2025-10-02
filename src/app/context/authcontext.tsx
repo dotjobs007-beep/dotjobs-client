@@ -76,7 +76,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
     // If no wallet address and mobile with wallet missing — show mobile deep link options
     if (!result.walletAddress && result.walletMissing && result.isMobile) {
-      console.log("Mobile with no wallet - show mobile connect options");
       setShowMobileWalletConnect(true);
     }
 
@@ -111,7 +110,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       toast.error(response.message);
     }
 
-    console.log("Wallet connected response:", response);
     setConnectingWallet(false);
     setIsWalletConnected(true);
     setCtxWalletAddress(walletAddress);

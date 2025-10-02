@@ -150,7 +150,7 @@ export interface IApplicantUser {
 // -----------------------------
 // ✅ Job Applicant Record
 // -----------------------------
-export type ApplicationStatus = "pending" | "accepted" | "rejected";
+export type ApplicationStatus = "pending" | "accepted" | "rejected" | "reviewing";
 export interface IJobApplicant {
   _id: string;
   jobId: string;

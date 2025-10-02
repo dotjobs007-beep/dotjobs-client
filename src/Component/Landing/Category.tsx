@@ -57,7 +57,7 @@ export function CategoryCard({
   return (
     <div
       ref={ref}
-      className={`rounded-lg overflow-hidden flex flex-col items-center justify-between h-20 ${
+      className={`rounded-lg overflow-hidden flex flex-col pl-4 lg:pl-0 md:pl-0 lg:items-center items-start justify-between h-20 ${
         theme === "dark" ? "bg-[#261933]" : "bg-[#734A98]"
       }
         transform transition-all duration-700 ease-out
@@ -67,7 +67,7 @@ export function CategoryCard({
       onClick={() => navigateToCategory(label)}
     >
       {/* Label Section */}
-      <div className="w-full text-center py-5 flex justify-center items-center gap-2">
+      <div className="w-full lg:text-center py-5 flex lg:justify-center lg:items-center gap-2">
         {icon}
         <p className="text-[16px] font-bold text-gray-700">{label}</p>
       </div>

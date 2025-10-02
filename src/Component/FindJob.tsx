@@ -105,7 +105,7 @@ export default function Jobs() {
       </div>
 
       {/* FILTER CARD */}
-      <Card className="p-6 w-full bg-white shadow-md rounded-xl space-y-6 sticky top-16 z-40">
+      <Card className="p-6 w-full bg-white shadow-md rounded-xl space-y-6 lg:sticky top-16 z-40">
         {/* SEARCH */}
         <div className="flex flex-col lg:flex-row gap-4 w-full">
           <input
@@ -124,7 +124,8 @@ export default function Jobs() {
         </div>
 
         {/* INLINE DROPDOWNS */}
-        <div className="flex flex-wrap gap-4 items-center">
+        {/* INLINE DROPDOWNS */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 w-full">
           {/* Employment Type */}
           <div className="flex flex-col text-sm">
             <label className="mb-1 font-medium">Employment Type</label>
@@ -166,7 +167,7 @@ export default function Jobs() {
           </div>
 
           {/* Salary Min */}
-          <div className="flex flex-col text-sm w-24">
+          <div className="flex flex-col text-sm">
             <label className="mb-1 font-medium">Min Salary</label>
             <input
               type="number"
@@ -177,7 +178,7 @@ export default function Jobs() {
           </div>
 
           {/* Salary Max */}
-          <div className="flex flex-col text-sm w-24">
+          <div className="flex flex-col text-sm">
             <label className="mb-1 font-medium">Max Salary</label>
             <input
               type="number"
@@ -258,5 +259,3 @@ export default function Jobs() {
     </div>
   );
 }
-
-

@@ -19,8 +19,6 @@ class ServiceHelper {
   try {
     // Try to get token from localStorage
     const token = typeof window !== "undefined" ? localStorage.getItem("dottoken") : null;
-    console.log("ServiceHelper.fetcher called with:", { url, method, options, tokenPresent: !!token });
-
     // Merge headers safely
     const headers = {
       "Content-Type": "application/json",
@@ -36,8 +34,6 @@ class ServiceHelper {
       ...Object.fromEntries(Object.entries(options).filter(([k]) => k !== "headers")),
       withCredentials: true, // include cookies
     });
-
-    console.log("ServiceHelper.fetcher response:", response);
 
     return response.data;
   } catch (error: any) {

@@ -3,31 +3,65 @@ import { useAuth } from "@/app/context/authcontext";
 import { FaXTwitter, FaFacebookF, FaTelegram, FaGithub } from "react-icons/fa6";
 
 export default function Footer() {
-  const {theme} = useAuth();
-  
-  const backgroundStyle = theme === "dark"
-    ? "linear-gradient(to bottom, #dbdbdbff, #850335ff, #190330ff)"
-    : "linear-gradient(to bottom, #FFFDFE, #EC1166, #724B99)";
+  const { theme } = useAuth();
+
+  const backgroundStyle =
+    theme === "dark"
+      ? "linear-gradient(to bottom, #dbdbdbff, #850335ff, #190330ff)"
+      : "linear-gradient(to bottom, #FFFDFE, #EC1166, #724B99)";
   return (
     <div
-      className="text-white px-8 py-12 text-center mt-[6rem]"
-      style={{
-        background: backgroundStyle,
-      }}
+      className="text-white px-8 py-2 text-center lg:px-[10rem] md:px-[5rem] lg:text-left w-full bottom-0 left-0"
+      style={{ background: backgroundStyle }}
     >
+      {" "}
       {/* Top Section */}
-      <h1 className="text-[30px] font-[600] text-[#4E009D] mb-3">About Us</h1>
-      <p
-        className="mb-2 font-[800] text-[30px]"
-        style={{ letterSpacing: "-4%", lineHeight: "100%" }}
-      >
-        Find your dream job in Polkadot Ecosystem
-      </p>
-      <p className="mt-[40px] text-[15px]">
-        Explore opportunities in the decentralised web, <br />
-        connecting talent with innovative projects building future.
-      </p>
+      {/* Links */}
+      <div className="flex justify-between gap-6 flex-wrap">
+        <div className="flex flex-col">
+          <a
+            href="/about"
+            className="text-sm text-white underline mt-4 inline-block"
+          >
+            About Us
+          </a>
+          <a
+            href="/about"
+            className="text-sm text-white underline mt-4 inline-block"
+          >
+            Support
+          </a>
+        </div>
+        <div className="flex flex-col">
+          <a
+            href="/services"
+            className="text-sm text-white underline mt-4 inline-block"
+          >
+            Services
+          </a>
 
+          <a
+            href="/services"
+            className="text-sm text-white underline mt-4 inline-block"
+          >
+            Privacy Policy
+          </a>
+        </div>
+        <div className="flex flex-col">
+          <a
+            href="/contact"
+            className="text-sm text-white underline mt-4 inline-block"
+          >
+            Contact
+          </a>
+          <a
+            href="/faq"
+            className="text-sm text-white underline mt-4 inline-block"
+          >
+            FAQ
+          </a>
+        </div>
+      </div>
       {/* Bottom Section - FLEX */}
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6 pt-10">
         {/* Left Column */}
@@ -42,13 +76,6 @@ export default function Footer() {
               className="hover:text-gray-700 text-[22px] text-white"
             >
               <FaXTwitter />
-            </a>
-            <a
-              href="#"
-              aria-label="Facebook"
-              className="hover:text-gray-700 text-[22px] text-white"
-            >
-              <FaFacebookF />
             </a>
             <a
               href="#"

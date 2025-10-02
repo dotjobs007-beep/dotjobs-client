@@ -52,10 +52,7 @@ export default function ActionButtons({
   };
 
   useEffect(() => {
-    console.log(
-      "Wallet Address in ActionButtons in useEffect:",
-      ctxWalletAddress
-    );
+
   }, [ctxWalletAddress]);
 
   const handleNavigate = (path: string) => {
@@ -78,7 +75,6 @@ export default function ActionButtons({
         ) : (
           <button
             onClick={() => {
-                console.log("Connect Wallet button clicked");
                 polkadotWalletConnect();
             }}
             className="px-4 py-2 rounded-lg bg-purple-600 text-[12px] text-white font-medium hover:bg-purple-700 transition-colors"
