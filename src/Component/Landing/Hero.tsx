@@ -186,10 +186,11 @@ export default function Hero() {
                           <Image
                             src={job.logo || ""}
                             alt={job.title}
-                            height={50}
                             width={50}
-                            className="rounded-full"
+                            height={50}
+                            className="rounded-full object-cover w-[50px] h-[50px]"
                           />
+
                           <b className="hover:bg-gray-800 cursor-pointer p-3 rounded-md mb-2 border-b-2 border-gray-200">
                             {job.title} at {job.company_name}
                           </b>
@@ -222,7 +223,7 @@ export default function Hero() {
                             alt={company.title}
                             height={50}
                             width={50}
-                            className="rounded-full"
+                            className="rounded-full object-cover w-[50px] h-[50px]"
                           />
                           <b className="hover:bg-gray-800 cursor-pointer p-3 rounded-md mb-2 border-b-2 border-gray-200">
                             {company.company_name}
@@ -256,7 +257,7 @@ export default function Hero() {
                             alt={user.name}
                             height={50}
                             width={50}
-                            className="rounded-full"
+                            className="rounded-full object-cover w-[50px] h-[50px]"
                           />
                           <b className="hover:bg-gray-800 cursor-pointer p-3 rounded-md mb-2 border-b-2 border-gray-200">
                             {user.name}
