@@ -4,6 +4,7 @@ import Card from "./Card";
 
 interface JobCardProps {
   logo: string;
+  companyName?: string;
   title: string;
   description: string;
   tags: string[];
@@ -16,6 +17,7 @@ interface JobCardProps {
 
 export default function JobCard({
   logo,
+  companyName,
   title,
   description,
   tags,
@@ -51,6 +53,7 @@ export default function JobCard({
       <div className="flex flex-col md:flex-row justify-between items-center w-full gap-4">
         {/* Job Details */}
         <div className="flex flex-col gap-2 text-center md:text-left text-[12px] leading-snug">
+          <b className="text-[13px] text-green-600 block">{companyName}</b>
           <b className="text-[13px] block">{title}</b>
 
           <p className="text-[12px] max-w-xs mx-auto md:mx-0 text-gray-700 line-clamp-3">

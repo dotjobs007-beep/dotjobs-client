@@ -2,7 +2,6 @@
 // import jobs from "@/mock/job.json";
 import Card from "../../Card";
 import Image from "next/image";
-import { useParams } from "next/navigation";
 import { ArrowRight, Bookmark } from "lucide-react"; // ✅ Add icons
 import { useRouter } from "next/navigation";
 import { useJob } from "@/app/context/jobcontext";
@@ -10,8 +9,6 @@ import Link from "next/link";
 import { getRelativeTime } from "@/utils/relativeTime";
 
 export default function ViewJobDetails() {
-  const params = useParams(); // ✅ Get params on client
-  // const job = jobs.find((j) => String(j.id) === params?.id);
   const router = useRouter();
 
   const { jobDetails } = useJob();

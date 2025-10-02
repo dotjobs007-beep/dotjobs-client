@@ -1,20 +1,33 @@
 "use client";
 
 import { useAuth } from "@/app/context/authcontext";
+import { useJob } from "@/app/context/jobcontext";
 import Image from "next/image";
 import { useEffect, useRef, useState } from "react";
+import { GrUserManager } from "react-icons/gr";
+import { IoMegaphoneSharp } from "react-icons/io5";
+import { MdDesignServices, MdDeveloperMode } from "react-icons/md";
+import { TfiWrite } from "react-icons/tfi";
+import { useRouter } from "next/navigation";
 
 type CategoryCardProps = {
-  imageSrc: any;
+  icon: React.ReactNode;
   alt: string;
   label: string;
   delay?: number; // Stagger delay
 };
 
-export function CategoryCard({ imageSrc, alt, label, delay = 0 }: CategoryCardProps) {
+export function CategoryCard({
+  icon,
+  alt,
+  label,
+  delay = 0,
+}: CategoryCardProps) {
   const ref = useRef<HTMLDivElement | null>(null);
   const [isVisible, setIsVisible] = useState(false);
-  const {theme } = useAuth();
+  const { theme } = useAuth();
+  const { setCategory } = useJob();
+  const router = useRouter();
 
   useEffect(() => {
     const observer = new IntersectionObserver(
@@ -35,46 +48,62 @@ export function CategoryCard({ imageSrc, alt, label, delay = 0 }: CategoryCardPr
     };
   }, []);
 
+  const navigateToCategory = (label: string) => {
+    // Logic to navigate to category page
+    setCategory(label);
+    router.push("/jobs");
+  }
+
   return (
     <div
       ref={ref}
-      className={`rounded-lg overflow-hidden flex flex-col items-center justify-between h-56 ${theme === "dark" ? "bg-[#261933]" : "bg-[#734A98]"}
+      className={`rounded-lg overflow-hidden flex flex-col items-center justify-between h-20 ${
+        theme === "dark" ? "bg-[#261933]" : "bg-[#734A98]"
+      }
         transform transition-all duration-700 ease-out
         ${isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-8"}
-        hover:scale-105 hover:shadow-2xl shadow-lg`}
+        hover:scale-105 hover:shadow-2xl shadow-lg cursor-pointer`}
       style={{ transitionDelay: `${delay}ms` }}
+      onClick={() => navigateToCategory(label)}
     >
-      {/* Image Section */}
-      <div className="flex items-center justify-center flex-1 p-4">
-        <Image
-          src={imageSrc}
-          alt={alt}
-          width={220}
-          height={220}
-          className="object-contain max-h-40"
-        />
-      </div>
-
       {/* Label Section */}
-      <div className="w-full text-center py-2 bg-gray-50">
+      <div className="w-full text-center py-5 flex justify-center items-center gap-2">
+        {icon}
         <p className="text-[16px] font-bold text-gray-700">{label}</p>
       </div>
     </div>
   );
 }
 
-
-
 // Main Category component
 export default function Category() {
   const categories = [
-    { imageSrc: "https://res.cloudinary.com/dk06cndku/image/upload/v1758747694/image1_kij58k.png", alt: "Category 1", label: "Design" },
-    { imageSrc: "https://res.cloudinary.com/dk06cndku/image/upload/v1758747694/image2_u3ffv1.png", alt: "Category 2", label: "Development" },
-    { imageSrc: "https://res.cloudinary.com/dk06cndku/image/upload/v1758747694/image3_uuhtqb.png", alt: "Category 3", label: "Marketing" },
-    { imageSrc: "https://res.cloudinary.com/dk06cndku/image/upload/v1758747694/image4_kjvrey.png", alt: "Category 4", label: "Writing" },
+    {
+      icon: <MdDeveloperMode className="text-[30px] text-[#CB2174]" />,
+      alt: "Category 1",
+      label: "Development",
+    },
+    {
+      icon: <MdDesignServices className="text-[30px] text-[#CB2174]" />,
+      alt: "Category 2",
+      label: "Design",
+    },
+    {
+      icon: <GrUserManager className="text-[30px] text-[#CB2174]" />,
+      alt: "Category 3",
+      label: "Management",
+    },
+    {
+      icon: <IoMegaphoneSharp className="text-[30px] text-[#CB2174]" />,
+      alt: "Category 4",
+      label: "Marketing & Advertising",
+    },
+    {
+      icon: <TfiWrite className="text-[30px] text-[#CB2174]" />,
+      alt: "Category 5",
+      label: "Writing",
+    },
   ];
-
-
 
   return (
     <div className="mt-20 px-4">
@@ -82,18 +111,19 @@ export default function Category() {
         Browse By Category
       </h1>
 
-      <div className={`grid gap-6 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-4`}>
+      <div
+        className={`grid gap-6 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-4`}
+      >
         {categories.map((cat, idx) => (
           <CategoryCard
             key={idx}
-            imageSrc={cat.imageSrc}
+            icon={cat.icon}
             alt={cat.alt}
             label={cat.label}
             delay={idx * 150} // stagger animation
           />
         ))}
       </div>
-
     </div>
   );
 }

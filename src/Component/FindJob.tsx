@@ -15,6 +15,7 @@ import { useJob } from "@/app/context/jobcontext";
 
 export default function Jobs() {
   const [query, setQuery] = useState("");
+  const {companyName, category} = useJob();
   const [employmentType, setEmploymentType] = useState("");
   const [workArrangement, setWorkArrangement] = useState("");
   const [minSalary, setMinSalary] = useState("");
@@ -49,9 +50,12 @@ export default function Jobs() {
       if (workArrangement) params.append("workArrangement", workArrangement);
       if (minSalary) params.append("minSalary", minSalary);
       if (maxSalary) params.append("maxSalary", maxSalary);
+      if (companyName) params.append("companyName", companyName);
+      if (category) params.append("category", category.toLocaleLowerCase());
+      console.log("Fetching jobs with params:", category, params.toString());
 
       const res: IApiResponse<IJobResponse> = await service.fetcher(
-        `/job/fetch-jobs`,
+        `/job/fetch-jobs?${params.toString()}`,
         "GET",
         { withCredentials: true }
       );
@@ -211,6 +215,7 @@ export default function Jobs() {
             <JobCard
               key={job._id}
               logo={job.logo || ""}
+              companyName={job.company_name || ""}
               title={job.title}
               description={job.description}
               tags={[

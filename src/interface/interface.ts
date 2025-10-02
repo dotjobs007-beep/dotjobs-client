@@ -282,3 +282,45 @@ export interface SalaryRange {
   min: number;
   max: number;
 }
+
+export interface IUser  {
+  _id: string;
+  name: string;
+  email: string;
+  role: string;
+  authProvider: string;
+  verified_onchain: boolean;
+  about: string;
+  avatar: string;
+  email_verified: boolean;
+  phoneNumber: string;
+  skill: string[];
+  address: string;
+  onchain_status: string;
+  linkedInProfile?: string;
+  xProfile?: string;
+  githubProfile?: string;
+  jobSeeker: boolean;
+  location?: string;
+  gender?: string;
+  ethnicity?: string;
+  primaryLanguage?: string;
+}
+
+export interface IPublicService {
+  job: IJobsDetails;
+  user: IUser[];
+  page: number;
+  limit: number;
+  sortBy?: string;
+}
+
+export interface IJobsDetails {
+  data : IJob[]
+  pagination: {
+    totalJobs: number
+    totalPages: number
+    currentPage: number
+    pageSize: number
+  }
+}
