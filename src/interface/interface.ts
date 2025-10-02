@@ -305,6 +305,7 @@ export interface IUser  {
   gender?: string;
   ethnicity?: string;
   primaryLanguage?: string;
+  createdAt: string;
 }
 
 export interface IPublicService {

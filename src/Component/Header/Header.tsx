@@ -20,7 +20,6 @@ import { s } from "framer-motion/client";
 import { openWallet } from "../OpenNovaWallet";
 import ActionButtons from "./ActionButtont";
 
-
 /* ===========================
    Dropdown Menu (Mobile)
 =========================== */
@@ -54,12 +53,17 @@ function DropdownMenu({
           My Jobs
         </li>
         <li
-          onClick={() => handleNavigate("/dashboard/my-applications")}
+          onClick={() => handleNavigate("/jobs/my_application")}
           className="cursor-pointer hover:underline"
         >
           My Applications
         </li>
-        <li className="cursor-pointer hover:underline">Find Talents</li>
+        <li
+          className="cursor-pointer hover:underline"
+          onClick={() => handleNavigate("/jobs/talents")}
+        >
+          Find Talents
+        </li>
         <li className="cursor-pointer hover:underline">About</li>
       </ul>
 
@@ -95,7 +99,7 @@ export default function Header() {
   const router = useRouter();
 
   const closeMenu = () => setMenuOpen(false); // ✅ new helper
-  const {theme} = useAuth();
+  const { theme } = useAuth();
 
   useEffect(() => {
     setMenuOpen(false);
@@ -108,7 +112,11 @@ export default function Header() {
   };
 
   return (
-    <header className={`fixed top-0 left-0 w-full z-50 flex items-center justify-between p-6 lg:px-[3rem] text-foreground h-16 ${theme === "dark" ? "bg-[#261933]" : "bg-white"}`}>
+    <header
+      className={`fixed top-0 left-0 w-full z-50 flex items-center justify-between p-6 lg:px-[3rem] text-foreground h-16 ${
+        theme === "dark" ? "bg-[#261933]" : "bg-white"
+      }`}
+    >
       <div className="flex justify-between">
         <div
           className="text-2xl cursor-pointer font-bold"
@@ -143,7 +151,7 @@ export default function Header() {
           </li>
           <li
             className="cursor-pointer hover:underline"
-            onClick={() => handleNavigate("/jobs/find_talents")}
+            onClick={() => handleNavigate("/jobs/talents")}
           >
             Find Talents
           </li>
@@ -221,9 +229,7 @@ export default function Header() {
         )}
       </div>
 
-      <WalletModal
-        onClose={() => setShowMobileWalletConnect(false)}
-      />
+      <WalletModal onClose={() => setShowMobileWalletConnect(false)} />
       <Spinner isLoading={connectingWallet} />
     </header>
   );

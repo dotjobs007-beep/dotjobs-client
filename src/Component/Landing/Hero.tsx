@@ -12,6 +12,7 @@ import {
 } from "@/interface/interface";
 import { useJob } from "@/app/context/jobcontext";
 import { useRouter } from "next/navigation";
+import { useUser } from "@/app/context/usercontext";
 
 export default function Hero() {
   const [query, setQuery] = useState("");
@@ -21,8 +22,9 @@ export default function Hero() {
   const [companies, setCompanies] = useState<IJobsDetails>({} as IJobsDetails);
   const [users, setUsers] = useState<IUser[]>([]);
   const [loading, setLoading] = useState(false);
-  const { setJobDetails, setCompanyName } = useJob();
+  const { setJobDetails, setCompanyName, setJobQuery } = useJob();
   const router = useRouter();
+  const { setUserDetails, setUserQuery } = useUser();
 
   const backgroundStyle =
     theme === "dark"
@@ -81,9 +83,23 @@ export default function Hero() {
     router.push(`/jobs/${selectedJob._id}`);
   };
 
+  const navigateWithQuery = (query: string) => {
+    setJobQuery(query);
+    router.push(`/jobs`);
+  };
   const navigateCompany = (companyName: string) => {
     setCompanyName(companyName);
     router.push(`/jobs`);
+  };
+
+  const navigateUser = (user: IUser) => {
+    setUserDetails(user);
+    router.push(`/jobs/talents/${user._id}`);
+  };
+
+  const navigateUserQuery = (query: string) => {
+    setUserQuery(query);
+    router.push(`/jobs/talents`);
   };
 
   return (
@@ -176,6 +192,13 @@ export default function Hero() {
                           </b>
                         </div>
                       ))}
+
+                      <b
+                        className="text-center flex justify-center text-[#680334] cursor-pointer"
+                        onClick={() => navigateWithQuery(query)}
+                      >
+                        View More
+                      </b>
                     </div>
                   ))}
                 {activeTab === "companies" &&
@@ -203,6 +226,13 @@ export default function Hero() {
                           </b>
                         </div>
                       ))}
+
+                      <b
+                        className="text-center flex justify-center text-[#680334] cursor-pointer"
+                        onClick={() => navigateCompany(query)}
+                      >
+                        View More
+                      </b>
                     </div>
                   ))}
                 {activeTab === "users" &&
@@ -213,7 +243,11 @@ export default function Hero() {
                   ) : (
                     <div>
                       {users.map((user: IUser, idx: number) => (
-                        <div key={idx} className="flex items-center gap-2 mb-2">
+                        <div
+                          key={idx}
+                          className="flex items-center gap-2 mb-2"
+                          onClick={() => navigateUser(user)}
+                        >
                           <Image
                             src={user.avatar || ""}
                             alt={user.name}
@@ -226,6 +260,13 @@ export default function Hero() {
                           </b>
                         </div>
                       ))}
+
+                      <b
+                        className="text-center flex justify-center text-[#680334] cursor-pointer"
+                        onClick={() => navigateUserQuery(query)}
+                      >
+                        View More
+                      </b>
                     </div>
                   ))}
               </div>

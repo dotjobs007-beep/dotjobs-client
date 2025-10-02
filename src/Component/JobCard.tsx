@@ -1,6 +1,7 @@
 "use client";
 import Image from "next/image";
 import Card from "./Card";
+import { useAuth } from "@/app/context/authcontext";
 
 interface JobCardProps {
   logo: string;
@@ -27,72 +28,72 @@ export default function JobCard({
   onClick = () => {},
   buttonText = "Apply Now",
 }: JobCardProps) {
+
+  const {theme} = useAuth();
   return (
     <Card
       className="
-        flex flex-col md:flex-row
-        md:items-center md:justify-between
+        grid grid-cols-1 md:grid-cols-[4fr_1fr]
         gap-4 mt-6 px-4 py-3
         shadow-sm
+        items-start
+        w-full
       "
     >
-      {/* ✅ Avatar Logo */}
-      <div className="flex justify-center md:justify-start">
-        <div className="w-12 h-12 rounded-full overflow-hidden bg-gray-100">
-          <Image
-            src={logo}
-            alt={`${title} company logo`}
-            width={48}
-            height={48}
-            className="object-cover w-full h-full"
-          />
+      {/* ✅ Avatar + Details */}
+      <div className="flex flex-col gap-2 text-[12px] leading-snug min-w-0">
+        <div className="flex items-center gap-3">
+          <div className="w-12 h-12 rounded-full overflow-hidden bg-gray-100 shrink-0">
+            <Image
+              src={logo}
+              alt={`${title} company logo`}
+              width={48}
+              height={48}
+              className="object-cover w-full h-full"
+            />
+          </div>
+          <div className="min-w-0">
+            <b className={`text-[13px] ${theme === "dark" ? "text-[#F02A74]" : "text-[#4A3063]"} block truncate`}>{companyName}</b>
+            <b className="text-[13px] text-white block truncate">{title}</b>
+          </div>
+        </div>
+
+        <p className="text-[12px] text-white break-words">
+          {description}
+        </p>
+
+        <div className="flex flex-wrap gap-4">
+          {/* Salary Range */}
+          <p className="text-[12px] text-white font-medium">
+            Salary:{" "}
+            {salaryRange
+              ? `${salaryRange.min} - ${salaryRange.max} ${salaryType?.toLocaleUpperCase()}`
+              : "Not specified"}
+          </p>
+
+          {/* Applicant Count */}
+          {applicantCount !== undefined && (
+            <p className="text-[12px] text-white font-medium">
+              Applicants: {applicantCount}
+            </p>
+          )}
+        </div>
+
+        {/* Job Tags */}
+        <div className="flex flex-wrap gap-2 text-[11px] font-medium">
+          {tags.map((tag, index) => (
+            <span
+              key={index}
+              className="bg-gray-200 text-gray-600 px-2 py-1 rounded-full"
+            >
+              {tag}
+            </span>
+          ))}
         </div>
       </div>
 
-      {/* Details + Button */}
-      <div className="flex flex-col md:flex-row justify-between items-center w-full gap-4">
-        {/* Job Details */}
-        <div className="flex flex-col gap-2 text-center md:text-left text-[12px] leading-snug">
-          <b className="text-[13px] text-green-600 block">{companyName}</b>
-          <b className="text-[13px] block">{title}</b>
-
-          <p className="text-[12px] max-w-xs mx-auto md:mx-0 text-gray-700 line-clamp-3">
-            {description}
-          </p>
-
-          <div className="flex justify-between md:flex-row md:items-center gap-2 md:gap-4">
-            {/* Salary Range */}
-            <p className="text-[12px] text-gray-600 font-medium">
-              Salary:{" "}
-              {salaryRange
-                ? `${salaryRange.min} - ${
-                    salaryRange.max
-                  } ${salaryType?.toLocaleUpperCase()}`
-                : "Not specified"}
-            </p>
-
-            {/* Applicant Count */}
-            {applicantCount !== undefined && (
-              <p className="text-[12px] text-gray-600 font-medium">
-                Applicants: {applicantCount}
-              </p>
-            )}
-          </div>
-
-          {/* Job Tags */}
-          <div className="flex flex-wrap justify-center md:justify-start gap-2 text-[11px] font-medium">
-            {tags.map((tag, index) => (
-              <span
-                key={index}
-                className="bg-gray-200 text-gray-600 px-2 py-1 rounded-full"
-              >
-                {tag}
-              </span>
-            ))}
-          </div>
-        </div>
-
-        {/* Apply Button */}
+      {/* ✅ Fixed-width Apply Button */}
+      <div className="flex justify-end items-start">
         <button
           onClick={onClick}
           className="

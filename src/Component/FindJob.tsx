@@ -14,8 +14,9 @@ import { useRouter } from "next/navigation";
 import { useJob } from "@/app/context/jobcontext";
 
 export default function Jobs() {
-  const [query, setQuery] = useState("");
-  const {companyName, category} = useJob();
+  const { companyName, category, jobQuery } = useJob();
+
+  const [query, setQuery] = useState(jobQuery);
   const [employmentType, setEmploymentType] = useState("");
   const [workArrangement, setWorkArrangement] = useState("");
   const [minSalary, setMinSalary] = useState("");
@@ -52,8 +53,6 @@ export default function Jobs() {
       if (maxSalary) params.append("maxSalary", maxSalary);
       if (companyName) params.append("companyName", companyName);
       if (category) params.append("category", category.toLocaleLowerCase());
-      console.log("Fetching jobs with params:", category, params.toString());
-
       const res: IApiResponse<IJobResponse> = await service.fetcher(
         `/job/fetch-jobs?${params.toString()}`,
         "GET",
@@ -207,7 +206,7 @@ export default function Jobs() {
       </Card>
 
       {/* JOB LIST */}
-      <div className="w-full mt-10 flex flex-col gap-6 min-h-[200px]">
+      <div className="w-full mt-10 grid grid-cols-1 lg:grid-cols-2 gap-6">
         {loading ? (
           <p className="text-center text-gray-500">Loading jobs...</p>
         ) : jobs.length ? (
@@ -259,3 +258,5 @@ export default function Jobs() {
     </div>
   );
 }
+
+

@@ -9,6 +9,8 @@ interface JobContextType {
   setCompanyName: (value: string) => void;
   category: string | null;
   setCategory: (value: string) => void;
+  jobQuery: string;
+  setJobQuery: (value: string) => void;
 }
 
 
@@ -18,9 +20,10 @@ export function JobProvider({ children }: { children: React.ReactNode }) {
   const [jobDetails, setJobDetails] = useState<IJob | null>(null);
   const [companyName, setCompanyName] = useState<string | null>(null);
   const [category, setCategory] = useState<string | null>(null);
+  const [jobQuery, setJobQuery] = useState<string>("");
 
   return (
-    <JobContext.Provider value={{ jobDetails, setJobDetails, companyName, setCompanyName, category, setCategory }}>
+    <JobContext.Provider value={{ jobDetails, setJobDetails, companyName, setCompanyName, category, setCategory, jobQuery, setJobQuery }}>
       {children}
     </JobContext.Provider>
   );
