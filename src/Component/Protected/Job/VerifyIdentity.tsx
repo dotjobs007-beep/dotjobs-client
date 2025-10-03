@@ -2,6 +2,8 @@
 import Card from "@/Component/Card";
 import Image from "next/image";
 import Link from "next/link";
+import assemblyLogo from "../../../../public/images/polkadot_assembly.png";
+import polkadotIdentityLogo from "../../../../public/images/polkadot_identity.png";
 export default function VerifyIdentity() {
   return (
     <Card className="flex flex-col items-center justify-center p-6 max-w-md mx-auto">
@@ -10,7 +12,7 @@ export default function VerifyIdentity() {
 
       <Link href="https://app.polkaidentity.com/" target="_blank" className="flex items-center border p-3 rounded-lg mt-4 cursor-pointer">
         <Image
-          src="/images/polkadot_identity.png"
+          src={polkadotIdentityLogo}
           alt="Verify Identity"
           width={30}
           height={30}
@@ -22,7 +24,7 @@ export default function VerifyIdentity() {
       <Link href="https://polkadot.polkassembly.io/" target="_blank" className="flex items-center mt-4 cursor-pointer">
       <div className="flex items-center border p-3 rounded-lg mt-4 cursor-pointer">
         <Image
-          src="/images/polkadot_assembly.png"
+          src={assemblyLogo}
           alt="Verify Identity"
           width={30}
           height={30}
