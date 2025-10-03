@@ -58,7 +58,7 @@ export function CategoryCard({
     <div
       ref={ref}
       className={`rounded-lg overflow-hidden flex flex-col pl-4 lg:pl-0 md:pl-0 lg:items-center items-start justify-between h-20 ${
-        theme === "dark" ? "bg-[#261933]" : "bg-[#734A98]"
+        theme === "dark" ? "bg-[#1A0330]" : "bg-[#734A98]"
       }
         transform transition-all duration-700 ease-out
         ${isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-8"}
