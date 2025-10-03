@@ -68,7 +68,7 @@ select{
   transition: background 0.3s, color 0.3s, border-color 0.3s;
 }
 
-button:not(.theme-toggle) {
+button:not(.theme-toggle, .password) {
   background-color: var(--button-bg);
   color: var(--button-text);
   padding: 0.5rem 1rem;
@@ -80,11 +80,11 @@ button:not(.theme-toggle) {
 }
 
 
-button:not(.theme-toggle):hover {
+button:not(.theme-toggle, .password):hover {
   background-color: var(--button-hover);
 }
 
-button:hover {
+button:hover:not(.password) {
   background-color: var(--button-hover);
 }
 

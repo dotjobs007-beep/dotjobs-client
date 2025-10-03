@@ -6,13 +6,13 @@ import { CheckCircle, Users, Shield, BookOpen } from "lucide-react";
 export default function About() {
   const { theme } = useAuth();
   return (
-    <section className="w-full py-16 px-6 lg:px-24 bg-gray-50 text-gray-800">
+    <section className={`w-full py-16 px-6 lg:px-24  ${theme === "dark" ? "text-white" : "text-gray-900"}`}>
       {/* Header */}
       <div className="max-w-3xl mx-auto text-center mb-12">
         <h2 className={`text-3xl lg:text-4xl font-bold mb-4 ${theme === "dark" ? "text-[#7F13EC]" : "text-[#AE1E67]"}`}>
           About DotJobs
         </h2>
-        <p className="text-lg text-gray-600">
+        <p className="text-lg ">
           Dotjobs is an open-source job and talent platform built for the
           <span className={`font-semibold ${theme === "dark" ? "text-[#7F13EC]" : "text-[#AE1E67]"}`}>
             {" "}Polkadot and Kusama ecosystem
@@ -24,7 +24,7 @@ export default function About() {
 
       {/* Main Content */}
       <div className="max-w-5xl mx-auto space-y-12">
-        <p className="text-lg leading-relaxed text-gray-700 text-center">
+        <p className="text-lg leading-relaxed text-center">
           We believe the future of work is decentralized, collaborative, and
           borderless. Dot Jobs is more than a job board  it is a{" "}
           <span className={`font-semibold ${theme === "dark" ? "text-[#7F13EC]" : "text-[#AE1E67]"}`}>

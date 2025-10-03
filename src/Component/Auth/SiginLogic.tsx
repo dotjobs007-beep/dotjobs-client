@@ -44,7 +44,7 @@ export default function useSignInLogic() {
         localStorage.setItem("dottoken", token);
         localStorage.setItem("isLoggedIn", "true");
         setIsLoggedIn(true);
-        router.push("/dashboard/profile");
+        router.push("/jobs");
       } else {
         toast.error(res.message);
       }

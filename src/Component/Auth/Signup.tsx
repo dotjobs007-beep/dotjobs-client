@@ -2,9 +2,11 @@
 import Image from "next/image";
 import { FcGoogle } from "react-icons/fc";
 import { SiX } from "react-icons/si";
+import { FiEye, FiEyeOff } from "react-icons/fi";
 import Spinner from "../Spinner";
 import useSignupLogic from "./SignupLogic";
 import { useAuth } from "@/app/context/authcontext";
+import { useState } from "react";
 
 export default function Signup() {
   const {
@@ -17,14 +19,16 @@ export default function Signup() {
     handleTwitterSignup,
   } = useSignupLogic(); 
 
-  const {theme} = useAuth();
+  const { theme } = useAuth();
+  const [showPassword, setShowPassword] = useState(false);
 
-    const img = theme === "dark"
-    ? "/Images/auth_img_dark.png"
-    : "/Images/auth_img_light.png";
+  const img =
+    theme === "dark"
+      ? "/Images/auth_img_dark.png"
+      : "/Images/auth_img_light.png";
 
   return (
-    <div className="flex lg:h-[89vh] overflow-hidden mt-5">
+    <div className="flex lg:h-[89vh] overflow-hidden mt-8">
       {inApp && (
         <div className="w-full bg-yellow-100 text-yellow-900 p-3 text-center">
           It looks like you are in an in-app browser. For sign-up please
@@ -48,22 +52,37 @@ export default function Signup() {
           }}
           className="flex flex-col gap-5"
         >
+          {/* Email */}
           <input
             type="email"
             placeholder="Email"
-            className="border border-gray-300 rounded-lg p-4 shadow-sm focus:ring-2 focus:ring-green-500 focus:outline-none transition"
+            className="border border-gray-300 rounded-lg p-4 shadow-sm "
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             required
           />
-          <input
-            type="password"
-            placeholder="Password"
-            className="border border-gray-300 rounded-lg p-4 shadow-sm focus:ring-2 focus:ring-green-500 focus:outline-none transition"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            required
-          />
+
+          {/* Password with Eye Toggle */}
+          <div className="relative">
+            <input
+              type={showPassword ? "text" : "password"}
+              placeholder="Password"
+              className="w-full border border-gray-300 rounded-lg p-4 shadow-sm pr-12"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              required
+            />
+            <button
+              type="button"
+              onClick={() => setShowPassword(!showPassword)}
+              className="password absolute inset-y-0 right-3 flex items-center text-gray-500 hover:text-gray-700"
+              tabIndex={-1}
+            >
+              {showPassword ? <FiEyeOff size={22} /> : <FiEye size={22} />}
+            </button>
+          </div>
+
+          {/* Submit */}
           <button
             type="submit"
             className="bg-green-600 text-white p-4 rounded-lg hover:bg-green-700 flex justify-center items-center gap-2 transition"
@@ -72,6 +91,7 @@ export default function Signup() {
           </button>
         </form>
 
+        {/* Divider */}
         <div className="flex items-center my-6">
           <hr className="flex-1 border-t" />
           <span className="px-2 text-gray-400">or</span>
@@ -97,6 +117,7 @@ export default function Signup() {
           </div>
         </div>
 
+        {/* Already have account */}
         <p className="mt-6 text-gray-500">
           Already have an account?{" "}
           <a href="/auth/signin" className="text-blue-500 font-medium">

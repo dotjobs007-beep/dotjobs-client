@@ -6,7 +6,7 @@ import Image from "next/image";
 import { FiUser, FiMenu, FiX } from "react-icons/fi";
 import { usePolkadotWallet } from "../../hooks/usePolkadotWallet";
 import WalletModal from "../WalletModal";
-import { useRouter } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { AppRouterInstance } from "next/dist/shared/lib/app-router-context.shared-runtime";
 import { useAuth } from "@/app/context/authcontext";
 import toast from "react-hot-toast";
@@ -37,35 +37,42 @@ function DropdownMenu({
     closeMenu(); // Close menu on navigation
   };
 
+  const { theme } = useAuth();
+
+    const pathname = usePathname();
+
+  const isActive = (path: string) =>
+    pathname === path ? `${theme === "dark" ? "text-[#7F13EC]" : "text-[#FD2771]"} font-semibold underline` : "";
+
   return (
     <div className="absolute top-full right-0 w-full md:w-[50vw] bg-background text-white dark:bg-gray-900 shadow-md py-4 z-50 animate-slideDown">
       <ul className="flex flex-col gap-3 px-4">
         <li
           onClick={() => handleNavigate("/jobs")}
-          className="cursor-pointer hover:underline"
+          className={`cursor-pointer hover:underline ${isActive("/jobs")}`}
         >
           Find Jobs
         </li>
         <li
           onClick={() => handleNavigate("/jobs/my_jobs")}
-          className="cursor-pointer hover:underline"
+          className={`cursor-pointer hover:underline ${isActive("/jobs/my_jobs")}`}
         >
           My Jobs
         </li>
         <li
           onClick={() => handleNavigate("/jobs/my_application")}
-          className="cursor-pointer hover:underline"
+          className={`cursor-pointer hover:underline ${isActive("/jobs/my_application")}`}
         >
           My Applications
         </li>
         <li
-          className="cursor-pointer hover:underline"
+          className={`cursor-pointer hover:underline ${isActive("/jobs/talents")}`}
           onClick={() => handleNavigate("/jobs/talents")}
         >
           Find Talents
         </li>
         <li
-          className="cursor-pointer hover:underline"
+          className={`cursor-pointer hover:underline ${isActive("/about")}`}
           onClick={() => handleNavigate("/about")}
         >
           About
@@ -105,6 +112,10 @@ export default function Header() {
 
   const closeMenu = () => setMenuOpen(false); // ✅ new helper
   const { theme } = useAuth();
+  const pathname = usePathname();
+
+   const isActive = (path: string) =>
+    pathname === path ? `${theme === "dark" ? "text-[#7F13EC]" : "text-[#FD2771]"} font-semibold underline` : "";
 
   useEffect(() => {
     setMenuOpen(false);
@@ -138,30 +149,30 @@ export default function Header() {
         <ul className="hidden lg:flex gap-6 ml-8 mt-2">
           <li
             onClick={() => handleNavigate("/jobs")}
-            className="cursor-pointer hover:underline"
+            className={`cursor-pointer hover:underline ${isActive("/jobs")}`}
           >
             Find Jobs
           </li>
           <li
             onClick={() => handleNavigate("/jobs/my_jobs")}
-            className="cursor-pointer hover:underline"
+            className={`cursor-pointer hover:underline ${isActive("/jobs/my_jobs")}`}
           >
             My Jobs
           </li>
           <li
             onClick={() => handleNavigate("/jobs/my_application")}
-            className="cursor-pointer hover:underline"
+            className={`cursor-pointer hover:underline ${isActive("/jobs/my_application")}`}
           >
             My Applications
           </li>
           <li
-            className="cursor-pointer hover:underline"
+            className={`cursor-pointer hover:underline ${isActive("/jobs/talents")}`}
             onClick={() => handleNavigate("/jobs/talents")}
           >
             Find Talents
           </li>
           <li
-            className="cursor-pointer hover:underline"
+            className={`cursor-pointer hover:underline ${isActive("/about")}`}
             onClick={() => handleNavigate("/about")}
           >
             About
@@ -204,7 +215,7 @@ export default function Header() {
       <div className="flex lg:hidden">
         <div
           onClick={() => handleNavigate("/dashboard/profile")}
-          className="p-1 cursor-pointer rounded-full hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors"
+          className="p-1 cursor-pointer w-12 h-12 rounded-full hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors"
           title="My Profile"
         >
           {userDetails?.avatar ? (
@@ -213,7 +224,7 @@ export default function Header() {
               alt="User Profile"
               width={36}
               height={36}
-              className="rounded-full object-cover border border-gray-300 dark:border-gray-700"
+              className="rounded-full w-full h-full object-cover border border-gray-300 dark:border-gray-700"
             />
           ) : (
             <FiUser size={28} className="text-gray-600 dark:text-gray-300" />

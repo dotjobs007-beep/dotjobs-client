@@ -7,11 +7,11 @@ export default function Footer() {
 
   const backgroundStyle =
     theme === "dark"
-      ? "linear-gradient(to bottom, #dbdbdbff, #850335ff, #190330ff)"
-      : "linear-gradient(to bottom, #FFFDFE, #EC1166, #724B99)";
+      ? "#1A0330"
+      : "#744A98";
   return (
     <div
-      className="text-white px-8 py-2 text-center lg:px-[10rem] md:px-[5rem] lg:text-left w-full bottom-0 left-0"
+      className="text-white px-8 py-2 text-center lg:px-[10rem] shadow-lg md:px-[5rem] lg:text-left w-full bottom-0 left-0"
       style={{ background: backgroundStyle }}
     >
       {" "}
@@ -34,14 +34,14 @@ export default function Footer() {
         </div>
         <div className="flex flex-col">
           <a
-            href="/services"
+            href="/terms"
             className="text-sm text-white underline mt-4 inline-block"
           >
-            Services
+            Terms of use
           </a>
 
           <a
-            href="/services"
+            href="/privacy"
             className="text-sm text-white underline mt-4 inline-block"
           >
             Privacy Policy

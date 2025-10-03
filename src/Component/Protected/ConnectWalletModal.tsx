@@ -12,8 +12,6 @@ export default function ConnectWalletModal({
   closeModal,
 }: ConnectWalletModalProps) {
   const {
-    connectingWallet,
-    polkadotWalletConnect,
     setShowMobileWalletConnect,
   } = useAuth();
   const router = useRouter();
@@ -25,7 +23,7 @@ export default function ConnectWalletModal({
           onClick={() => {
             // Close overlay click: hide mobile wallet connect and redirect to profile
             setShowMobileWalletConnect(false);
-            router.push("/dashboard/profile");
+            router.back();
           }}
         >
           <motion.div
@@ -49,7 +47,7 @@ export default function ConnectWalletModal({
             <button
               onClick={() => {
                 closeModal();
-                router.push("/dashboard/profile");
+                router.back();
               }}
               className="w-full py-3 rounded-xl bg-purple-600 text-white font-medium hover:bg-purple-700 transition-colors"
             >
