@@ -2,8 +2,6 @@
 import Card from "@/Component/Card";
 import Image from "next/image";
 import Link from "next/link";
-import assemblyLogo from "../../../../public/images/polkadot_assembly.png";
-import polkadotIdentityLogo from "../../../../public/images/polkadot_identity.png";
 export default function VerifyIdentity() {
   return (
     <Card className="flex flex-col items-center justify-center p-6 max-w-md mx-auto">
@@ -12,10 +10,11 @@ export default function VerifyIdentity() {
 
       <Link href="https://app.polkaidentity.com/" target="_blank" className="flex items-center border p-3 rounded-lg mt-4 cursor-pointer">
         <Image
-          src={polkadotIdentityLogo}
+          src="https://res.cloudinary.com/dk06cndku/image/upload/v1759530665/identity_wcsogn.jpg"
           alt="Verify Identity"
-          width={30}
-          height={30}
+          width={50}
+          height={50}
+          className="rounded-full"
         />
 
         <h1 className="ml-3 lg:text-[15px] md:text-[15px] text-[12px]">Verify with Polka Identity</h1>
@@ -24,10 +23,11 @@ export default function VerifyIdentity() {
       <Link href="https://polkadot.polkassembly.io/" target="_blank" className="flex items-center mt-4 cursor-pointer">
       <div className="flex items-center border p-3 rounded-lg mt-4 cursor-pointer">
         <Image
-          src={assemblyLogo}
+          src="https://res.cloudinary.com/dk06cndku/image/upload/v1759530623/assembly_v5uspf.jpg"
           alt="Verify Identity"
-          width={30}
-          height={30}
+          width={50}
+          height={50}
+          className="rounded-full"
         />
 
         <h1 className="ml-3 lg:text-[15px] md:text-[15px] text-[12px]">Verify with Polkassembly</h1>

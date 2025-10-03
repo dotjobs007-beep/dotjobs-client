@@ -72,10 +72,10 @@ function DropdownMenu({
           Find Talents
         </li>
         <li
-          className={`cursor-pointer hover:underline ${isActive("/about")}`}
-          onClick={() => handleNavigate("/about")}
+          className={`cursor-pointer hover:underline ${isActive("/onchain_identity")}`}
+          onClick={() => handleNavigate("/onchain_identity")}
         >
-          About
+          Onchain Identity
         </li>
       </ul>
 
@@ -172,10 +172,10 @@ export default function Header() {
             Find Talents
           </li>
           <li
-            className={`cursor-pointer hover:underline ${isActive("/about")}`}
-            onClick={() => handleNavigate("/about")}
+            className={`cursor-pointer hover:underline ${isActive("/onchain_identity")}`}
+            onClick={() => handleNavigate("/onchain_identity")}
           >
-            About
+            Onchain Identity
           </li>
         </ul>
       </div>
