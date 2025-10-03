@@ -10,7 +10,7 @@ export default function VerifyIdentity() {
 
       <Link href="https://app.polkaidentity.com/" target="_blank" className="flex items-center border p-3 rounded-lg mt-4 cursor-pointer">
         <Image
-          src="https://res.cloudinary.com/dk06cndku/image/upload/v1759530665/identity_wcsogn.jpg"
+          src="https://res.cloudinary.com/dk06cndku/image/upload/v1759530623/assembly_v5uspf.jpg"
           alt="Verify Identity"
           width={50}
           height={50}
@@ -23,7 +23,7 @@ export default function VerifyIdentity() {
       <Link href="https://polkadot.polkassembly.io/" target="_blank" className="flex items-center mt-4 cursor-pointer">
       <div className="flex items-center border p-3 rounded-lg mt-4 cursor-pointer">
         <Image
-          src="https://res.cloudinary.com/dk06cndku/image/upload/v1759530623/assembly_v5uspf.jpg"
+          src="https://res.cloudinary.com/dk06cndku/image/upload/v1759530665/identity_wcsogn.jpg"
           alt="Verify Identity"
           width={50}
           height={50}
