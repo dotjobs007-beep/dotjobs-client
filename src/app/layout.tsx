@@ -33,7 +33,7 @@ export default function RootLayout({
               <Header />
               {/* <header className="p-4 flex justify-end">
         </header> */}
-              <main className="mt-[4rem] min-h-[calc(100vh-8rem)]">
+              <main className="mt-[4rem] min-h-[calc(80vh)]">
                 {children}
                 <Toaster
                   position="top-right"
