@@ -52,7 +52,7 @@ export default function Footer() {
             href="/contact"
             className="text-sm text-white underline mt-4 inline-block"
           >
-            Contact
+            Contacts
           </a>
           <a
             href="/faq"
