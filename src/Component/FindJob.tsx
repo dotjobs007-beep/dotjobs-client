@@ -14,7 +14,7 @@ import { useRouter } from "next/navigation";
 import { useJob } from "@/app/context/jobcontext";
 
 export default function Jobs() {
-  const { companyName, category, jobQuery } = useJob();
+  const { companyName, category, jobQuery, setCategory } = useJob();
 
   const [query, setQuery] = useState(jobQuery);
   const [employmentType, setEmploymentType] = useState("");
@@ -81,7 +81,7 @@ export default function Jobs() {
   useEffect(() => {
     fetchJobs(1);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [category, companyName]);
 
   const handleApplyFilters = () => fetchJobs(1);
   const nextPage = () =>
@@ -126,6 +126,61 @@ export default function Jobs() {
         {/* INLINE DROPDOWNS */}
         {/* INLINE DROPDOWNS */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 w-full">
+          {/* CATEGORY DROPDOWN */}
+          <div className="flex flex-col text-sm">
+            <label className="mb-1 font-medium">Category</label>
+            <select
+              name="category"
+              value={category || ""}
+              onChange={(e) => setCategory(e.target.value)}
+              className="w-full bg-[#FCE9FC] text-gray-800 rounded-lg p-3 focus:outline-none"
+            >
+              <option value="">{category || "Select category"}</option>
+              <optgroup label="Business & Marketing">
+                <option value="marketing_advertising">
+                  Marketing & Advertising
+                </option>
+                <option value="digital marketing">Digital Marketing</option>
+                <option value="social media">Social Media Management</option>
+                <option value="brand management">Brand Management</option>
+                <option value="sales">Sales & Business Development</option>
+                <option value="product management">Product Management</option>
+                <option value="community management">
+                  Community Management & Moderation
+                </option>
+              </optgroup>
+              <optgroup label="Technology & Development">
+                <option value="web development">Web Development</option>
+                <option value="mobile app">Mobile App Development</option>
+                <option value="cybersecurity">Cybersecurity</option>
+                <option value="it support">IT Support & Networking</option>
+                <option value="blockchain">Blockchain Development</option>
+                <option value="blockchain">Smart Contract Development</option>
+                <option value="blockchain">Rust Development</option>
+              </optgroup>
+              <optgroup label="Creative & Design">
+                <option value="graphic design">Graphic Design</option>
+                <option value="uiux">UI/UX Design</option>
+                <option value="video editing">
+                  Video Production & Editing Design
+                </option>
+                <option value="animation">
+                  Animation & Motion Graphics Design
+                </option>
+                <option value="game design">
+                  Game Design & Development Design
+                </option>
+
+                <option value="writing">Writing & Content</option>
+              </optgroup>
+              <optgroup label="Human Resources & Management">
+                <option value="hr recruitment">
+                  HR & Recruitment Management
+                </option>
+                <option value="operations">Operations Management</option>
+              </optgroup>
+            </select>
+          </div>
           {/* Employment Type */}
           <div className="flex flex-col text-sm">
             <label className="mb-1 font-medium">Employment Type</label>

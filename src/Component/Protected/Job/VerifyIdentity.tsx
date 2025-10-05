@@ -1,7 +1,7 @@
 "use client";
 import { useAuth } from "@/app/context/authcontext";
 import Card from "@/Component/Card";
-import { Car } from "lucide-react";
+import { Wallet } from "lucide-react";
 import { useRouter } from "next/dist/client/components/navigation";
 import Image from "next/image";
 import Link from "next/link";
@@ -10,7 +10,7 @@ export default function VerifyIdentity() {
   const { isLoggedIn, isWalletConnected } = useAuth();
   if (!isLoggedIn) {
     router.push("/auth/signin");
-    return null;
+    return;
   }
 
   return (
@@ -69,13 +69,12 @@ export default function VerifyIdentity() {
 export function WalletConnectionNotification() {
   return (
     <Card className="flex flex-col items-center justify-center p-6 max-w-md mx-auto">
-      <Car className="mb-4" size={50} />
+      <Wallet className="mb-4" size={50} />
       <h1 className="lg:text-2xl md:text-2xl text-l font-bold mb-4">
-        Connect Your Wallet
+        Connect Your Polkadot Wallet
       </h1>
       <p className="text-center">
-        Please connect your wallet to verify your identity and proceed with job
-        applications.
+        Please connect your Polkadot wallet to verify your identity.
       </p>
     </Card>
   )

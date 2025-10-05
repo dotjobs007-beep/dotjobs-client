@@ -69,7 +69,7 @@ export function CategoryCard({
       {/* Label Section */}
       <div className="w-full lg:text-center py-5 flex lg:justify-center lg:items-center gap-2">
         {icon}
-        <p className="text-[16px] font-bold text-gray-700">{label}</p>
+        <p className="text-[16px] font-bold text-white">{label}</p>
       </div>
     </div>
   );
