@@ -1,22 +1,29 @@
 "use client";
 import { useAuth } from "@/app/context/authcontext";
 import { motion } from "framer-motion";
+import { useRouter } from "next/navigation";
+import { MdCancel } from "react-icons/md";
 
 export default function OnchainIdentityVerification() {
   const { theme } = useAuth();
   const color = theme === "dark" ? "text-[#7F13EC]" : "text-[#DD0075]";
+  const router = useRouter();
   return (
-    <div className="min-h-screen bg-gray-50 flex justify-center p-6">
+    <div className="min-h-screen flex justify-center p-6">
       <motion.div
         initial={{ opacity: 0, y: 30 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.5 }}
         className="max-w-3xl w-full bg-white shadow-lg rounded-2xl p-8"
       >
-        {/* Page Title */}
-        <h1 className={`text-3xl font-bold text-center ${color} mb-6`}>
+      <div className="flex items-center justify-between mb-6">
+          {/* Page Title */}
+        <h1 className={`text-3xl font-bold text-center ${color}`}>
           Onchain Identity Verification
         </h1>
+
+        <MdCancel className={`text-2xl ${color} cursor-pointer`} onClick={() => router.back()} />
+      </div>
 
         {/* Intro */}
         <p className="text-gray-700 mb-8 text-sm leading-relaxed">
