@@ -54,10 +54,10 @@ export function usePolkadotWallet() {
   };
 
   // Restore previous session if needed
-  // useEffect(() => {
-  //   const saved = localStorage.getItem("polkadotWalletAddress");
-  //   if (saved) setWalletAddress(saved);
-  // }, []);
+  useEffect(() => {
+    const saved = localStorage.getItem("polkadotWalletAddress");
+    if (saved) setWalletAddress(saved);
+  }, []);
 
   return { walletAddress, connectWallet, disconnectWallet, walletMissing, isMobile, initialized };
 }

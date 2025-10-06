@@ -49,10 +49,10 @@ export default function Footer() {
         </div>
         <div className="flex flex-col">
           <a
-            href="/contact"
+            href="/roadmap"
             className="text-sm text-white underline mt-4 inline-block"
           >
-            Contacts
+            Road Map
           </a>
           <a
             href="/faq"
