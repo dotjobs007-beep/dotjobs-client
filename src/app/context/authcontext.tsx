@@ -7,8 +7,8 @@ import { IApiResponse, IUserDetails } from "@/interface/interface";
 import clientLogger from "@/utils/clientLogger";
 import { useRouter } from "next/navigation";
 import router from "next/dist/shared/lib/router/router";
-import { toast } from "react-hot-toast/headless";
 import { usePolkadotWallet } from "@/hooks/usePolkadotWallet";
+import toast from "react-hot-toast";
 
 interface AuthContextType {
   isLoggedIn: boolean;
@@ -67,9 +67,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     const result = await connectWallet();
 
     if (result.walletAddress) {
-      // Handled by effect that watches walletAddress in the hook; we still update context state here
-      setCtxWalletAddress(result.walletAddress);
-      setIsWalletConnected(true);
       setShowMobileWalletConnect(false);
       return;
     }
@@ -108,13 +105,17 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       router.push("/auth/signin");
     } else if (response.status === "error") {
       toast.error(response.message);
+      setConnectingWallet(false);
+      setIsWalletConnected(false);
+      return;
     }
+    setCtxWalletAddress(walletAddress);
+    setIsWalletConnected(true);
 
     setConnectingWallet(false);
     setIsWalletConnected(true);
-    setCtxWalletAddress(walletAddress);
-    
   };
+
 
   return (
     <AuthContext.Provider
