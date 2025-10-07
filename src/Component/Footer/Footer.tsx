@@ -5,10 +5,7 @@ import { FaXTwitter, FaFacebookF, FaTelegram, FaGithub } from "react-icons/fa6";
 export default function Footer() {
   const { theme } = useAuth();
 
-  const backgroundStyle =
-    theme === "dark"
-      ? "#1A0330"
-      : "#744A98";
+  const backgroundStyle = theme === "dark" ? "#1A0330" : "#744A98";
   return (
     <div
       className="text-white px-8 py-2 text-center lg:px-[10rem] shadow-lg md:px-[5rem] lg:text-left w-full bottom-0 left-0"
@@ -71,21 +68,27 @@ export default function Footer() {
           {/* Social Icons */}
           <div className="flex gap-4 mb-2 text-black text-2xl">
             <a
-              href="#"
+              href="https://x.com/dotjobs_online?s=21"
+              target="_blank"
+              rel="noopener noreferrer"
               aria-label="Twitter"
               className="hover:text-gray-700 text-[22px] text-white"
             >
               <FaXTwitter />
             </a>
             <a
-              href="#"
+              href="https://t.me/Dotjobsonline"
+              target="_blank"
+              rel="noopener noreferrer"
               aria-label="Telegram"
               className="hover:text-gray-700 text-[22px] text-white"
             >
               <FaTelegram />
             </a>
             <a
-              href="#"
+              href="https://github.com/dotjobs007-beep"
+              target="_blank"
+              rel="noopener noreferrer"
               aria-label="GitHub"
               className="hover:text-gray-700 text-[22px] text-white"
             >

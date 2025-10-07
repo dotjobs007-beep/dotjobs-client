@@ -3,7 +3,7 @@
 import { useAuth } from "@/app/context/authcontext";
 
 export default function Roadmap() {
-    const { theme } = useAuth();
+  const { theme } = useAuth();
   return (
     <div className="min-h-screen py-16 px-6 lg:px-24">
       <div className="max-w-4xl mx-auto bg-white dark:bg-gray-800 shadow-lg rounded-2xl p-8 lg:p-12">
@@ -26,7 +26,7 @@ export default function Roadmap() {
             </h2>
             <p className="text-gray-700 dark:text-gray-300 mb-2">Laying the foundation</p>
             <ul className="list-disc pl-6 text-gray-700 dark:text-gray-300 space-y-1">
-              <li>Defined the vision and mission for DotJobs.</li>
+              <li>Defined the vision and mission for DotJobs (formerly Freelance Web3)</li>
               <li>Researched the Polkadot & Kusama job landscape.</li>
               <li>Identified key challenges and ecosystem needs.</li>
               <li>Outlined the open-source direction and long-term goals.</li>
@@ -89,10 +89,12 @@ export default function Roadmap() {
             </h2>
             <p className="text-gray-700 dark:text-gray-300 mb-2">Empowering the community</p>
             <ul className="list-disc pl-6 text-gray-700 dark:text-gray-300 space-y-1">
-              <li>Introduced community governance and voting system.</li>
-              <li>Strengthened community building through campaigns and programs.</li>
-              <li>Formed major collaborations across the Polkadot ecosystem.</li>
-              <li>Expanded brand awareness and contributor participation.</li>
+              <li>Develop and integrate DAO-style governance, allowing the community to vote on featured job listings as well as key platform and feature update decisions, all powered by Polkadot technology.</li>
+              <li>Launch the community governance and voting system.</li>
+              <li>Strengthen community building through targeted campaigns and contributor programs.</li>
+              <li>Form strategic collaborations across the Polkadot ecosystem.</li>
+              <li>Expand brand visibility and community participation.</li>
+              <li>Integrate Notifications for “New jobs matching your profile” alerts.</li>
             </ul>
           </section>
 
@@ -101,12 +103,14 @@ export default function Roadmap() {
             <h2 className="text-xl font-semibold text-purple-600 dark:text-purple-400 mb-4">
               Q2 2026 — Freelance & Expansion Phase
             </h2>
-            <p className="text-gray-700 dark:text-gray-300 mb-2">Evolving from jobs to full-scale talent economy</p>
+            <p className="text-gray-700 dark:text-gray-300 mb-2">
+              Evolving from jobs to a full-scale talent economy
+            </p>
             <ul className="list-disc pl-6 text-gray-700 dark:text-gray-300 space-y-1">
-              <li>Began development of the Freelance Marketplace.</li>
-              <li>Introduced categories for remote work, tasks, and bounties.</li>
-              <li>Hosted workshops, educational sessions, and career events.</li>
-              <li>Enhanced platform integrations and ecosystem reach.</li>
+              <li>Begin development of the Freelance Marketplace.</li>
+              <li>Integrate In-Platform Chat for real-time communication between potential employees and employers.</li>
+              <li>Host workshops, educational sessions, and career development events.</li>
+              <li>Enhance platform integrations and expand ecosystem partnerships.</li>
             </ul>
           </section>
 
@@ -117,11 +121,12 @@ export default function Roadmap() {
             </h2>
             <p className="text-gray-700 dark:text-gray-300 mb-2">Delivering the next frontier</p>
             <ul className="list-disc pl-6 text-gray-700 dark:text-gray-300 space-y-1">
-              <li>Completed development and testing of the Freelance Marketplace.</li>
-              <li>Officially launched freelance and bounty modules.</li>
-              <li>Introduced new payment options and on-chain contract workflows.</li>
-              <li>Strengthened user profiles with skill verification and reputation scoring.</li>
-              <li>Collaborated with ecosystem teams to pilot freelance projects.</li>
+              <li>Complete development and testing of the Freelance Marketplace.</li>
+              <li>Officially launch the Freelance Marketplace.</li>
+              <li>Integrate Escrow payments for the freelance marketplace via Asset Hub pallets, enabling gigs and bounties to be paid directly through users’ wallets.</li>
+              <li>Introduce new payment options and on-chain contract workflows.</li>
+              <li>Strengthen user profiles with skill verification and reputation scoring.</li>
+              <li>Collaborate with ecosystem teams to pilot freelance projects and bounties.</li>
             </ul>
           </section>
 
@@ -132,11 +137,23 @@ export default function Roadmap() {
             </h2>
             <p className="text-gray-700 dark:text-gray-300 mb-2">Scaling and improving</p>
             <ul className="list-disc pl-6 text-gray-700 dark:text-gray-300 space-y-1">
-              <li>Gathered post-launch data and performance feedback.</li>
-              <li>Rolled out major UX/UI improvements and scalability updates.</li>
-              <li>Expanded multi-chain and cross-ecosystem integrations.</li>
-              <li>Introduced incentive programs and community-driven initiatives.</li>
-              <li>Continued ecosystem partnerships and long-term sustainability planning.</li>
+              <li>Collect post-launch performance data and community feedback.</li>
+              <li>Implement major UX/UI improvements and scalability updates.</li>
+              <li>Introduce job boosting/promotion fees, posting fees, and multiple application fees to support platform sustainability.</li>
+              <li>Continue expanding partnerships and community-led initiatives for long-term growth.</li>
+            </ul>
+          </section>
+
+          {/* Q1 2027 */}
+          <section>
+            <h2 className="text-xl font-semibold text-purple-600 dark:text-purple-400 mb-4">
+              Q1 2027 — Intelligence & Experience Phase
+            </h2>
+            <p className="text-gray-700 dark:text-gray-300 mb-2">Automating and enhancing opportunities</p>
+            <ul className="list-disc pl-6 text-gray-700 dark:text-gray-300 space-y-1">
+              <li>Integrate AI-powered job posting and matching, enabling smarter connections between talent and projects.</li>
+              <li>Introduce Simulated Job Experience modules for learners and new contributors.</li>
+              <li>Launch Volunteering Job Offers to support community growth and ecosystem participation.</li>
             </ul>
           </section>
         </div>
