@@ -23,7 +23,7 @@ export default function Footer() {
             About Us
           </a>
           <a
-            href="/about"
+            href="/support"
             className="text-sm text-white underline mt-4 inline-block"
           >
             Support
