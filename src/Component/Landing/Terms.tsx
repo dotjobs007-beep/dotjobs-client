@@ -84,7 +84,9 @@ export default function TermsOfUse() {
             <ul className="list-disc pl-6 text-gray-700 dark:text-gray-300 space-y-1">
               <li>
                 Employers may be required to complete On-chain Identity
-                verification before posting jobs.
+                verification before posting jobs. (Users verify their identity
+                through Polka Identity and Polkassembly, with their verification
+                status displayed directly on their DotJobs profile.)
               </li>
               <li>
                 Users are encouraged to connect their wallets for trust and
@@ -159,7 +161,9 @@ export default function TermsOfUse() {
               8. Disclaimer of Warranties
             </h2>
             <ul className="list-disc pl-6 text-gray-700 dark:text-gray-300 space-y-1">
-              <li>The platform is provided “as is” without warranties of any kind.</li>
+              <li>
+                The platform is provided “as is” without warranties of any kind.
+              </li>
               <li>We do not guarantee uninterrupted or error-free service.</li>
             </ul>
           </section>
@@ -216,10 +220,7 @@ export default function TermsOfUse() {
             </p>
             <ul className="list-none text-gray-700 dark:text-gray-300 mt-2">
               <li>
-                <strong>Email:</strong> [Insert Contact Email]
-              </li>
-              <li>
-                <strong>Website:</strong> [Insert Website URL]
+                <strong>Support Email:</strong> [Insert Contact Email]
               </li>
             </ul>
           </section>

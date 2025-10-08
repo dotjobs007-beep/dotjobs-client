@@ -46,12 +46,15 @@ export default function PrivacyPolicy() {
                 <ul className="list-disc pl-6 text-gray-700 dark:text-gray-300">
                   <li>
                     <strong>Account Information:</strong> When you sign up, you
-                    may provide an email address, username, and/or other details.
+                    may provide an email address, username, and/or other
+                    details.
                   </li>
                   <li>
                     <strong>Profile Information:</strong> Job seekers and
                     employers may add details such as skills, work experience,
-                    team information, or company description.
+                    social media profile, location, gender, Race/Ethnicity
+                    (Optional), Primary Language, team information, or company
+                    description.
                   </li>
                   <li>
                     <strong>Job Postings & Applications:</strong> Content you
@@ -59,8 +62,8 @@ export default function PrivacyPolicy() {
                   </li>
                   <li>
                     <strong>On-Chain Identity:</strong> Wallet addresses and
-                    optional on-chain identity verification (such as
-                    Polkadot/Kusama identity).
+                    optional on-chain identity verification (Polkadot/Kusama
+                    Identity) through Polkassembly or Polka Identity.
                   </li>
                 </ul>
               </div>
@@ -100,7 +103,9 @@ export default function PrivacyPolicy() {
                 Improve security, prevent abuse, and ensure compliance with
                 ecosystem standards.
               </li>
-              <li>Personalize the user experience and recommend opportunities.</li>
+              <li>
+                Personalize the user experience and recommend opportunities.
+              </li>
               <li>
                 Communicate with you about updates, new features, or ecosystem
                 news.
@@ -202,8 +207,13 @@ export default function PrivacyPolicy() {
               8. Children’s Privacy
             </h2>
             <p className="text-gray-700 dark:text-gray-300">
-              DotJobs is not intended for individuals under 18 years of age. We
-              do not knowingly collect personal data from minors.
+              DotJobs is not intended for individuals under
+              18 years of age or for those who do not have legal capacity under
+              their jurisdiction. You must be at least 18 years old or have the
+              legal capacity to use this platform. We do not knowingly collect
+              personal data from minors. If we become aware that we have
+              collected personal data from a minor without verification of
+              parental consent, we will take steps to delete that information.
             </p>
           </section>
 
@@ -233,8 +243,8 @@ export default function PrivacyPolicy() {
                 <strong>Email:</strong> [Insert Contact Email]
               </li>
               <li>
-                <strong>GitHub/Docs:</strong> [Insert Open Source Repository if
-                applicable]
+                <strong>GitHub/Docs:</strong>{" "}
+                <a href="https://github.com/dotjobs007-beep">Github</a>
               </li>
             </ul>
           </section>
