@@ -138,21 +138,21 @@ export default function Hero() {
       }}
     >
       {/* Banner Image Slider */}
-      <div className="relative w-full cursor-pointer h-[100px] overflow-hidden">
+      <div className="relative w-full cursor-pointer h-[40px] md:h-[90px] lg:h-[100px] overflow-hidden">
         {/* Slider Container */}
         <div 
           className="flex w-full h-full transition-transform duration-500 ease-in-out"
           style={{ transform: `translateX(-${currentSlide * 100}%)` }}
         >
           {sliders.map((image, index) => (
-            <div key={index} className="w-full h-full cursor-pointer flex-shrink-0">
+            <div key={index} className="relative w-full h-full cursor-pointer flex-shrink-0">
               <Image
                 src={image}
                 alt={`banner image ${index + 1}`}
-                height={100}
-                width={1500}
-                className="w-full h-full cursor-pointer object-cover"
+                fill
+                className="cursor-pointer object-cover object-center"
                 priority={index === 0}
+                sizes="100vw"
               />
             </div>
           ))}
@@ -169,7 +169,7 @@ export default function Hero() {
         />
 
         {/* Navigation Arrows */}
-        <button
+        {/* <button
           onClick={prevSlide}
           className="absolute left-4 top-1/2 transform -translate-y-1/2 bg-gray-500 bg-opacity-60 text-white p-2 rounded-full hover:bg-gray-400 hover:bg-opacity-80 transition-all duration-200 z-10"
           aria-label="Previous slide"
@@ -177,9 +177,9 @@ export default function Hero() {
           <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
           </svg>
-        </button>
+        </button> */}
         
-        <button
+        {/* <button
           onClick={nextSlide}
           className="absolute right-4 top-1/2 transform -translate-y-1/2 bg-gray-500 bg-opacity-60 text-white p-2 rounded-full hover:bg-gray-400 hover:bg-opacity-80 transition-all duration-200 z-10"
           aria-label="Next slide"
@@ -187,15 +187,15 @@ export default function Hero() {
           <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
           </svg>
-        </button>
+        </button> */}
 
         {/* Slide Indicators - Dot Style */}
-        <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 flex space-x-3 z-10">
+        {/* <div className="absolute bottom-1 md:bottom-2 lg:bottom-4 left-1/2 transform -translate-x-1/2 flex space-x-2 md:space-x-3 z-10">
           {sliders.map((_, index) => (
             <button
               key={index}
               onClick={() => goToSlide(index)}
-              className={`w-3 h-3 rounded-full transition-all duration-300 border-2 ${
+              className={`w-2 h-2 md:w-3 md:h-3 rounded-full transition-all duration-300 border md:border-2 ${
                 index === currentSlide 
                   ? 'bg-white border-white scale-110 shadow-lg' 
                   : 'bg-transparent border-white border-opacity-70 hover:border-opacity-100 hover:scale-105'
@@ -203,7 +203,7 @@ export default function Hero() {
               aria-label={`Go to slide ${index + 1}`}
             />
           ))}
-        </div>
+        </div> */}
       </div>
 
       {/* Hero Content */}
