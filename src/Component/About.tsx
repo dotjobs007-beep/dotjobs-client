@@ -54,7 +54,7 @@ export default function About() {
         {/* Feature List */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
           {/* Ecosystem-Wide Opportunities */}
-          <div className="flex flex-col items-start bg-white shadow-md rounded-xl p-6 hover:shadow-lg transition">
+          <div className="flex flex-col items-start shadow-md rounded-xl p-6 hover:shadow-lg transition">
             <Users
               className={`h-10 w-10 ${
                 theme === "dark" ? "text-[#7F13EC]" : "text-[#AE1E67]"
@@ -71,7 +71,7 @@ export default function About() {
           </div>
 
           {/* On-Chain Identity */}
-          <div className="flex flex-col items-start bg-white shadow-md rounded-xl p-6 hover:shadow-lg transition">
+          <div className="flex flex-col items-start  shadow-md rounded-xl p-6 hover:shadow-lg transition">
             <Shield
               className={`h-10 w-10 ${
                 theme === "dark" ? "text-[#7F13EC]" : "text-[#AE1E67]"
@@ -86,7 +86,7 @@ export default function About() {
           </div>
 
           {/* Awareness & Education */}
-          <div className="flex flex-col items-start bg-white shadow-md rounded-xl p-6 hover:shadow-lg transition">
+          <div className="flex flex-col items-start  shadow-md rounded-xl p-6 hover:shadow-lg transition">
             <BookOpen
               className={`h-10 w-10 ${
                 theme === "dark" ? "text-[#7F13EC]" : "text-[#AE1E67]"

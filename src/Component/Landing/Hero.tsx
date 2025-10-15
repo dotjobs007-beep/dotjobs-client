@@ -104,9 +104,9 @@ export default function Hero() {
   };
 
   const sliders = [
-    "https://res.cloudinary.com/dk06cndku/image/upload/v1760345361/dotjobs_banner003_rm8zgh.png",
     "https://res.cloudinary.com/dk06cndku/image/upload/v1760345361/dotjobs_banner001_av0sjg.png",
-    "https://res.cloudinary.com/dk06cndku/image/upload/v1760345360/dotjobs_banner002_rfph0r.png"
+    "https://res.cloudinary.com/dk06cndku/image/upload/v1760345361/dotjobs_banner003_rm8zgh.png",
+    "https://res.cloudinary.com/dk06cndku/image/upload/v1760345360/dotjobs_banner002_rfph0r.png",
   ];
 
   // Auto-slide functionality
@@ -118,16 +118,17 @@ export default function Hero() {
     return () => clearInterval(interval);
   }, [sliders.length]);
 
-  const nextSlide = () => {
-    setCurrentSlide((prev) => (prev + 1) % sliders.length);
-  };
-
-  const prevSlide = () => {
-    setCurrentSlide((prev) => (prev - 1 + sliders.length) % sliders.length);
-  };
-
   const goToSlide = (index: number) => {
     setCurrentSlide(index);
+  };
+
+  const handleSliderClick = (image: string, index: number) => {
+    if (index === 0) {
+      router.push('/about');
+      return;
+    }
+
+    router.push('/info?index=' + index);
   };
 
   return (
@@ -140,12 +141,16 @@ export default function Hero() {
       {/* Banner Image Slider */}
       <div className="relative w-full cursor-pointer h-[40px] md:h-[90px] lg:h-[100px] overflow-hidden">
         {/* Slider Container */}
-        <div 
+        <div
           className="flex w-full h-full transition-transform duration-500 ease-in-out"
           style={{ transform: `translateX(-${currentSlide * 100}%)` }}
         >
           {sliders.map((image, index) => (
-            <div key={index} className="relative w-full h-full cursor-pointer flex-shrink-0">
+            <div
+              key={index}
+              className="relative w-full h-full cursor-pointer flex-shrink-0"
+              onClick={() => handleSliderClick(image, index)}
+            >
               <Image
                 src={image}
                 alt={`banner image ${index + 1}`}
@@ -159,12 +164,13 @@ export default function Hero() {
         </div>
 
         {/* Theme-based Overlay */}
-        <div 
-          className="absolute inset-0 z-5"
+        <div
+          className="absolute inset-0 z-5 pointer-events-none"
           style={{
-            background: theme === "dark" 
-              ? "linear-gradient(to right, rgba(219,219,219,0.1), rgba(133,3,53,0.2), rgba(25,3,48,0.3))"
-              : "linear-gradient(to right, rgba(255,253,254,0.1), rgba(236,17,102,0.2), rgba(114,75,153,0.3))"
+            background:
+              theme === "dark"
+                ? "linear-gradient(to right, rgba(219,219,219,0.1), rgba(133,3,53,0.2), rgba(25,3,48,0.3))"
+                : "linear-gradient(to right, rgba(255,253,254,0.1), rgba(236,17,102,0.2), rgba(114,75,153,0.3))",
           }}
         />
 
@@ -178,7 +184,7 @@ export default function Hero() {
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
           </svg>
         </button> */}
-        
+
         {/* <button
           onClick={nextSlide}
           className="absolute right-4 top-1/2 transform -translate-y-1/2 bg-gray-500 bg-opacity-60 text-white p-2 rounded-full hover:bg-gray-400 hover:bg-opacity-80 transition-all duration-200 z-10"
@@ -190,20 +196,20 @@ export default function Hero() {
         </button> */}
 
         {/* Slide Indicators - Dot Style */}
-        {/* <div className="absolute bottom-1 md:bottom-2 lg:bottom-4 left-1/2 transform -translate-x-1/2 flex space-x-2 md:space-x-3 z-10">
+        <div className="absolute bottom-1 md:bottom-2 lg:bottom-1 left-1/2 transform -translate-x-1/2 flex space-x-1.5 md:space-x-2 z-10">
           {sliders.map((_, index) => (
-            <button
+            <div
               key={index}
               onClick={() => goToSlide(index)}
-              className={`w-2 h-2 md:w-3 md:h-3 rounded-full transition-all duration-300 border md:border-2 ${
-                index === currentSlide 
-                  ? 'bg-white border-white scale-110 shadow-lg' 
-                  : 'bg-transparent border-white border-opacity-70 hover:border-opacity-100 hover:scale-105'
+              className={`w-1.5 h-1.5 md:w-2 md:h-2 rounded-full transition-all duration-300 border border-white ${
+                index === currentSlide
+                  ? "bg-white scale-110 shadow-md"
+                  : "bg-transparent border-opacity-70 hover:border-opacity-100 hover:scale-105"
               }`}
               aria-label={`Go to slide ${index + 1}`}
             />
           ))}
-        </div> */}
+        </div>
       </div>
 
       {/* Hero Content */}
