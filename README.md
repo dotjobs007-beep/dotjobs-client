@@ -1,4 +1,4 @@
-Overview
+# Introduction
 
 DotJobs is an open-source job and talent platform built for the Polkadot and Kusama ecosystem.
 Our mission is simple: to connect projects, teams, and initiatives across the ecosystem with the right talent, while amplifying careers, opportunities, and the future of work in Web3.
@@ -20,10 +20,10 @@ AMAs with founders
 Initiatives highlighting career growth in Web3
 
 
-2. Platform Overview and Navigation
+# Platform Overview and Navigation
 DotJobs is built for seamless navigation, designed for both Web3 natives and non-Web3 users.
 
-2.1 Home Page
+## Home Page
 The Home Page serves as the platform’s central hub and includes:
 
 Find Jobs – Browse all open roles and gigs.
@@ -52,7 +52,7 @@ FAQ
 Social and community handles
 
 
-2.2 Sign Up and Sign In
+## Sign Up and Sign In
 
 The authentication flow supports multiple entry options:
 Email and password
@@ -64,14 +64,14 @@ Users can connect their Polkadot wallet and verify their on-chain identity via P
 Verified users receive a verified badge and gain the ability to post jobs.
 
 
-2.3 User Profile
+## User Profile
 The profile icon at the top-right corner gives quick access to:
 Edit profile information
 
 Update experience, skills, and contact info
 View verification status
 
-2.4 Job Posting
+## Job Posting
 A “Post Job” button (highlighted in red) appears at the top of the interface.
 Requirements:
 On-chain verification
@@ -80,7 +80,7 @@ Fill in job title, description, requirements, budget, and duration
 
 Submit listing for publication
 
-2.5 Finding and Applying for Jobs
+## Finding and Applying for Jobs
 Users can explore jobs by visiting the Find Jobs tab.
 From there:
 Use filters or search by keywords
@@ -91,15 +91,15 @@ View detailed listings
 
 Apply by submitting the provided form and attaching a resume or portfolio
 
-2.6 Accessibility
+## Accessibility
 DotJobs supports Light Mode and Dark Mode for user preference and comfort.
 
-3. User Guide
+# User Guide
 For full platform tutorials and walkthroughs, visit our  YouTube Channel https://www.youtube.com/@Dotjobsonline
 Users are also encouraged to join our Telegram Community  https://t.me/Dotjobsonline
  to ask questions, share feedback, or connect directly with the team and other users.
 
-4. Governance and Community
+# Governance and Community
 DotJobs will implement a governance and voting system powered by Polkadot technology, allowing users to participate in decisions regarding:
 Featured job listings
 
@@ -111,7 +111,8 @@ Ecosystem collaborations
 
 This decentralized governance model will be introduced in Q1 2026 as part of the Governance & Growth Phase of the roadmap.
 
-5. Launch a freelance marketplace with Escrow payments via Asset Hub, enabling short-term gigs and bounties to be paid directly through users’ wallets.
+# Freelance Market
+Launch a freelance marketplace with Escrow payments via Asset Hub, enabling short-term gigs and bounties to be paid directly through users’ wallets.
 
 The freelance market development will start in Q2 2026 as part of Freelance & Expansion Phase
 
