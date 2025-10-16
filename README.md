@@ -114,7 +114,11 @@ This decentralized governance model will be introduced in Q1 2026 as part of the
 # Freelance Market
 Launch a freelance marketplace with Escrow payments via Asset Hub, enabling short-term gigs and bounties to be paid directly through users’ wallets.
 
-The freelance market development will start in Q2 2026 as part of Freelance & Expansion Phase
+The freelance market development will start in Q2 2026 as part of Freelance & Expansion Phase.
+
+
+
+
 
 
 This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
