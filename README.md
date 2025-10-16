@@ -1,5 +1,5 @@
-1. Overview
-2. 
+Overview
+
 DotJobs is an open-source job and talent platform built for the Polkadot and Kusama ecosystem.
 Our mission is simple: to connect projects, teams, and initiatives across the ecosystem with the right talent, while amplifying careers, opportunities, and the future of work in Web3.
 We believe the future of work is decentralized, collaborative, and borderless.
