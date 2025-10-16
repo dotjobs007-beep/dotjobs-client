@@ -1,6 +1,6 @@
 "use client";
 import { useAuth } from "@/app/context/authcontext";
-import { FaXTwitter, FaFacebookF, FaTelegram, FaGithub } from "react-icons/fa6";
+import { FaXTwitter, FaTelegram, FaGithub, FaYoutube } from "react-icons/fa6";
 
 export default function Footer() {
   const { theme } = useAuth();
@@ -94,16 +94,21 @@ export default function Footer() {
             >
               <FaGithub />
             </a>
+
+            <a
+              href="https://youtube.com/@dotjobsonline"
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-label="Youtube"
+              className="hover:text-gray-700 text-[22px] text-white"
+            >
+              <FaYoutube />
+            </a>
           </div>
 
           <p className="text-sm">© 2025 Dotjobs. All rights reserved</p>
         </div>
 
-        {/* Right Column */}
-        <div className="text-left md:text-right">
-          <p className="mb-1">www.dotjob.com</p>
-          <p>Dotcom@gmail.com</p>
-        </div>
       </div>
     </div>
   );
