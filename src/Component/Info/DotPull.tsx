@@ -29,7 +29,7 @@ export default function DotBullsInfo() {
       perks: "All Rank 1 perks + more visibility and Dot rewards",
     },
     {
-      title: "🥉 Rank 3 (2 slots)",
+      title: "🥉 Rank 3",
       tasks: [
         "Do all Rank 2 tasks",
         "Champion Reddit engagement, onboard newcomers, and promote events",
