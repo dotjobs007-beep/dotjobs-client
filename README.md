@@ -1,39 +1,38 @@
-DotJobs Readme
-
 1. Overview
+2. 
 DotJobs is an open-source job and talent platform built for the Polkadot and Kusama ecosystem.
 Our mission is simple: to connect projects, teams, and initiatives across the ecosystem with the right talent, while amplifying careers, opportunities, and the future of work in Web3.
 We believe the future of work is decentralized, collaborative, and borderless.
 DotJobs is more than a job board — it is a career hub for the Polkadot and Kusama ecosystem, unifying opportunities and talent under one open platform.
 Key Features
+
 Ecosystem-Wide Opportunities
 DotJobs aggregates and showcases roles from Rollups, DAOs, projects, and ecosystem teams, connecting talent with meaningful opportunities across Polkadot and Kusama.
+
 On-Chain Identity
 Users verify their identity through Polkadot Identity and Polkassembly, with their verification status displayed directly on their DotJobs profile.
 Only on-chain verified users can post jobs, ensuring trust and authenticity across the platform.
+
 Awareness & Education
 DotJobs also drives awareness through:
 Educational campaigns
-
 AMAs with founders
-
 Initiatives highlighting career growth in Web3
+
 
 2. Platform Overview and Navigation
 DotJobs is built for seamless navigation, designed for both Web3 natives and non-Web3 users.
+
 2.1 Home Page
 The Home Page serves as the platform’s central hub and includes:
+
 Find Jobs – Browse all open roles and gigs.
-
 My Jobs – Manage job listings or hiring posts.
-
 My Applications – Track submitted applications.
-
 Find Talents – Discover and hire verified professionals.
-
 On-Chain Identity – Verify using Polkadot Identity or Polkassembly.
-
 Sign Up / Sign In – Access your personalized account.
+
 
 Additional elements:
 Ad banner for announcements or sponsored listings.
@@ -45,37 +44,31 @@ Browse by Category leading to specialized job sections.
 Footer with links to:
 
 About Us
-
 Terms of Use
-
 Support
-
 Roadmap
-
 Privacy Policy
-
 FAQ
-
 Social and community handles
 
+
 2.2 Sign Up and Sign In
+
 The authentication flow supports multiple entry options:
 Email and password
-
 Google sign-in
-
 X (Twitter) sign-in
 
 After registration, a user profile is automatically created.
 Users can connect their Polkadot wallet and verify their on-chain identity via Polkassembly or Polka Identity.
 Verified users receive a verified badge and gain the ability to post jobs.
 
+
 2.3 User Profile
 The profile icon at the top-right corner gives quick access to:
 Edit profile information
 
 Update experience, skills, and contact info
-
 View verification status
 
 2.4 Job Posting
