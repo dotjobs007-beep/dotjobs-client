@@ -10,8 +10,8 @@ import { JobProvider } from "./context/jobcontext";
 import { UserProvider } from "./context/usercontext";
 import Footer from "@/Component/Footer/Footer";
 export const metadata: Metadata = {
-  title: "Tailwind v4 Dark Mode",
-  description: "Manual toggle with Tailwind v4",
+  title: "Dotjobs - Your Gateway to Remote Opportunities",
+  description: "Find your dream remote job today! Explore thousands of listings, apply with ease, and take your career global with Dotjobs.",
 };
 
 const unbounded = Unbounded({
