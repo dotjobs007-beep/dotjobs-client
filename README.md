@@ -116,6 +116,4 @@ Launch a freelance marketplace with Escrow payments via Asset Hub, enabling shor
 
 The freelance market development will start in Q2 2026 as part of Freelance & Expansion Phase.
 
-
-
 ##
