@@ -40,6 +40,7 @@ export interface IJob {
   is_active?: boolean;
   category: string;
   salary_token: string; // e.g., "USD", "DOT", etc.
+  postedByAdmin?: boolean;
 
   employment_type:
     | "full-time"

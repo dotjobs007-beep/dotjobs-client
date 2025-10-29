@@ -20,7 +20,6 @@ export default function MyApplication() {
       setLoading(true);
       const res = await service.fetcher("/job/jobs-applied-by-user");
       const data = res as IJobsAppliedResponse;
-      //   console.log("Fetched applications:", data.data.data[0].jobId._id);
       if (data.code === 401) return router.push("/login");
       if (data.code !== 200) return;
       setApplications(data.data.data || []);

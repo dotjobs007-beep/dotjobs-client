@@ -14,11 +14,9 @@ export default function CallbackPage() {
       try {
         const result = await getRedirectResult(auth);
         if (result?.user) {
-          console.log("✅ User signed in:", result.user);
           // Example: save user data or redirect
           router.push("/dashboard");
         } else {
-          console.log("❌ No user found.");
           router.push("/auth/signin");
         }
       } catch (error) {

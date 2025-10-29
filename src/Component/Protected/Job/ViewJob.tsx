@@ -12,7 +12,6 @@ export default function ViewJobDetails() {
   const router = useRouter();
 
   const { jobDetails } = useJob();
-
   const tags = [
     jobDetails?.employment_type,
     jobDetails?.salary_type,
@@ -21,8 +20,6 @@ export default function ViewJobDetails() {
       ? `${jobDetails.salary_range.min} - ${jobDetails.salary_range.max} USD`
       : null,
   ].filter(Boolean);
-
-
 
   return (
     <main className="px-6 py-8 lg:px-[10rem]">
@@ -34,17 +31,25 @@ export default function ViewJobDetails() {
       <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-5">
         <div>
           <h1 className="text-3xl font-bold mb-2">{jobDetails?.title}</h1>
-          <p className="text-gray-600">Posted {getRelativeTime(jobDetails?.createdAt)} {jobDetails?.work_arrangement ? `• ${jobDetails.work_arrangement}` : ""}</p>
+          <p className="text-gray-600">
+            Posted {getRelativeTime(jobDetails?.createdAt)}{" "}
+            {jobDetails?.work_arrangement
+              ? `• ${jobDetails.work_arrangement}`
+              : ""}
+          </p>
         </div>
 
         <div className="flex gap-3">
           {/* ✅ Apply Button with Icon */}
-          <button
-            onClick={() => router.push("/jobs/apply")}
-            className="bg-purple-600 text-white px-4 py-2 rounded-lg hover:bg-purple-700 transition flex items-center gap-2"
-          >
-            Apply Now <ArrowRight size={18} />
-          </button>
+
+          {!jobDetails?.postedByAdmin && (
+            <button
+              onClick={() => router.push("/jobs/apply")}
+              className="bg-purple-600 text-white px-4 py-2 rounded-lg hover:bg-purple-700 transition flex items-center gap-2"
+            >
+              Apply Now <ArrowRight size={18} />
+            </button>
+          )}
 
           {/* ✅ Save Button with Icon */}
           <button className="border border-purple-600 text-purple-600 px-4 py-2 rounded-lg hover:bg-purple-50 transition flex items-center gap-2">
@@ -64,6 +69,8 @@ export default function ViewJobDetails() {
 
           <h2 className="font-bold text-xl my-4">Requirements</h2>
           <p className="leading-relaxed">{jobDetails?.requirements}</p>
+
+          {jobDetails?.postedByAdmin && <p className="mt-10">Note: In order to apply, click on the button to visit the company site.</p>}
         </div>
 
         {/* Right Card */}
@@ -110,7 +117,7 @@ export default function ViewJobDetails() {
               </a>
             ) : (
               <button
-                onClick={() => router.push('/jobs')}
+                onClick={() => router.push("/jobs")}
                 className="mt-6 w-full bg-gray-300 text-center text-gray-700 py-2 rounded-lg transition"
               >
                 <b> Visit Company</b>
