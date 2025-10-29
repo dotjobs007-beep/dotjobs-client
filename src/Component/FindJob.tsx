@@ -12,6 +12,8 @@ import {
 import service from "@/helper/service.helper";
 import { useRouter } from "next/navigation";
 import { useJob } from "@/app/context/jobcontext";
+import { Search, MapPin, Users, Filter, ChevronLeft, ChevronRight, Sparkles, Briefcase, DollarSign } from "lucide-react";
+import { useAuth } from "@/app/context/authcontext";
 
 export default function Jobs() {
   const { companyName, category, jobQuery, setCategory } = useJob();
@@ -27,6 +29,7 @@ export default function Jobs() {
   const [page, setPage] = useState(1);
   const [loading, setLoading] = useState(false);
   const router = useRouter();
+  const { theme } = useAuth();
 
   const employmentTypes = ["", "full-time", "part-time", "contract"];
   const workArrangements = ["", "remote", "hybrid", "on-site"];
@@ -36,7 +39,7 @@ export default function Jobs() {
     { value: "-salary", label: "Salary High → Low" },
     { value: "salary", label: "Salary Low → High" },
   ];
-
+  const color = theme === "dark" ? "text-[#fff]" : "text-[#734A98]";
   const fetchJobs = async (pageNum: number) => {
     setLoading(true);
     try {
@@ -95,220 +98,271 @@ export default function Jobs() {
   };
 
   return (
-    <div className="my-24 px-4 flex flex-col items-center lg:px-[8rem]">
-      {/* HEADER */}
-      <div className="mb-6 text-center max-w-2xl">
-        <h1 className="text-3xl lg:text-4xl font-bold mb-2">
-          Browse Available Jobs
-        </h1>
-        <p className="text-gray-600">Filter, sort and find your next role.</p>
+    <div className="min-h-screen">
+      {/* Hero Section */}
+      <div className="relative overflow-hidden">
+        <div className="absolute inset-0 bg-gradient-to-r from-purple-600/10 via-blue-600/10 to-indigo-600/10"></div>
+        <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
+          <div className="text-center">
+            <div className="flex items-center justify-center mb-6">
+              <Briefcase className="h-8 w-8 text-purple-600 mr-3" />
+              <h1 className={`text-4xl lg:text-5xl font-bold ${color} `}>
+                Browse Jobs
+              </h1>
+            </div>
+            <p className="text-xl text-gray-600 max-w-3xl mx-auto">
+              Discover amazing opportunities in the Polkadot ecosystem
+            </p>
+            <div className="mt-4 flex items-center justify-center text-sm text-gray-500">
+              <Briefcase className="h-4 w-4 mr-2" />
+              {pagination && <span>{pagination.totalJobs} available positions</span>}
+            </div>
+          </div>
+        </div>
       </div>
 
-      {/* FILTER CARD */}
-      <Card className="p-6 w-full bg-white shadow-md rounded-xl space-y-6 lg:sticky top-16 z-40">
-        {/* SEARCH */}
-        <div className="flex flex-col lg:flex-row gap-4 w-full">
-          <input
-            type="text"
-            placeholder="Search by title or company..."
-            value={query}
-            onChange={(e) => setQuery(e.target.value)}
-            className="px-4 lg:w-[90%] w-full text-gray-600 py-3 border border-gray-300 rounded-lg bg-[#FDD7FD]"
-          />
-          <button
-            onClick={handleApplyFilters}
-            className="bg-purple-600 text-white px-6 py-3 rounded-lg font-semibold hover:bg-purple-700"
-          >
-            Apply Filters
-          </button>
-        </div>
+      {/* Sticky Search Bar */}
+      <div className="sticky top-0 z-50 backdrop-blur-md border-b border-white/20 shadow-sm">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
+          <div className="space-y-4">
+            {/* Main Search Row */}
+            <div className="grid grid-cols-1 md:grid-cols-12 gap-3">
+              <div className="relative md:col-span-5">
+                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
+                <input
+                  value={query}
+                  onChange={(e) => setQuery(e.target.value)}
+                  placeholder="Search jobs by title or company..."
+                  className="w-full pl-10 pr-4 py-2.5 bg-gray-50 border border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 text-sm"
+                />
+              </div>
+              
+              <div className="md:col-span-3">
+                <select
+                  name="category"
+                  value={category || ""}
+                  onChange={(e) => setCategory(e.target.value)}
+                  className="w-full px-3 py-2.5 bg-gray-50 border border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 text-sm"
+                >
+                  <option value="">All Categories</option>
+                  <optgroup label="Business & Marketing">
+                    <option value="marketing_advertising">Marketing & Advertising</option>
+                    <option value="digital marketing">Digital Marketing</option>
+                    <option value="social media">Social Media Management</option>
+                    <option value="brand management">Brand Management</option>
+                    <option value="sales">Sales & Business Development</option>
+                    <option value="product management">Product Management</option>
+                    <option value="community management">Community Management & Moderation</option>
+                  </optgroup>
+                  <optgroup label="Technology & Development">
+                    <option value="web development">Web Development</option>
+                    <option value="mobile app">Mobile App Development</option>
+                    <option value="cybersecurity">Cybersecurity</option>
+                    <option value="it support">IT Support & Networking</option>
+                    <option value="blockchain">Blockchain Development</option>
+                  </optgroup>
+                  <optgroup label="Creative & Design">
+                    <option value="graphic design">Graphic Design</option>
+                    <option value="uiux">UI/UX Design</option>
+                    <option value="video editing">Video Production & Editing</option>
+                    <option value="animation">Animation & Motion Graphics</option>
+                    <option value="writing">Writing & Content</option>
+                  </optgroup>
+                </select>
+              </div>
+              
+              <div className="md:col-span-4">
+                <button
+                  onClick={handleApplyFilters}
+                  className="w-full h-[80%] bg-blue-600 hover:bg-blue-700 text-white px-1 py-6 rounded-lg font-medium transition-all duration-200 shadow-sm hover:shadow-lg text-sm flex items-center justify-center"
+                >
+                  <Search className="h-4 w-4 mr-1.5" />
+                  Search Jobs
+                </button>
+              </div>
+            </div>
 
-        {/* INLINE DROPDOWNS */}
-        {/* INLINE DROPDOWNS */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 w-full">
-          {/* CATEGORY DROPDOWN */}
-          <div className="flex flex-col text-sm">
-            <label className="mb-1 font-medium">Category</label>
-            <select
-              name="category"
-              value={category || ""}
-              onChange={(e) => setCategory(e.target.value)}
-              className="w-full bg-[#FCE9FC] text-gray-800 rounded-lg p-3 focus:outline-none"
-            >
-              <option value="">{category || "Select category"}</option>
-              <optgroup label="Business & Marketing">
-                <option value="marketing_advertising">
-                  Marketing & Advertising
-                </option>
-                <option value="digital marketing">Digital Marketing</option>
-                <option value="social media">Social Media Management</option>
-                <option value="brand management">Brand Management</option>
-                <option value="sales">Sales & Business Development</option>
-                <option value="product management">Product Management</option>
-                <option value="community management">
-                  Community Management & Moderation
-                </option>
-              </optgroup>
-              <optgroup label="Technology & Development">
-                <option value="web development">Web Development</option>
-                <option value="mobile app">Mobile App Development</option>
-                <option value="cybersecurity">Cybersecurity</option>
-                <option value="it support">IT Support & Networking</option>
-                <option value="blockchain">Blockchain Development</option>
-                <option value="blockchain">Smart Contract Development</option>
-                <option value="blockchain">Rust Development</option>
-              </optgroup>
-              <optgroup label="Creative & Design">
-                <option value="graphic design">Graphic Design</option>
-                <option value="uiux">UI/UX Design</option>
-                <option value="video editing">
-                  Video Production & Editing Design
-                </option>
-                <option value="animation">
-                  Animation & Motion Graphics Design
-                </option>
-                <option value="game design">
-                  Game Design & Development Design
-                </option>
+            {/* Filters Row */}
+            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-6 gap-3">
+              <div className="relative">
+                <DollarSign className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
+                <input
+                  type="number"
+                  value={minSalary}
+                  onChange={(e) => setMinSalary(e.target.value)}
+                  placeholder="Min salary"
+                  className="w-full pl-10 pr-4 py-2.5 bg-gray-50 border border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 text-sm"
+                />
+              </div>
 
-                <option value="writing">Writing & Content</option>
-              </optgroup>
-              <optgroup label="Human Resources & Management">
-                <option value="hr recruitment">
-                  HR & Recruitment Management
-                </option>
-                <option value="operations">Operations Management</option>
-              </optgroup>
-            </select>
-          </div>
-          {/* Employment Type */}
-          <div className="flex flex-col text-sm">
-            <label className="mb-1 font-medium">Employment Type</label>
-            <select
-              value={employmentType}
-              onChange={(e) => setEmploymentType(e.target.value)}
-              className="border border-gray-300 rounded-md px-2 py-1 text-gray-600 text-sm"
-            >
-              <option value="">All</option>
-              {employmentTypes.map(
-                (type) =>
-                  type && (
-                    <option key={type} value={type}>
-                      {type}
-                    </option>
-                  )
-              )}
-            </select>
-          </div>
+              <input
+                type="number"
+                value={maxSalary}
+                onChange={(e) => setMaxSalary(e.target.value)}
+                placeholder="Max salary"
+                className="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 text-sm"
+              />
+              
+              <select
+                value={employmentType}
+                onChange={(e) => setEmploymentType(e.target.value)}
+                className="w-full px-3 py-2.5 bg-gray-50 border border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 text-sm"
+              >
+                <option value="">All Types</option>
+                {employmentTypes.map(
+                  (type) =>
+                    type && (
+                      <option key={type} value={type}>
+                        {type.charAt(0).toUpperCase() + type.slice(1)}
+                      </option>
+                    )
+                )}
+              </select>
+              
+              <select
+                value={workArrangement}
+                onChange={(e) => setWorkArrangement(e.target.value)}
+                className="w-full px-3 py-2.5 bg-gray-50 border border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 text-sm"
+              >
+                <option value="">All Arrangements</option>
+                {workArrangements.map(
+                  (arr) =>
+                    arr && (
+                      <option key={arr} value={arr}>
+                        {arr.charAt(0).toUpperCase() + arr.slice(1)}
+                      </option>
+                    )
+                )}
+              </select>
+              
+              <select
+                value={sortBy}
+                onChange={(e) => setSortBy(e.target.value)}
+                className="w-full px-3 py-2.5 bg-gray-50 border border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 text-sm"
+              >
+                {sortOptions.map((opt) => (
+                  <option key={opt.value} value={opt.value}>
+                    {opt.label}
+                  </option>
+                ))}
+              </select>
 
-          {/* Work Arrangement */}
-          <div className="flex flex-col text-sm">
-            <label className="mb-1 font-medium">Work Arrangement</label>
-            <select
-              value={workArrangement}
-              onChange={(e) => setWorkArrangement(e.target.value)}
-              className="border border-gray-300 text-gray-600 rounded-md px-2 py-1 text-sm"
-            >
-              <option value="">All</option>
-              {workArrangements.map(
-                (arr) =>
-                  arr && (
-                    <option key={arr} value={arr}>
-                      {arr}
-                    </option>
-                  )
-              )}
-            </select>
-          </div>
-
-          {/* Salary Min */}
-          <div className="flex flex-col text-sm">
-            <label className="mb-1 font-medium">Min Salary</label>
-            <input
-              type="number"
-              value={minSalary}
-              onChange={(e) => setMinSalary(e.target.value)}
-              className="border border-gray-300 rounded-md px-2 py-1 text-sm"
-            />
-          </div>
-
-          {/* Salary Max */}
-          <div className="flex flex-col text-sm">
-            <label className="mb-1 font-medium">Max Salary</label>
-            <input
-              type="number"
-              value={maxSalary}
-              onChange={(e) => setMaxSalary(e.target.value)}
-              className="border border-gray-300 rounded-md px-2 py-1 text-sm"
-            />
-          </div>
-
-          {/* Sort By */}
-          <div className="flex flex-col text-sm">
-            <label className="mb-1 font-medium">Sort By</label>
-            <select
-              value={sortBy}
-              onChange={(e) => setSortBy(e.target.value)}
-              className="border text-gray-600 border-gray-300 rounded-md px-2 py-1 text-sm"
-            >
-              {sortOptions.map((opt) => (
-                <option key={opt.value} value={opt.value}>
-                  {opt.label}
-                </option>
-              ))}
-            </select>
+              <div className="flex items-center justify-center text-sm text-gray-500">
+                <Filter className="h-4 w-4 mr-1" />
+                <span className="hidden sm:inline">Filters</span>
+              </div>
+            </div>
           </div>
         </div>
-      </Card>
+      </div>
 
-      {/* JOB LIST */}
-      <div className="w-full mt-10 grid grid-cols-1 lg:grid-cols-2 gap-6">
+      {/* Results Section */}
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-8 pb-20">
         {loading ? (
-          <p className="text-center text-gray-500">Loading jobs...</p>
-        ) : jobs.length ? (
-          jobs.map((job) => (
-            <JobCard
-              key={job._id}
-              logo={job.logo || ""}
-              companyName={job.company_name || ""}
-              title={job.title}
-              description={job.description}
-              tags={[
-                job.employment_type,
-                job.salary_type,
-                job.work_arrangement,
-              ]}
-              applicantCount={job.applicantCount}
-              salaryType={job.salary_token}
-              salaryRange={job.salary_range}
-              onClick={() => handleDisplayJobDetails(job)}
-            />
-          ))
+          <div className="flex items-center justify-center py-20">
+            <div className="relative">
+              <div className="w-16 h-16 border-4 border-purple-200 border-t-purple-600 rounded-full animate-spin"></div>
+              <div className="absolute inset-0 flex items-center justify-center">
+                <Briefcase className="h-6 w-6 text-purple-600" />
+              </div>
+            </div>
+          </div>
+        ) : jobs.length === 0 ? (
+          <div className="text-center py-20">
+            <div className="w-24 h-24 mx-auto mb-6 rounded-full flex items-center justify-center">
+              <Briefcase className="h-12 w-12 text-gray-400" />
+            </div>
+            <h3 className="text-2xl font-semibold text-gray-900 mb-2">No jobs found</h3>
+            <p className="text-gray-500 max-w-md mx-auto">
+              Try adjusting your search criteria or browse all available positions.
+            </p>
+          </div>
         ) : (
-          <p className="text-center text-gray-500">No jobs found.</p>
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            {jobs.map((job) => (
+              <JobCard
+                key={job._id}
+                logo={job.logo || ""}
+                companyName={job.company_name || ""}
+                title={job.title}
+                description={job.description}
+                tags={[
+                  job.employment_type,
+                  job.salary_type,
+                  job.work_arrangement,
+                ]}
+                applicantCount={job.applicantCount}
+                salaryType={job.salary_token}
+                salaryRange={job.salary_range}
+                onClick={() => handleDisplayJobDetails(job)}
+              />
+            ))}
+          </div>
         )}
       </div>
 
-      {/* PAGINATION */}
+      {/* Pagination */}
       {pagination && pagination.totalPages > 1 && (
-        <div className="flex gap-4 mt-8">
-          <button
-            disabled={page === 1}
-            onClick={prevPage}
-            className="px-4 py-2 rounded bg-gray-200 hover:bg-gray-300 disabled:opacity-50"
-          >
-            Previous
-          </button>
-          <span className="px-2 py-2 text-gray-700">
-            Page {page} of {pagination.totalPages}
-          </span>
-          <button
-            disabled={page === pagination.totalPages}
-            onClick={nextPage}
-            className="px-4 py-2 rounded bg-gray-200 hover:bg-gray-300 disabled:opacity-50"
-          >
-            Next
-          </button>
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-12">
+          <div className="flex justify-center items-center">
+            <div className="bg-white/80 backdrop-blur-xl rounded-2xl shadow-lg border border-white/20 p-2 flex items-center space-x-2">
+              <button
+                disabled={page === 1}
+                onClick={prevPage}
+                className="p-3 rounded-xl bg-gray-100 hover:bg-gray-200 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 group"
+              >
+                <ChevronLeft className="h-5 w-5 text-gray-600 group-hover:text-gray-800" />
+              </button>
+              
+              <div className="flex items-center space-x-2 px-4">
+                {Array.from({ length: Math.min(5, pagination.totalPages) }, (_, i) => {
+                  const pageNum = i + 1;
+                  const isActive = pageNum === page;
+                  return (
+                    <button
+                      key={pageNum}
+                      onClick={() => fetchJobs(pageNum)}
+                      className={`w-10 h-10 rounded-xl font-semibold transition-all duration-200 ${
+                        isActive
+                          ? 'bg-gradient-to-r from-purple-600 to-blue-600 text-white shadow-lg'
+                          : 'text-gray-600 hover:bg-gray-100 hover:text-gray-800'
+                      }`}
+                    >
+                      {pageNum}
+                    </button>
+                  );
+                })}
+                
+                {pagination.totalPages > 5 && (
+                  <>
+                    <span className="text-gray-400 px-2">...</span>
+                    <button
+                      onClick={() => fetchJobs(pagination.totalPages)}
+                      className={`w-10 h-10 rounded-xl font-semibold transition-all duration-200 ${
+                        pagination.totalPages === page
+                          ? 'bg-gradient-to-r from-purple-600 to-blue-600 text-white shadow-lg'
+                          : 'text-gray-600 hover:bg-gray-100 hover:text-gray-800'
+                      }`}
+                    >
+                      {pagination.totalPages}
+                    </button>
+                  </>
+                )}
+              </div>
+              
+              <button
+                disabled={page === pagination.totalPages}
+                onClick={nextPage}
+                className="p-3 rounded-xl bg-gray-100 hover:bg-gray-200 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 group"
+              >
+                <ChevronRight className="h-5 w-5 text-gray-600 group-hover:text-gray-800" />
+              </button>
+            </div>
+          </div>
+          
+          <div className="text-center mt-6 text-gray-500">
+            Showing {((page - 1) * 10) + 1} - {Math.min(page * 10, pagination.totalJobs || 0)} of {pagination.totalJobs || 0} jobs
+          </div>
         </div>
       )}
     </div>

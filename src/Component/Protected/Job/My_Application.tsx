@@ -6,6 +6,8 @@ import service from "@/helper/service.helper";
 import { IJobsAppliedResponse, IMyJobApplication } from "@/interface/interface";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
+import { FileText, Send, Eye } from "lucide-react";
+import { useAuth } from "@/app/context/authcontext";
 
 export default function MyApplication() {
   const router = useRouter();
@@ -14,7 +16,8 @@ export default function MyApplication() {
   const [selectedApplication, setSelectedApplication] =
     useState<IMyJobApplication | null>(null);
   const { setJobDetails } = useJob();
-
+  const { theme } = useAuth();
+  
   const fetchMyApplications = async () => {
     try {
       setLoading(true);
@@ -32,78 +35,141 @@ export default function MyApplication() {
     fetchMyApplications();
   }, []);
 
-  return (
-    <div className="mx-auto p-6 lg:p-20">
-      <h1 className="text-3xl lg:text-4xl font-extrabold text-center bg-gradient-to-r from-[#FF2670] to-[#A64FA0] bg-clip-text text-transparent mb-6">
-        My Applications
-      </h1>
+      const color = theme === "dark" ? "text-[#fff]" : "text-[#734A98]";
 
-      {loading ? (
-        <Spinner isLoading={loading} />
-      ) : applications.length === 0 ? (
-        <div className="text-center py-16">
-          <p className="text-lg text-muted-foreground">
-            You have not applied to any jobs yet.
-          </p>
-          <button
-            onClick={() => router.push("/jobs")}
-            className="mt-4 px-4 py-2 rounded-md bg-button-bg text-button-text"
-          >
-            Browse Jobs
-          </button>
+
+  return (
+    <div className="min-h-screen">
+      {/* Hero Section */}
+      <div className="relative overflow-hidden">
+        <div className="absolute inset-0 bg-gradient-to-r from-purple-600/10 via-blue-600/10 to-indigo-600/10"></div>
+        <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
+          <div className="text-center">
+            <div className="flex items-center justify-center mb-6">
+              <Send className="h-8 w-8 text-purple-600 mr-3" />
+              <h1 className={`text-4xl lg:text-5xl font-bold ${color} `}>
+                My Applications
+              </h1>
+            </div>
+            <p className="text-xl text-gray-600 max-w-3xl mx-auto">
+              Track your job applications and their current status
+            </p>
+            <div className="mt-4 flex items-center justify-center text-sm text-gray-500">
+              <FileText className="h-4 w-4 mr-2" />
+              <span>{applications.length} applications submitted</span>
+            </div>
+          </div>
         </div>
-      ) : (
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+      </div>
+
+      {/* Applications Content */}
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-8 pb-20">
+        {loading ? (
+          <div className="flex items-center justify-center py-20">
+            <div className="relative">
+              <div className="w-16 h-16 border-4 border-purple-200 border-t-purple-600 rounded-full animate-spin"></div>
+              <div className="absolute inset-0 flex items-center justify-center">
+                <Send className="h-6 w-6 text-purple-600" />
+              </div>
+            </div>
+          </div>
+        ) : applications.length === 0 ? (
+          <div className="text-center py-20">
+            <div className="w-24 h-24 mx-auto mb-6 rounded-full flex items-center justify-center">
+              <Send className="h-12 w-12 text-gray-400" />
+            </div>
+            <h3 className="text-2xl font-semibold text-gray-900 mb-2">No applications yet</h3>
+            <p className="text-gray-500 max-w-md mx-auto mb-6">
+              You haven't applied to any jobs yet. Start exploring opportunities and submit your first application.
+            </p>
+            <button
+              onClick={() => router.push("/jobs")}
+              className="inline-flex items-center px-6 py-3 bg-gradient-to-r from-purple-600 to-blue-600 text-white font-medium rounded-lg hover:from-purple-700 hover:to-blue-700 transition-all duration-200 shadow-md hover:shadow-lg"
+            >
+              <Eye className="h-4 w-4 mr-2" />
+              Browse Jobs
+            </button>
+          </div>
+        ) : (
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
           {applications.map((app) => (
             <Card
               key={app._id}
-              className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4 p-4 rounded-lg bg-white dark:bg-gray-900 shadow-sm"
+              className="group relative bg-white/90 backdrop-blur-sm rounded-xl shadow-md hover:shadow-lg border border-gray-200/50 p-5 transition-all duration-200 hover:scale-[1.01]"
             >
-              <div className="flex-1">
-                <h2 className="text-lg text-white font-semibold">
-                  {app.jobId?.title || "Untitled Role"}
-                </h2>
-                <p className="text-sm text-white">{app.jobId?.company_name}</p>
-                <p className="mt-2 text-sm text-white">
-                  Applied on:{" "}
-                  {new Date(
-                    app.appliedAt || app.createdAt
-                  ).toLocaleDateString()}
-                </p>
-                {app.polkadotExperience && (
-                  <p className="mt-2 text-xs text-white">
-                    Polkadot experience: {app.polkadotDescription || "Yes"}
-                  </p>
-                )}
-              </div>
-
-              <div className="flex flex-col items-start md:items-end gap-3">
+              {/* Status Badge */}
+              <div className="absolute top-4 right-4">
                 <span
-                  className={`inline-flex items-center px-3 py-1 rounded-full text-sm font-medium ${
+                  className={`inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold ${
                     app.status === "accepted"
-                      ? "bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200"
+                      ? "bg-gradient-to-r from-green-500 to-emerald-500 text-white"
                       : app.status === "rejected"
-                      ? "bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200"
-                      : "bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200"
+                      ? "bg-gradient-to-r from-red-500 to-rose-500 text-white"
+                      : app.status === "reviewing"
+                      ? "bg-gradient-to-r from-blue-500 to-indigo-500 text-white"
+                      : "bg-gradient-to-r from-yellow-500 to-orange-500 text-white"
                   }`}
                 >
-                  {app.status}
+                  {app.status.charAt(0).toUpperCase() + app.status.slice(1)}
                 </span>
+              </div>
 
+              <div className="flex items-start space-x-4 mb-4">
+                {/* Company Logo Placeholder */}
+                <div className="w-12 h-12 rounded-lg bg-gradient-to-br from-purple-100 to-blue-100 flex items-center justify-center flex-shrink-0">
+                  {app.jobId?.logo ? (
+                    <img
+                      src={app.jobId.logo}
+                      alt="Company logo"
+                      className="w-full h-full object-cover rounded-lg"
+                    />
+                  ) : (
+                    <FileText className="w-6 h-6 text-purple-600" />
+                  )}
+                </div>
+                
+                {/* Job Details */}
+                <div className="flex-1 min-w-0">
+                  <h2 className="text-lg font-semibold text-gray-900 mb-1 line-clamp-1 group-hover:text-purple-600 transition-colors">
+                    {app.jobId?.title || "Untitled Role"}
+                  </h2>
+                  <p className="text-sm text-gray-600 mb-2">{app.jobId?.company_name}</p>
+                  <div className="flex items-center text-xs text-gray-500">
+                    <Send className="w-3 h-3 mr-1" />
+                    <span>Applied {new Date(app.appliedAt || app.createdAt).toLocaleDateString()}</span>
+                  </div>
+                </div>
+              </div>
+
+              {/* Polkadot Experience */}
+              {app.polkadotExperience && (
+                <div className="mb-4 p-2 bg-purple-50 rounded-lg border border-purple-200">
+                  <p className="text-xs text-purple-700 font-medium">
+                    ✨ Polkadot Experience: {app.polkadotDescription || "Yes"}
+                  </p>
+                </div>
+              )}
+
+              {/* Action Buttons */}
+              <div className="flex items-center justify-between">
                 <div className="flex gap-2">
-                  <a
-                    href={app.resume}
-                    target="_blank"
-                    rel="noreferrer"
-                    className="px-3 py-2 rounded-md text-sm bg-button-bg text-button-text"
-                  >
-                    View Resume
-                  </a>
-
+                  {app.resume && (
+                    <a
+                      href={app.resume}
+                      target="_blank"
+                      rel="noreferrer"
+                      className="inline-flex items-center px-3 py-1.5 bg-gray-600 text-white text-xs font-medium rounded-lg hover:bg-gray-700 transition-colors"
+                    >
+                      <FileText className="w-3 h-3 mr-1" />
+                      Resume
+                    </a>
+                  )}
+                  
                   <button
                     onClick={() => setSelectedApplication(app)}
-                    className="px-3 py-1 rounded-md text-sm bg-gray-100 dark:bg-gray-800"
+                    className="inline-flex items-center px-3 py-1.5 bg-blue-600 text-white text-xs font-medium rounded-lg hover:bg-blue-700 transition-colors"
                   >
+                    <Eye className="w-3 h-3 mr-1" />
                     Details
                   </button>
                 </div>
@@ -393,6 +459,7 @@ export default function MyApplication() {
           </Card>
         </div>
       )}
+      </div>
     </div>
   );
 }
