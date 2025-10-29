@@ -46,7 +46,7 @@ export default function Talents() {
     setLoading(true);
     try {
       const q = buildQueryParams(pageNum);
-      const res = await service.fetcher<any>(`/user/all-users?${q}`);
+      const res = await service.fetcher<any>(`/public/users?${q}`);
       if (res.code === 401) {
         router.replace("/auth/signin");
         return;
