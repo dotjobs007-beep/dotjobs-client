@@ -54,7 +54,7 @@ export default function Talents() {
 
       // server returns { data: { data: users, pagination } }
       const payload = res.data ?? res; // defensive
-      const list = payload.data ?? payload; // defensive
+      const list = payload.user ?? payload; // defensive
 
       // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
       const usersData = Array.isArray(list) ? list : list.data ?? [];

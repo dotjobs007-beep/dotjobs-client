@@ -54,7 +54,7 @@ export default function MyApplication() {
         </div>
       ) : (
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-          {applications.map((app) => (
+          {applications.map((app:any) => (
             <Card
               key={app._id}
               className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4 p-4 rounded-lg bg-white dark:bg-gray-900 shadow-sm"
