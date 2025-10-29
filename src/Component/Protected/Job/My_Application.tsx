@@ -5,7 +5,7 @@ import Spinner from "@/Component/Spinner";
 import service from "@/helper/service.helper";
 import { IJobsAppliedResponse, IMyJobApplication } from "@/interface/interface";
 import { useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import { FileText, Send, Eye } from "lucide-react";
 import { useAuth } from "@/app/context/authcontext";
 
@@ -18,7 +18,7 @@ export default function MyApplication() {
   const { setJobDetails } = useJob();
   const { theme } = useAuth();
   
-  const fetchMyApplications = async () => {
+  const fetchMyApplications = useCallback(async () => {
     try {
       setLoading(true);
       const res = await service.fetcher("/job/jobs-applied-by-user");
@@ -29,11 +29,11 @@ export default function MyApplication() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [router]);
 
   useEffect(() => {
     fetchMyApplications();
-  }, []);
+  }, [fetchMyApplications]);
 
       const color = theme === "dark" ? "text-[#fff]" : "text-[#734A98]";
 
@@ -80,7 +80,7 @@ export default function MyApplication() {
             </div>
             <h3 className="text-2xl font-semibold text-gray-900 mb-2">No applications yet</h3>
             <p className="text-gray-500 max-w-md mx-auto mb-6">
-              You haven't applied to any jobs yet. Start exploring opportunities and submit your first application.
+              You haven&apos;t applied to any jobs yet. Start exploring opportunities and submit your first application.
             </p>
             <button
               onClick={() => router.push("/jobs")}
