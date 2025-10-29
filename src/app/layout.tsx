@@ -10,8 +10,8 @@ import { JobProvider } from "./context/jobcontext";
 import { UserProvider } from "./context/usercontext";
 import Footer from "@/Component/Footer/Footer";
 export const metadata: Metadata = {
-  title: "Dotjobs - Your Gateway to Remote Opportunities",
-  description: "Find your dream remote job today! Explore thousands of listings, apply with ease, and take your career global with Dotjobs.",
+  title: "DotJobs - A job and talent platform built for the Polkadot and Kusama ecosystems",
+  description: "Explore opportunities in the decentralized web, connecting talent with innovative projects and teams building the future.",
 };
 
 const unbounded = Unbounded({
