@@ -148,7 +148,7 @@ export default function HiberbridgeInfo() {
             Join the Sovereign Journey, complete your quests, and make your intent known.
           </p>
           <p className="text-sm text-gray-600 dark:text-gray-400">
-            There's much more coming. 🚀
+            There's much more coming. 
           </p>
         </Card>
       </motion.div>
