@@ -18,6 +18,7 @@ export default function Hero() {
   const [query, setQuery] = useState("");
   const [activeTab, setActiveTab] = useState("jobs"); // toggle state
   const [currentSlide, setCurrentSlide] = useState(0);
+  const [failedImages, setFailedImages] = useState<Set<number>>(new Set());
   const { theme } = useAuth();
   const [jobs, setJobs] = useState<IJobsDetails>({} as IJobsDetails);
   const [companies, setCompanies] = useState<IJobsDetails>({} as IJobsDetails);
@@ -103,10 +104,16 @@ export default function Hero() {
     router.push(`/jobs/talents`);
   };
 
+  const getFallbackImage = (index: number) => {
+    // Return the first banner as fallback for failed images
+    return sliders[0];
+  };
+
   const sliders = [
     "https://res.cloudinary.com/dk06cndku/image/upload/v1760345361/dotjobs_banner001_av0sjg.png",
     "https://res.cloudinary.com/dk06cndku/image/upload/v1760345361/dotjobs_banner003_rm8zgh.png",
     "https://res.cloudinary.com/dk06cndku/image/upload/v1760345360/dotjobs_banner002_rfph0r.png",
+    "https://res.cloudinary.com/dk06cndku/image/upload/v1761941315/hyperbridge_banner_xxsvsa.png" // Temporary placeholder until Hyperbridge banner is fixed
   ];
 
   // Auto-slide functionality
@@ -152,12 +159,16 @@ export default function Hero() {
               onClick={() => handleSliderClick(image, index)}
             >
               <Image
-                src={image}
+                src={failedImages.has(index) ? getFallbackImage(index) : image}
                 alt={`banner image ${index + 1}`}
                 fill
                 className="cursor-pointer object-cover object-center"
                 priority={index === 0}
                 sizes="100vw"
+                onError={(e) => {
+                  console.log(`Failed to load image at index ${index}:`, image);
+                  setFailedImages(prev => new Set([...prev, index]));
+                }}
               />
             </div>
           ))}
