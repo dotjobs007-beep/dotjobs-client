@@ -55,7 +55,7 @@ export default function HiberbridgeInfo() {
           The Sovereign Journey starts now.
         </p>
         <p className="text-md text-gray-600 dark:text-gray-400">
-          Over the next few weeks, we'll explore the meaning of{" "}
+          Over the next few weeks, we&apos;ll explore the meaning of{" "}
           <span className={`font-semibold ${theme === "dark" ? "text-[#7F13EC]" : "text-[#AE1E67]"}`}>
             Sovereignty
           </span>{" "}
@@ -148,7 +148,7 @@ export default function HiberbridgeInfo() {
             Join the Sovereign Journey, complete your quests, and make your intent known.
           </p>
           <p className="text-sm text-gray-600 dark:text-gray-400">
-            There's much more coming. 
+            There&apos;s much more coming. 🚀
           </p>
         </Card>
       </motion.div>
