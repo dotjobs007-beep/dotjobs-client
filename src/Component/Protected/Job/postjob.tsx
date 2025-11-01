@@ -507,7 +507,7 @@ export default function PostJob() {
                       <option value="usdc">USDC</option>
                       <option value="usdt">USDT</option>
                       <option value="ksm">KSM</option>
-                      <option value="others">Other native token</option>
+                      <option value="other native token">Other native token</option>
                     </select>
                   </div>
                 </motion.div>
