@@ -6,7 +6,13 @@ import { FiEye, FiEyeOff } from "react-icons/fi";
 import Spinner from "../Spinner";
 import useSignInLogic from "./SiginLogic";
 import { useAuth } from "@/app/context/authcontext";
-import { useState } from "react";
+import { use, useEffect, useState } from "react";
+import MobileWalletModal from "../Protected/MobileWalletModal";
+import toast from "react-hot-toast";
+import { IApiResponse } from "@/interface/interface";
+import service from "@/helper/service.helper";
+import router from "next/dist/shared/lib/router/router";
+import { useRouter } from "next/navigation";
 
 export default function SignIn() {
   const {
@@ -23,11 +29,66 @@ export default function SignIn() {
 
   const { theme } = useAuth();
   const [showPassword, setShowPassword] = useState(false);
+  const [menuOpen, setMenuOpen] = useState(false);
+  const [isLoadingWallet, setIsLoadingWallet] = useState(false);
+  const router = useRouter();
+
+  const {
+    setIsLoggedIn,
+    setUserDetails,
+    ctxWalletAddress,
+    showMobileWalletConnect,
+    polkadotWalletConnect,
+  } = useAuth();
+
+  const closeMenu = () => setMenuOpen(false);
+
+  console.log("Wallet Address in SignIn:", ctxWalletAddress);
 
   const img =
     theme === "dark"
       ? "/Images/auth_img_dark.png"
       : "/Images/auth_img_light.png";
+
+    const handleAuthentication = async (token: string) => {
+
+    setIsLoadingWallet(true);
+    try {
+      const response:IApiResponse<any> = await service.fetcher(
+           "/user/login-with-wallet",
+           "POST",
+           {
+             data: {
+              address: ctxWalletAddress,
+             },
+             withCredentials: true,
+           }
+         );
+      if (response.code === 200 || response.code === 201) {
+        const { token } = response.data || {};
+        localStorage.setItem("dottoken", token);
+        localStorage.setItem("isLoggedIn", "true");
+        setIsLoggedIn(true);
+        setUserDetails(response.data.user);
+        router.push("/jobs");
+      } else {
+        toast.error(response.message);
+      }
+    } catch (err) {
+      toast.error("Network error");
+    } finally {
+      setIsLoadingWallet(false);
+    }
+  };
+
+useEffect(() => {
+    if (ctxWalletAddress) {
+      handleAuthentication(ctxWalletAddress);
+    }
+}, [ctxWalletAddress]);
+
+
+
 
   return (
     <div className="flex lg:h-[89vh] overflow-hidden mt-8">
@@ -35,7 +96,11 @@ export default function SignIn() {
         <div className="w-full bg-yellow-100 text-yellow-900 p-3 text-center">
           It looks like you are in an in-app browser. For sign-up please
           <button
-            onClick={() => window.open(window.location.href, "_blank")}
+            onClick={() => {
+              if (typeof window !== 'undefined') {
+                window.open(window.location.href, "_blank");
+              }
+            }}
             className="font-semibold underline ml-1"
           >
             open in your browser
@@ -121,6 +186,23 @@ export default function SignIn() {
           </div>
         </div>
 
+        {showMobileWalletConnect ? (
+          <MobileWalletModal closeMenu={closeMenu} />
+        ) : (
+          <button
+            onClick={() => {
+              polkadotWalletConnect();
+            }}
+            className="px-4 py-2 rounded-lg bg-purple-600 text-[12px] mt-5 text-white font-medium hover:bg-purple-700 transition-colors"
+          >
+            {ctxWalletAddress
+              ? `${ctxWalletAddress.slice(0, 6)}...${ctxWalletAddress.slice(
+                  -4
+                )}`
+              : "Connect Wallet To Sign In"}
+          </button>
+        )}
+
         {/* Links */}
         <div className="lg:flex md:flex justify-between mt-1">
           <p className="mt-6 text-gray-500">
@@ -146,7 +228,7 @@ export default function SignIn() {
         />
       </div>
 
-      <Spinner isLoading={isLoading} />
+      <Spinner isLoading={isLoading || isLoadingWallet} />
     </div>
   );
 }
