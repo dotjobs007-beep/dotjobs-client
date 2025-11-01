@@ -41,16 +41,27 @@ class ServiceHelper {
     if (axios.isAxiosError(error)) {
       if (error.response?.data) {
         console.error("ServiceHelper.fetcher AxiosError (response.data):", error.response.data);
+        console.error("Response status:", error.response.status);
+        console.error("Response headers:", error.response.headers);
+        
+        // If response.data is empty object, provide more context
+        if (Object.keys(error.response.data).length === 0) {
+          console.error("Server returned empty response object - this might indicate a server-side validation error");
+        }
+        
         return error.response.data as IApiResponse<T>;
       }
       console.error("ServiceHelper.fetcher AxiosError (no response). message:", error.message);
       console.error("Axios error details:", {
         message: error.message,
         code: error.code,
+        status: error.response?.status,
+        statusText: error.response?.statusText,
         config: error.config && {
           url: error.config.url,
           method: error.config.method,
           headers: error.config.headers,
+          data: error.config.data,
         },
       });
     } else {
@@ -60,7 +71,7 @@ class ServiceHelper {
     const err: IApiResponse<null> = {
       data: null,
       message: error instanceof Error ? error.message : "An unknown error occurred",
-      code: 500,
+      code: error.response?.status || 500,
       status: "error",
     };
 

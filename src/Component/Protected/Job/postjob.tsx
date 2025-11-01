@@ -10,6 +10,7 @@ import { useRouter } from "next/navigation";
 import { useAuth } from "@/app/context/authcontext";
 import ConnectWalletModal from "../ConnectWalletModal";
 import Card from "@/Component/Card";
+import { CategoryOptions } from "@/constants/categories";
 
 export default function PostJob() {
   const [step, setStep] = useState(1);
@@ -103,56 +104,190 @@ export default function PostJob() {
       return;
     }
 
+    // Parse salary range safely
+    const salaryParts = formData.salaryRange.split("-");
+    if (salaryParts.length !== 2) {
+      toast.error("Invalid salary range format. Use format: min-max (e.g., 800-2000)");
+      return;
+    }
+
+    const minSalary = parseInt(salaryParts[0].trim(), 10);
+    const maxSalary = parseInt(salaryParts[1].trim(), 10);
+
+    if (isNaN(minSalary) || isNaN(maxSalary)) {
+      toast.error("Salary range must contain valid numbers");
+      return;
+    }
+
+    if (minSalary >= maxSalary) {
+      toast.error("Maximum salary must be greater than minimum salary");
+      return;
+    }
+
     const body: IJob = {
-      title: formData.jobTitle,
-      description: formData.jobDescription,
-      requirements: formData.jobRequirement,
+      title: formData.jobTitle.trim(),
+      description: formData.jobDescription.trim(),
+      requirements: formData.jobRequirement.trim(),
       employment_type: formData.employmentType as IJob["employment_type"],
       work_arrangement: formData.workArrangement as IJob["work_arrangement"],
       salary_type: formData.salaryType as IJob["salary_type"],
       salary_range: {
-        min: parseInt(formData.salaryRange.split("-")[0], 10),
-        max: parseInt(formData.salaryRange.split("-")[1], 10),
+        min: minSalary,
+        max: maxSalary,
       },
       // additional metadata
       category: formData.category,
       salary_token: formData.salaryToken,
-      company_name: formData.companyName,
-      company_website: formData.companyWebsite,
-      company_description: formData.companyDescription,
-      company_location: formData.companyLocation,
+      company_name: formData.companyName.trim(),
+      company_website: formData.companyWebsite.trim() || undefined,
+      company_description: formData.companyDescription.trim() || undefined,
+      company_location: formData.companyLocation.trim(),
       logo: formData.companyLogo ? formData.companyLogo : userDetails?.avatar,
     };
 
+    // Final validation to ensure no required fields are empty
+    const requiredFields = [
+      { field: body.title, name: "Job Title" },
+      { field: body.description, name: "Job Description" },
+      { field: body.requirements, name: "Job Requirements" },
+      { field: body.employment_type, name: "Employment Type" },
+      { field: body.work_arrangement, name: "Work Arrangement" },
+      { field: body.salary_type, name: "Salary Type" },
+      { field: body.category, name: "Job Category" },
+      { field: body.company_name, name: "Company Name" },
+      { field: body.company_location, name: "Company Location" },
+    ];
+
+    for (const { field, name } of requiredFields) {
+      if (!field || (typeof field === 'string' && field.trim() === '')) {
+        toast.error(`${name} is required and cannot be empty`);
+        setLoading(false);
+        return;
+      }
+    }
+
     setLoading(true);
 
-    const res: IApiResponse<any> = await service.fetcher(
-      "/job/post-job",
-      "POST",
-      {
-        data: body,
-        withCredentials: true,
+    try {
+      // Debug environment variables
+      console.log("Base URL:", process.env.NEXT_PUBLIC_BASE_URL);
+      console.log("Secret Key available:", !!process.env.NEXT_PUBLIC_SECRET_KEY);
+      console.log("User authenticated:", !!localStorage.getItem("dottoken"));
+      
+      // Log the request body for debugging
+      console.log("Submitting job with data:", body);
+
+      const res: IApiResponse<any> = await service.fetcher(
+        "/job/post-job",
+        "POST",
+        {
+          data: body,
+          withCredentials: true,
+        }
+      );
+
+      console.log("API Response:", res);
+
+      if (res.code === 401) {
+        toast.error("Authentication required. Please sign in again.");
+        router.replace("/auth/signin");
+        setLoading(false);
+        return;
       }
-    );
 
-    if (res.code === 401) {
-      router.replace("/auth/signin");
-      setLoading(false);
-      return;
-    }
+      if (res.status === "error") {
+        toast.error(res.message || "Failed to post job. Please try again.");
+        setLoading(false);
+        return;
+      }
 
-    if (res.status === "error") {
-      toast.error(res.message);
+      if (!res.status || res.status === "success") {
+        toast.success(res.message || "Job posted successfully!");
+        setLoading(false);
+        router.replace("/jobs/my_jobs");
+      } else {
+        toast.error("Unexpected response from server. Please try again.");
+        setLoading(false);
+      }
+    } catch (error) {
+      console.error("Job submission error:", error);
+      toast.error("Failed to post job. Please check your connection and try again.");
       setLoading(false);
-      return;
     }
-    toast.success(res.message);
-    setLoading(false);
-    router.replace("/jobs/my_jobs");
     // TODO: Redirect to job listings or dashboard
   };
 
-  const nextStep = () => setStep((s) => Math.min(s + 1, 4));
+  // Step-by-step validation functions
+  const validateStep1 = () => {
+    const errors = [];
+    if (formData.jobTitle.trim() === "") errors.push("Job Title is required");
+    if (formData.jobDescription.trim() === "") errors.push("Job Description is required");
+    if (formData.jobRequirement.trim().length < 10) errors.push("Job Requirement must be at least 10 characters");
+    if (formData.employmentType === "") errors.push("Employment Type is required");
+    if (formData.workArrangement === "") errors.push("Work Arrangement is required");
+    if (!formData.category || formData.category === "") errors.push("Job Category is required");
+    
+    if (errors.length > 0) {
+      toast.error(errors[0]);
+      return false;
+    }
+    return true;
+  };
+
+  const validateStep2 = () => {
+    const errors = [];
+    if (formData.salaryType === "") errors.push("Salary Type is required");
+    
+    // Validate salary range format
+    if (!formData.salaryRange.trim()) {
+      errors.push("Salary Range is required");
+    } else {
+      const salaryParts = formData.salaryRange.split("-");
+      if (salaryParts.length !== 2) {
+        errors.push("Salary Range must be in format min-max (e.g., 800-2000)");
+      } else {
+        const minSalary = parseInt(salaryParts[0].trim(), 10);
+        const maxSalary = parseInt(salaryParts[1].trim(), 10);
+        
+        if (isNaN(minSalary) || isNaN(maxSalary)) {
+          errors.push("Salary range must contain valid numbers");
+        } else if (minSalary >= maxSalary) {
+          errors.push("Maximum salary must be greater than minimum salary");
+        }
+      }
+    }
+    
+    if (errors.length > 0) {
+      toast.error(errors[0]);
+      return false;
+    }
+    return true;
+  };
+
+  const validateStep3 = () => {
+    const errors = [];
+    if (formData.companyName.trim() === "") errors.push("Company Name is required");
+    if (formData.companyLocation.trim() === "") errors.push("Company Location is required");
+    if (formData.companyWebsite && !/^https?:\/\//i.test(formData.companyWebsite)) {
+      errors.push("Company Website must be a valid URL (starting with http:// or https://)");
+    }
+    
+    if (errors.length > 0) {
+      toast.error(errors[0]);
+      return false;
+    }
+    return true;
+  };
+
+  const nextStep = () => {
+    // Validate current step before proceeding
+    if (step === 1 && !validateStep1()) return;
+    if (step === 2 && !validateStep2()) return;
+    if (step === 3 && !validateStep3()) return;
+    
+    setStep((s) => Math.min(s + 1, 5));
+  };
+  
   const prevStep = () => setStep((s) => Math.max(s - 1, 1));
 
   // Animation Variants
@@ -211,7 +346,10 @@ export default function PostJob() {
       <h1 className="text-3xl lg:text-4xl font-extrabold text-center bg-gradient-to-r from-[#FF2670] to-[#A64FA0] bg-clip-text text-transparent mb-2">
         Post a New Job
       </h1>
-      <p className="text-center text-gray-600 mb-8">Step {step} of 4</p>
+      <p className="text-center text-gray-600 mb-2">Step {step} of 5</p>
+      <p className="text-center text-sm text-gray-500 mb-8">
+        <span className="text-red-500">*</span> indicates required fields
+      </p>
 
       {isWalletConnected && (
         <form onSubmit={handleSubmit}>
@@ -229,42 +367,46 @@ export default function PostJob() {
                 >
                   <h2 className="text-xl font-semibold mb-6">Job Details</h2>
 
-                  <label className="block mb-2">Job Title</label>
+                  <label className="block mb-2">Job Title <span className="text-red-500">*</span></label>
                   <input
                     name="jobTitle"
                     value={formData.jobTitle}
                     onChange={handleChange}
                     placeholder="e.g. Senior Software Engineer"
+                    required
                     className="w-full bg-[#FCE9FC] text-gray-800 rounded-lg p-3 mb-6 focus:outline-none"
                   />
 
-                  <label className="block mb-2">Job Description</label>
+                  <label className="block mb-2">Job Description <span className="text-red-500">*</span></label>
                   <textarea
                     name="jobDescription"
                     value={formData.jobDescription}
                     onChange={handleChange}
                     rows={4}
                     placeholder="Responsibilities, benefits..."
+                    required
                     className="w-full bg-[#FCE9FC] text-gray-800 rounded-lg p-3 mb-6 focus:outline-none"
                   />
 
-                  <label className="block mb-2">Job Requirement</label>
+                  <label className="block mb-2">Job Requirement <span className="text-red-500">*</span></label>
                   <textarea
                     name="jobRequirement"
                     value={formData.jobRequirement}
                     onChange={handleChange}
                     rows={4}
                     placeholder="Requirement, Qualifications..."
+                    required
                     className="w-full bg-[#FCE9FC] text-gray-800 rounded-lg p-3 mb-6 focus:outline-none"
                   />
 
                   <div className="grid md:grid-cols-2 gap-6">
                     <div>
-                      <label className="block mb-2">Employment Type</label>
+                      <label className="block mb-2">Employment Type <span className="text-red-500">*</span></label>
                       <select
                         name="employmentType"
                         value={formData.employmentType}
                         onChange={handleChange}
+                        required
                         className="w-full bg-[#FCE9FC] text-gray-800 rounded-lg p-3 focus:outline-none"
                       >
                         <option value="">Select type</option>
@@ -276,11 +418,12 @@ export default function PostJob() {
                     </div>
 
                     <div>
-                      <label className="block mb-2">Work Arrangement</label>
+                      <label className="block mb-2">Work Arrangement <span className="text-red-500">*</span></label>
                       <select
                         name="workArrangement"
                         value={formData.workArrangement}
                         onChange={handleChange}
+                        required
                         className="w-full bg-[#FCE9FC] text-gray-800 rounded-lg p-3 focus:outline-none"
                       >
                         <option value="">Select arrangement</option>
@@ -294,79 +437,15 @@ export default function PostJob() {
                   {/* Category (left in step 1) */}
                   <div className="grid md:grid-cols-1 gap-6 mt-6">
                     <div>
-                      <label className="block mb-2">Job Category</label>
+                      <label className="block mb-2">Job Category <span className="text-red-500">*</span></label>
                       <select
                         name="category"
                         value={formData.category}
                         onChange={handleChange}
+                        required
                         className="w-full bg-[#FCE9FC] text-gray-800 rounded-lg p-3 focus:outline-none"
                       >
-                        <option value="">Select category</option>
-                        <optgroup label="Business & Marketing">
-                          <option value="marketing_advertising">
-                            Marketing & Advertising
-                          </option>
-                          <option value="digital marketing">
-                            Digital Marketing
-                          </option>
-                          <option value="social media">
-                            Social Media Management
-                          </option>
-                          <option value="brand management">
-                            Brand Management
-                          </option>
-                          <option value="sales">
-                            Sales & Business Development
-                          </option>
-                          <option value="product management">
-                            Product Management
-                          </option>
-                          <option value="community management">
-                            Community Management & Moderation
-                          </option>
-                        </optgroup>
-                        <optgroup label="Technology & Development">
-                          <option value="web development">
-                            Web Development
-                          </option>
-                          <option value="mobile app">
-                            Mobile App Development
-                          </option>
-                          <option value="cybersecurity">Cybersecurity</option>
-                          <option value="it support">
-                            IT Support & Networking
-                          </option>
-                          <option value="blockchain">
-                            Blockchain Development
-                          </option>
-                          <option value="blockchain">
-                            Smart Contract Development
-                          </option>
-                          <option value="blockchain">Rust Development</option>
-                        </optgroup>
-                        <optgroup label="Creative & Design">
-                          <option value="graphic design">Graphic Design</option>
-                          <option value="uiux">UI/UX Design</option>
-                          <option value="video editing">
-                            Video Production & Editing Design
-                          </option>
-                          <option value="animation">
-                            Animation & Motion Graphics Design
-                          </option>
-                          <option value="game design">
-                            Game Design & Development Design
-                          </option>
-
-                          <option value="writing">Writing & Content</option>
-                        </optgroup>
-                        <optgroup label="Human Resources & Management">
-                          <option value="hr recruitment">
-                            HR & Recruitment Management
-                          </option>
-                          <option value="operations">
-                            Operations Management
-                          </option>
-                        </optgroup>
+                        <CategoryOptions />
                       </select>
                     </div>
                   </div>
@@ -386,11 +465,12 @@ export default function PostJob() {
 
                   <div className="grid md:grid-cols-2 gap-6">
                     <div>
-                      <label className="block mb-2">Salary Type</label>
+                      <label className="block mb-2">Salary Type <span className="text-red-500">*</span></label>
                       <select
                         name="salaryType"
                         value={formData.salaryType}
                         onChange={handleChange}
+                        required
                         className="w-full bg-[#FCE9FC] text-gray-800 rounded-lg p-3 focus:outline-none"
                       >
                         <option value="">Choose salary type</option>
@@ -402,7 +482,7 @@ export default function PostJob() {
                     </div>
 
                     <div>
-                      <label className="block mb-2">Salary Range</label>
+                      <label className="block mb-2">Salary Range <span className="text-red-500">*</span></label>
                       <input
                         name="salaryRange"
                         value={formData.salaryRange}
@@ -446,12 +526,13 @@ export default function PostJob() {
                     Company Details
                   </h2>
 
-                  <label className="block mb-2">Company Name</label>
+                  <label className="block mb-2">Company Name <span className="text-red-500">*</span></label>
                   <input
                     name="companyName"
                     value={formData.companyName}
                     onChange={handleChange}
                     placeholder="e.g. Acme Corp"
+                    required
                     className="w-full bg-[#FCE9FC] text-gray-800 rounded-lg p-3 mb-6 focus:outline-none"
                   />
 
@@ -462,16 +543,17 @@ export default function PostJob() {
                     name="companyWebsite"
                     value={formData.companyWebsite}
                     onChange={handleChange}
-                    placeholder="e.g. www.acme.com"
+                    placeholder="e.g. https://www.acme.com"
                     className="w-full bg-[#FCE9FC] text-gray-800 rounded-lg p-3 mb-6 focus:outline-none"
                   />
 
-                  <label className="block mb-2">Company Location</label>
+                  <label className="block mb-2">Company Location <span className="text-red-500">*</span></label>
                   <input
                     name="companyLocation"
                     value={formData.companyLocation}
                     onChange={handleChange}
                     placeholder="e.g. New York, NY"
+                    required
                     className="w-full bg-[#FCE9FC] text-gray-800 rounded-lg p-3 mb-6 focus:outline-none"
                   />
 
@@ -537,9 +619,125 @@ export default function PostJob() {
                     </Link>
                   ) : (
                     <div className="block w-full text-center bg-white/10 text-green-600 font-semibold rounded-lg py-2">
-                      You are verified onchain ✅
+                      You are verified onchain
                     </div>
                   )}
+                </motion.div>
+              )}
+
+              {step === 5 && (
+                <motion.div
+                  key="step5"
+                  variants={variants}
+                  initial="initial"
+                  animate="animate"
+                  exit="exit"
+                  transition={{ duration: 0.4 }}
+                >
+                  <h2 className="text-xl font-semibold mb-6">Review & Submit</h2>
+                  <p className="text-sm text-gray-600 mb-6">
+                    Please review all the information before submitting your job posting.
+                  </p>
+
+                  <div className="space-y-6">
+                    {/* Job Details Section */}
+                    <div className="bg-gray-50 rounded-lg p-4">
+                      <h3 className="font-semibold text-lg mb-3 text-gray-800">Job Details</h3>
+                      <div className="grid md:grid-cols-2 gap-4 text-sm">
+                        <div>
+                          <span className="font-medium text-gray-600">Title:</span>
+                          <p className="text-gray-800">{formData.jobTitle}</p>
+                        </div>
+                        <div>
+                          <span className="font-medium text-gray-600">Category:</span>
+                          <p className="text-gray-800 capitalize">{formData.category}</p>
+                        </div>
+                        <div>
+                          <span className="font-medium text-gray-600">Employment Type:</span>
+                          <p className="text-gray-800 capitalize">{formData.employmentType}</p>
+                        </div>
+                        <div>
+                          <span className="font-medium text-gray-600">Work Arrangement:</span>
+                          <p className="text-gray-800 capitalize">{formData.workArrangement}</p>
+                        </div>
+                      </div>
+                      <div className="mt-4">
+                        <span className="font-medium text-gray-600">Description:</span>
+                        <p className="text-gray-800 mt-1">{formData.jobDescription}</p>
+                      </div>
+                      <div className="mt-4">
+                        <span className="font-medium text-gray-600">Requirements:</span>
+                        <p className="text-gray-800 mt-1">{formData.jobRequirement}</p>
+                      </div>
+                    </div>
+
+                    {/* Salary Section */}
+                    <div className="bg-gray-50 rounded-lg p-4">
+                      <h3 className="font-semibold text-lg mb-3 text-gray-800">Compensation</h3>
+                      <div className="grid md:grid-cols-3 gap-4 text-sm">
+                        <div>
+                          <span className="font-medium text-gray-600">Salary Type:</span>
+                          <p className="text-gray-800 capitalize">{formData.salaryType}</p>
+                        </div>
+                        <div>
+                          <span className="font-medium text-gray-600">Range:</span>
+                          <p className="text-gray-800">{formData.salaryRange}</p>
+                        </div>
+                        <div>
+                          <span className="font-medium text-gray-600">Token:</span>
+                          <p className="text-gray-800 uppercase">{formData.salaryToken}</p>
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Company Section */}
+                    <div className="bg-gray-50 rounded-lg p-4">
+                      <h3 className="font-semibold text-lg mb-3 text-gray-800">Company Information</h3>
+                      <div className="flex items-start gap-4">
+                        {(formData.companyLogo || userDetails?.avatar) && (
+                          <img
+                            src={formData.companyLogo || userDetails?.avatar}
+                            alt="Company Logo"
+                            className="w-16 h-16 rounded-full object-cover"
+                          />
+                        )}
+                        <div className="flex-1 grid md:grid-cols-2 gap-4 text-sm">
+                          <div>
+                            <span className="font-medium text-gray-600">Company Name:</span>
+                            <p className="text-gray-800">{formData.companyName}</p>
+                          </div>
+                          <div>
+                            <span className="font-medium text-gray-600">Location:</span>
+                            <p className="text-gray-800">{formData.companyLocation}</p>
+                          </div>
+                          {formData.companyWebsite && (
+                            <div>
+                              <span className="font-medium text-gray-600">Website:</span>
+                              <p className="text-gray-800">{formData.companyWebsite}</p>
+                            </div>
+                          )}
+                        </div>
+                      </div>
+                      {formData.companyDescription && (
+                        <div className="mt-4">
+                          <span className="font-medium text-gray-600">Description:</span>
+                          <p className="text-gray-800 mt-1">{formData.companyDescription}</p>
+                        </div>
+                      )}
+                    </div>
+
+                    {/* Verification Status */}
+                    <div className="bg-gray-50 rounded-lg p-4">
+                      <h3 className="font-semibold text-lg mb-3 text-gray-800">Verification Status</h3>
+                      <div className={`inline-flex items-center px-3 py-1 rounded-full text-sm ${
+                        userDetails?.verified_onchain 
+                          ? "bg-green-100 text-green-800"
+                          : "bg-yellow-100 text-yellow-800"
+                      }`}>
+                        {userDetails?.verified_onchain ? "Verified On-chain" : "Not Verified"}
+                      </div>
+                    </div>
+                  </div>
                 </motion.div>
               )}
             </AnimatePresence>
@@ -558,22 +756,22 @@ export default function PostJob() {
                 </button>
               )}
 
-              {step < 4 && (
+              {step < 5 && (
                 <button
                   type="button"
                   onClick={nextStep}
                   className="ml-auto px-8 py-2 rounded-full font-semibold bg-gradient-to-r from-[#FF2670] to-[#FF4B92] shadow hover:scale-105 hover:shadow-lg transition"
                 >
-                  Next →
+                  {step === 4 ? "Review →" : "Next →"}
                 </button>
               )}
-              {step === 4 && (
+              {step === 5 && (
                 <button
                   type="submit"
-                  disabled={uploading}
+                  disabled={uploading || loading}
                   className="ml-auto px-8 py-2 rounded-full font-semibold bg-gradient-to-r from-[#FF2670] to-[#FF4B92] shadow hover:scale-105 hover:shadow-lg transition disabled:opacity-60"
                 >
-                  {loading ? "Uploading..." : "Post Job"}
+                  {loading ? "Posting Job..." : "Post Job"}
                 </button>
               )}
             </div>

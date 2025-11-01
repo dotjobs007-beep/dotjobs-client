@@ -160,11 +160,18 @@ export default function Talents() {
                     <p className="text-sm text-gray-500">location: {u.location}</p>
                   </div>
                   <div className="text-right">
-                    <p className="text-sm text-gray-200">
+                    <div className={`inline-flex items-center px-3 py-1 rounded-full text-xs font-medium ${
+                      u.jobSeeker 
+                        ? "bg-green-100 text-green-800 border border-green-200" 
+                        : "bg-gray-100 text-gray-600 border border-gray-200"
+                    }`}>
+                      <div className={`w-2 h-2 rounded-full mr-2 ${
+                        u.jobSeeker ? "bg-green-500" : "bg-gray-400"
+                      }`}></div>
                       {u.jobSeeker
-                        ? "Looking for a job"
-                        : "Not looking for a job"}
-                    </p>
+                        ? "Available"
+                        : "Not Available"}
+                    </div>
                   </div>
                 </div>
                 <div className="mt-2 flex flex-wrap gap-2 ">

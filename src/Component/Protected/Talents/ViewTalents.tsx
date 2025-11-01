@@ -89,9 +89,20 @@ export default function TalentDetails() {
                   </div>
                   <div className="flex justify-between">
                     <span className="font-medium">Job seeking</span>
-                    <span className={`text-sm font-semibold ${userDetails.jobSeeker ? 'text-green-400' : 'text-red-400'}`}>
-                      {userDetails.jobSeeker ? 'Yes' : 'No'}
-                    </span>
+                                     <div className="text-right">
+                    <div className={`inline-flex items-center px-3 py-1 rounded-full text-xs font-medium ${
+                      userDetails.jobSeeker 
+                        ? "bg-green-100 text-green-800 border border-green-200" 
+                        : "bg-gray-100 text-gray-600 border border-gray-200"
+                    }`}>
+                      <div className={`w-2 h-2 rounded-full mr-2 ${
+                        userDetails.jobSeeker ? "bg-green-500" : "bg-gray-400"
+                      }`}></div>
+                      {userDetails.jobSeeker
+                        ? "Available"
+                        : "Not Available"}
+                    </div>
+                  </div>
                   </div>
                   <div className="flex justify-between">
                     <span className="font-medium">Joined on: </span>
