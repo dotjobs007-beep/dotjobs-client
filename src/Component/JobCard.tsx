@@ -59,8 +59,8 @@ export default function JobCard({
         </div>
 
         <p className="text-[12px] text-white break-words">
-          {description.length > 200
-            ? description.slice(0, 200) + "..."
+          {description.length > 50
+            ? description.slice(0, 50) + "..."
             : description}
         </p>
 

@@ -91,7 +91,7 @@ export default function Jobs() {
       if (employmentType) params.append("employmentType", employmentType);
       if (workArrangement) params.append("workArrangement", workArrangement);
       if (companyName) params.append("companyName", companyName);
-      if (category) params.append("category", category.toLocaleLowerCase());
+      if (category && category.value) params.append("category", category.value.toLocaleLowerCase());
       
       // Parse and append salary range
       const { minSalary, maxSalary } = parseSalaryRange(salaryRange);
@@ -184,8 +184,30 @@ export default function Jobs() {
             <label className="mb-1 font-medium">Category</label>
             <select
               name="category"
-              value={category || ""}
-              onChange={(e) => setCategory(e.target.value)}
+              value={category?.value || ""}
+              onChange={(e) => {
+                const selectedValue = e.target.value;
+                if (selectedValue) {
+                  // Find the category object that matches the selected value
+                  const selectedCategory = CategoryOptions().props.children.find(
+                    (option: any) => option.props.value === selectedValue
+                  );
+                  if (selectedCategory) {
+                    setCategory({
+                      value: selectedValue, label: selectedCategory.props.children,
+                      icon: undefined,
+                      alt: ""
+                    });
+                  }
+                } else {
+                  setCategory({
+                    value: "",
+                    label: "",
+                    icon: undefined,
+                    alt: ""
+                  });
+                }
+              }}
               className="w-full bg-[#FCE9FC] text-gray-800 rounded-lg p-3 focus:outline-none"
             >
               <CategoryOptions />
