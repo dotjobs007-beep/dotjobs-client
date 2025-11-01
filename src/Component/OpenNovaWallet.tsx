@@ -3,6 +3,12 @@
 export type WalletType = "nova" | "subwallet" | "polkadot";
 
 export function openWallet(wallet: WalletType) {
+  // Check if we're on the client side
+  if (typeof window === 'undefined' || typeof navigator === 'undefined') {
+    console.warn('openWallet called on server side');
+    return;
+  }
+
   const dappUrl = encodeURIComponent("https://dotjob-i4y3.onrender.com");
   const userAgent = navigator.userAgent || navigator.vendor || (window as any).opera;
   const isiOS = /iPad|iPhone|iPod/.test(userAgent) && !("MSStream" in window);

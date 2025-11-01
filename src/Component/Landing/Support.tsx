@@ -66,7 +66,9 @@ export default function Support() {
     const mailto = `mailto:supports@dotjobs.online?subject=${subject}&body=${body}`;
 
     // Open the user's email client
-    window.location.href = mailto;
+    if (typeof window !== 'undefined') {
+      window.location.href = mailto;
+    }
 
     // Optionally reset form
     setName("");

@@ -20,6 +20,9 @@ export default function Authentication() {
 
 useEffect(() => {
   const handleEmailSignIn = async () => {
+    // Check if we're on the client side
+    if (typeof window === 'undefined') return;
+    
     if (isSignInWithEmailLink(auth, window.location.href)) {
       try {
         const emailForSignIn =
@@ -56,6 +59,9 @@ useEffect(() => {
       return;
     }
 
+    // Check if we're on the client side
+    if (typeof window === 'undefined') return;
+
     const actionCodeSettings = {
       url: window.location.href, // Redirect back to this page after sign-in
       handleCodeInApp: true,
@@ -63,7 +69,9 @@ useEffect(() => {
 
     try {
       await sendSignInLinkToEmail(auth, email, actionCodeSettings);
-      window.localStorage.setItem("emailForSignIn", email);
+      if (typeof window !== 'undefined') {
+        window.localStorage.setItem("emailForSignIn", email);
+      }
       alert("Check your email for the login link!");
     } catch (err) {
       console.error(err);
@@ -116,7 +124,7 @@ const handleTwitterLogin = async () => {
             
             // Optional: Automatically redirect to the appropriate sign-in method
             if (methods.includes('google.com')) {
-              if (window.confirm("Would you like to sign in with Google instead?")) {
+              if (typeof window !== 'undefined' && window.confirm("Would you like to sign in with Google instead?")) {
                 await handleGoogleLogin();
               }
             }

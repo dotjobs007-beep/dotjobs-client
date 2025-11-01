@@ -33,7 +33,11 @@ export default function Signup() {
         <div className="w-full bg-yellow-100 text-yellow-900 p-3 text-center">
           It looks like you are in an in-app browser. For sign-up please
           <button
-            onClick={() => window.open(window.location.href, "_blank")}
+            onClick={() => {
+              if (typeof window !== 'undefined') {
+                window.open(window.location.href, "_blank");
+              }
+            }}
             className="font-semibold underline ml-1"
           >
             open in your browser

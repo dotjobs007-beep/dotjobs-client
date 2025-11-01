@@ -18,6 +18,7 @@ interface AuthContextType {
   ctxWalletAddress?: string | null;
   setWalletAddress?: (address: string | null) => void;
   disconnectWallet: () => Promise<void> | (() => void);
+  clearWalletState: () => Promise<void>;
   connectingWallet: boolean;
   isWalletConnected?: boolean;
   setIsWalletConnected: (value: boolean) => void;
@@ -81,6 +82,42 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     }
   };
 
+  // Enhanced wallet cleanup function
+  const clearWalletState = async () => {
+    console.log("Starting comprehensive wallet state cleanup...");
+    
+    try {
+      // Clear context state first (most important)
+      setCtxWalletAddress(null);
+      setIsWalletConnected(false);
+      setShowMobileWalletConnect(false);
+      setIsWalletMissing(false);
+      setConnectingWallet(false);
+      console.log("Auth context wallet states cleared");
+      
+      // Call the hook's comprehensive disconnect function
+      if (disconnectWallet) {
+        await disconnectWallet();
+        console.log("Hook wallet disconnect completed");
+      }
+      
+      // Additional cleanup - force reset of any cached connection state
+      try {
+        localStorage.removeItem("walletConnectionState");
+        sessionStorage.removeItem("walletConnectionState");
+        console.log("Additional connection state cleared");
+      } catch (storageError) {
+        console.warn("Error clearing additional storage:", storageError);
+      }
+      
+    } catch (error) {
+      console.error("Error in clearWalletState:", error);
+      // Don't throw, allow logout to continue even if wallet cleanup fails
+    }
+    
+    console.log("Comprehensive wallet state cleanup completed");
+  };
+
   useEffect(() => {
     // When walletAddress becomes available, handle post-connection steps
     if (walletAddress) {
@@ -126,6 +163,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         setUserDetails,
         ctxWalletAddress,
         disconnectWallet,
+        clearWalletState,
         connectingWallet,
         isWalletConnected,
         setIsWalletConnected,
