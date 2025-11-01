@@ -443,7 +443,7 @@ export default function ProfilePage() {
             />
 
             <label className="block text-sm font-medium text-white mb-1">
-              LinkedIn Profile
+              LinkedIn Profile (paste your linkedin profile URL)
             </label>
             <input
               value={formData.linkedInProfile}
@@ -454,7 +454,7 @@ export default function ProfilePage() {
             />
 
             <label className="block text-sm font-medium text-white mb-1">
-              x Profile
+              x Profile (paste your x profile URL)
             </label>
             <input
               value={formData.xProfile}
@@ -465,7 +465,7 @@ export default function ProfilePage() {
             />
 
             <label className="block text-sm font-medium text-white mb-1">
-              GitHub Profile
+              GitHub Profile (paste your GitHub profile URL)
             </label>
             <input
               value={formData.githubProfile}

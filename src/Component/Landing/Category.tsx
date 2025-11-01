@@ -10,16 +10,18 @@ import { MdDesignServices, MdDeveloperMode } from "react-icons/md";
 import { TfiWrite } from "react-icons/tfi";
 import { useRouter } from "next/navigation";
 
-type CategoryCardProps = {
+export type CategoryCardProps = {
   icon: React.ReactNode;
   alt: string;
   label: string;
   delay?: number; // Stagger delay
+  value?: string;
 };
 
 export function CategoryCard({
   icon,
   alt,
+  value,
   label,
   delay = 0,
 }: CategoryCardProps) {
@@ -50,7 +52,7 @@ export function CategoryCard({
 
   const navigateToCategory = (label: string) => {
     // Logic to navigate to category page
-    setCategory(label);
+    setCategory({ icon, alt, label, value });
     router.push("/jobs");
   }
 
@@ -82,26 +84,31 @@ export default function Category() {
       icon: <MdDeveloperMode className="text-[30px] text-[#CB2174]" />,
       alt: "Category 1",
       label: "Development",
+      value: "development",
     },
     {
       icon: <MdDesignServices className="text-[30px] text-[#CB2174]" />,
       alt: "Category 2",
       label: "Design",
+      value: "design",
     },
     {
       icon: <GrUserManager className="text-[30px] text-[#CB2174]" />,
       alt: "Category 3",
       label: "Management",
+      value: "management",
     },
     {
       icon: <IoMegaphoneSharp className="text-[30px] text-[#CB2174]" />,
       alt: "Category 4",
       label: "Marketing & Advertising",
+      value: "marketing_advertising",
     },
     {
       icon: <TfiWrite className="text-[30px] text-[#CB2174]" />,
       alt: "Category 5",
       label: "Writing",
+      value: "writing",
     },
   ];
 
@@ -121,6 +128,7 @@ export default function Category() {
             alt={cat.alt}
             label={cat.label}
             delay={idx * 150} // stagger animation
+            value={cat.value}
           />
         ))}
       </div>
