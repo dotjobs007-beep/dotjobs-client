@@ -17,7 +17,7 @@ export default function ViewJobDetails() {
     jobDetails?.salary_type,
     jobDetails?.work_arrangement,
     jobDetails?.salary_range
-      ? `${jobDetails.salary_range.min} - ${jobDetails.salary_range.max} USD`
+      ? `${jobDetails.salary_range.min} - ${jobDetails.salary_range.max} ${jobDetails.salary_type}`
       : null,
   ].filter(Boolean);
 

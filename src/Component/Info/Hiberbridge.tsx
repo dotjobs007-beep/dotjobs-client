@@ -10,7 +10,7 @@ export default function HiberbridgeInfo() {
 
   const tasks = [
     {
-      title: "🎯 Basic Participation",
+      title: "Basic Participation",
       description: "Complete all tasks to qualify for the raffle draw",
       tasks: [
         "Join the Sovereign Journey on Airlyft",
@@ -20,7 +20,7 @@ export default function HiberbridgeInfo() {
       reward: "Enter the $50 raffle (10 active participants will win)",
     },
     {
-      title: "🚀 Enhanced Participation",
+      title: "Enhanced Participation",
       description: "Want a better shot at winning $50? Go beyond basic quests",
       tasks: [
         "Write a short thread about your experience",
@@ -49,7 +49,7 @@ export default function HiberbridgeInfo() {
         className="max-w-3xl text-center space-y-6"
       >
         <h1 className="text-4xl font-bold tracking-tight">
-          🌉 Hyperbridge <span className={theme === "dark" ? "text-[#7F13EC]" : "text-[#AE1E67]"}>Sovereign Journey</span>
+         Hyperbridge <span className={theme === "dark" ? "text-[#7F13EC]" : "text-[#AE1E67]"}>Sovereign Journey</span>
         </h1>
         <p className="text-lg text-gray-600 dark:text-gray-300">
           The Sovereign Journey starts now.
@@ -106,7 +106,7 @@ export default function HiberbridgeInfo() {
       >
         <Card className="border border-green-400/40 bg-green-50 dark:bg-green-950/20">
           <p className="text-sm text-green-600 dark:text-green-400 text-center">
-            💰 10 active participants will win $50 each in a raffle
+            10 active participants will win $50 each in a raffle
           </p>
         </Card>
       </motion.div>
@@ -148,7 +148,7 @@ export default function HiberbridgeInfo() {
             Join the Sovereign Journey, complete your quests, and make your intent known.
           </p>
           <p className="text-sm text-gray-600 dark:text-gray-400">
-            There&apos;s much more coming. 🚀
+            There&apos;s much more coming.
           </p>
         </Card>
       </motion.div>

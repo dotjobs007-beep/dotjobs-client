@@ -34,7 +34,7 @@ export default function JobCard({
     <Card
       className="
         grid grid-cols-1 md:grid-cols-[4fr_1fr]
-        gap-4 mt-6 px-4 py-3
+        gap-4 px-4 py-3
         shadow-sm
         items-start
         w-full
@@ -59,7 +59,9 @@ export default function JobCard({
         </div>
 
         <p className="text-[12px] text-white break-words">
-          {description}
+          {description.length > 200
+            ? description.slice(0, 200) + "..."
+            : description}
         </p>
 
         <div className="flex flex-wrap gap-4">

@@ -12,6 +12,7 @@ import {
 import service from "@/helper/service.helper";
 import { useRouter } from "next/navigation";
 import { useJob } from "@/app/context/jobcontext";
+import { CategoryOptions } from "@/constants/categories";
 
 export default function Jobs() {
   const { companyName, category, jobQuery, setCategory } = useJob();
@@ -19,8 +20,8 @@ export default function Jobs() {
   const [query, setQuery] = useState(jobQuery);
   const [employmentType, setEmploymentType] = useState("");
   const [workArrangement, setWorkArrangement] = useState("");
-  const [minSalary, setMinSalary] = useState("");
-  const [maxSalary, setMaxSalary] = useState("");
+  const [salaryRange, setSalaryRange] = useState("");
+  const [salaryError, setSalaryError] = useState("");
   const [sortBy, setSortBy] = useState("createdAt");
   const [jobs, setJobs] = useState<IJob[]>([]);
   const [pagination, setPagination] = useState<IPagination | null>(null);
@@ -37,6 +38,46 @@ export default function Jobs() {
     { value: "salary", label: "Salary Low → High" },
   ];
 
+  // Parse salary range input
+  const parseSalaryRange = (input: string) => {
+    if (!input.trim()) return { minSalary: "", maxSalary: "", error: "" };
+    
+    // Check if it's a range (contains hyphen)
+    if (input.includes('-')) {
+      const parts = input.split('-').map(part => part.trim());
+      if (parts.length === 2) {
+        const min = parseFloat(parts[0]);
+        const max = parseFloat(parts[1]);
+        
+        if (isNaN(min) || isNaN(max)) {
+          return { minSalary: "", maxSalary: "", error: "Please enter valid numbers" };
+        }
+        
+        if (max < min) {
+          return { minSalary: "", maxSalary: "", error: "Maximum salary cannot be less than minimum" };
+        }
+        
+        return { minSalary: min.toString(), maxSalary: max.toString(), error: "" };
+      }
+    } else {
+      // Single value - use as minimum
+      const value = parseFloat(input);
+      if (isNaN(value)) {
+        return { minSalary: "", maxSalary: "", error: "Please enter a valid number" };
+      }
+      return { minSalary: value.toString(), maxSalary: "", error: "" };
+    }
+    
+    return { minSalary: "", maxSalary: "", error: "Invalid format. Use single number or range like 100-200" };
+  };
+
+  // Handle salary range input change
+  const handleSalaryRangeChange = (value: string) => {
+    setSalaryRange(value);
+    const { error } = parseSalaryRange(value);
+    setSalaryError(error);
+  };
+
   const fetchJobs = async (pageNum: number) => {
     setLoading(true);
     try {
@@ -49,10 +90,17 @@ export default function Jobs() {
       if (query) params.append("title", query);
       if (employmentType) params.append("employmentType", employmentType);
       if (workArrangement) params.append("workArrangement", workArrangement);
-      if (minSalary) params.append("minSalary", minSalary);
-      if (maxSalary) params.append("maxSalary", maxSalary);
       if (companyName) params.append("companyName", companyName);
       if (category) params.append("category", category.toLocaleLowerCase());
+      
+      // Parse and append salary range
+      const { minSalary, maxSalary } = parseSalaryRange(salaryRange);
+      if (minSalary) params.append("minSalary", minSalary);
+      if (maxSalary) params.append("maxSalary", maxSalary);
+      
+      // Debug: log the parameters being sent
+      console.log("Fetching jobs with params:", params.toString());
+      
       const res: IApiResponse<IJobResponse> = await service.fetcher(
         `/job/fetch-jobs?${params.toString()}`,
         "GET",
@@ -78,12 +126,23 @@ export default function Jobs() {
     }
   };
 
+  // Debounce search to avoid too many API calls
   useEffect(() => {
-    fetchJobs(1);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [category, companyName]);
+    const debounceTimer = setTimeout(() => {
+      fetchJobs(1);
+    }, 500); // 500ms delay for search input
 
-  const handleApplyFilters = () => fetchJobs(1);
+    return () => clearTimeout(debounceTimer);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [query]);
+
+  // Immediate filtering for dropdowns and other inputs
+  useEffect(() => {
+    if (!salaryError) { // Only fetch if there's no salary error
+      fetchJobs(1);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [category, companyName, employmentType, workArrangement, salaryRange, sortBy]);
   const nextPage = () =>
     pagination && page < pagination.totalPages && fetchJobs(page + 1);
   const prevPage = () => page > 1 && fetchJobs(page - 1);
@@ -105,27 +164,21 @@ export default function Jobs() {
       </div>
 
       {/* FILTER CARD */}
-      <Card className="p-6 w-full bg-white shadow-md rounded-xl space-y-6 lg:sticky top-16 z-40">
-        {/* SEARCH */}
-        <div className="flex flex-col lg:flex-row gap-4 w-full">
-          <input
-            type="text"
-            placeholder="Search by title or company..."
-            value={query}
-            onChange={(e) => setQuery(e.target.value)}
-            className="px-4 lg:w-[90%] w-full text-gray-600 py-3 border border-gray-300 rounded-lg bg-[#FDD7FD]"
-          />
-          <button
-            onClick={handleApplyFilters}
-            className="bg-purple-600 text-white px-6 py-3 rounded-lg font-semibold hover:bg-purple-700"
-          >
-            Apply Filters
-          </button>
-        </div>
+      <Card className="p-2 w-full bg-white shadow-md rounded-xl space-y-6 lg:sticky top-16 z-40">
+        {/* MAIN ROW - SEARCH + PRIMARY FILTERS */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 w-full">
+          {/* SEARCH FILTER */}
+          <div className="flex flex-col text-sm">
+            <label className="mb-1 font-medium">Search</label>
+            <input
+              type="text"
+              placeholder="Search by title or company..."
+              value={query}
+              onChange={(e) => setQuery(e.target.value)}
+              className="px-4 w-full text-black py-3 border border-gray-300 rounded-lg bg-[#FDD7FD] focus:outline-none"
+            />
+          </div>
 
-        {/* INLINE DROPDOWNS */}
-        {/* INLINE DROPDOWNS */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 w-full">
           {/* CATEGORY DROPDOWN */}
           <div className="flex flex-col text-sm">
             <label className="mb-1 font-medium">Category</label>
@@ -135,59 +188,17 @@ export default function Jobs() {
               onChange={(e) => setCategory(e.target.value)}
               className="w-full bg-[#FCE9FC] text-gray-800 rounded-lg p-3 focus:outline-none"
             >
-              <option value="">{category || "Select category"}</option>
-              <optgroup label="Business & Marketing">
-                <option value="marketing_advertising">
-                  Marketing & Advertising
-                </option>
-                <option value="digital marketing">Digital Marketing</option>
-                <option value="social media">Social Media Management</option>
-                <option value="brand management">Brand Management</option>
-                <option value="sales">Sales & Business Development</option>
-                <option value="product management">Product Management</option>
-                <option value="community management">
-                  Community Management & Moderation
-                </option>
-              </optgroup>
-              <optgroup label="Technology & Development">
-                <option value="web development">Web Development</option>
-                <option value="mobile app">Mobile App Development</option>
-                <option value="cybersecurity">Cybersecurity</option>
-                <option value="it support">IT Support & Networking</option>
-                <option value="blockchain">Blockchain Development</option>
-                <option value="blockchain">Smart Contract Development</option>
-                <option value="blockchain">Rust Development</option>
-              </optgroup>
-              <optgroup label="Creative & Design">
-                <option value="graphic design">Graphic Design</option>
-                <option value="uiux">UI/UX Design</option>
-                <option value="video editing">
-                  Video Production & Editing Design
-                </option>
-                <option value="animation">
-                  Animation & Motion Graphics Design
-                </option>
-                <option value="game design">
-                  Game Design & Development Design
-                </option>
-
-                <option value="writing">Writing & Content</option>
-              </optgroup>
-              <optgroup label="Human Resources & Management">
-                <option value="hr recruitment">
-                  HR & Recruitment Management
-                </option>
-                <option value="operations">Operations Management</option>
-              </optgroup>
+              <CategoryOptions />
             </select>
           </div>
-          {/* Employment Type */}
-          <div className="flex flex-col text-sm">
+
+          {/* Employment Type - Hidden on medium, shown on large */}
+          <div className="flex flex-col text-sm hidden lg:flex">
             <label className="mb-1 font-medium">Employment Type</label>
             <select
               value={employmentType}
               onChange={(e) => setEmploymentType(e.target.value)}
-              className="border border-gray-300 rounded-md px-2 py-1 text-gray-600 text-sm"
+              className="border border-gray-300 rounded-lg px-3 py-3 text-gray-600 focus:outline-none"
             >
               <option value="">All</option>
               {employmentTypes.map(
@@ -201,13 +212,56 @@ export default function Jobs() {
             </select>
           </div>
 
-          {/* Work Arrangement */}
-          <div className="flex flex-col text-sm">
+          {/* Work Arrangement - Hidden on medium, shown on large */}
+          <div className="flex flex-col text-sm hidden lg:flex">
             <label className="mb-1 font-medium">Work Arrangement</label>
             <select
               value={workArrangement}
               onChange={(e) => setWorkArrangement(e.target.value)}
-              className="border border-gray-300 text-gray-600 rounded-md px-2 py-1 text-sm"
+              className="border border-gray-300 text-gray-600 rounded-lg px-3 py-3 focus:outline-none"
+            >
+              <option value="">All</option>
+              {workArrangements.map(
+                (arr) =>
+                  arr && (
+                    <option key={arr} value={arr}>
+                      {arr}
+                    </option>
+                  )
+              )}
+            </select>
+          </div>
+        </div>
+
+        {/* SECONDARY ROW - ADDITIONAL FILTERS */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 w-full">
+          {/* Employment Type - Shown on medium screens */}
+          <div className="flex flex-col text-sm lg:hidden">
+            <label className="mb-1 font-medium">Employment Type</label>
+            <select
+              value={employmentType}
+              onChange={(e) => setEmploymentType(e.target.value)}
+              className="border border-gray-300 rounded-lg px-3 py-3 text-gray-600 focus:outline-none"
+            >
+              <option value="">All</option>
+              {employmentTypes.map(
+                (type) =>
+                  type && (
+                    <option key={type} value={type}>
+                      {type}
+                    </option>
+                  )
+              )}
+            </select>
+          </div>
+
+          {/* Work Arrangement - Shown on medium screens */}
+          <div className="flex flex-col text-sm lg:hidden">
+            <label className="mb-1 font-medium">Work Arrangement</label>
+            <select
+              value={workArrangement}
+              onChange={(e) => setWorkArrangement(e.target.value)}
+              className="border border-gray-300 text-gray-600 rounded-lg px-3 py-3 focus:outline-none"
             >
               <option value="">All</option>
               {workArrangements.map(
@@ -221,26 +275,25 @@ export default function Jobs() {
             </select>
           </div>
 
-          {/* Salary Min */}
+          {/* Salary Range */}
           <div className="flex flex-col text-sm">
-            <label className="mb-1 font-medium">Min Salary</label>
+            <label className="mb-1 font-medium">Salary Range</label>
             <input
-              type="number"
-              value={minSalary}
-              onChange={(e) => setMinSalary(e.target.value)}
-              className="border border-gray-300 rounded-md px-2 py-1 text-sm"
+              type="text"
+              placeholder="e.g. 1000 (min only) or 1000-5000 (range)"
+              value={salaryRange}
+              onChange={(e) => handleSalaryRangeChange(e.target.value)}
+              className={`border rounded-lg px-3 py-3 focus:outline-none ${
+                salaryError ? 'border-red-500' : 'border-gray-300'
+              }`}
             />
-          </div>
-
-          {/* Salary Max */}
-          <div className="flex flex-col text-sm">
-            <label className="mb-1 font-medium">Max Salary</label>
-            <input
-              type="number"
-              value={maxSalary}
-              onChange={(e) => setMaxSalary(e.target.value)}
-              className="border border-gray-300 rounded-md px-2 py-1 text-sm"
-            />
+            {salaryError ? (
+              <span className="text-red-500 text-xs mt-1">{salaryError}</span>
+            ) : (
+              <span className="text-gray-400 text-xs mt-1">
+                Enter minimum only or range (min-max)
+              </span>
+            )}
           </div>
 
           {/* Sort By */}
@@ -249,7 +302,7 @@ export default function Jobs() {
             <select
               value={sortBy}
               onChange={(e) => setSortBy(e.target.value)}
-              className="border text-gray-600 border-gray-300 rounded-md px-2 py-1 text-sm"
+              className="border text-gray-600 border-gray-300 rounded-lg px-3 py-3 focus:outline-none"
             >
               {sortOptions.map((opt) => (
                 <option key={opt.value} value={opt.value}>
@@ -258,6 +311,8 @@ export default function Jobs() {
               ))}
             </select>
           </div>
+
+
         </div>
       </Card>
 

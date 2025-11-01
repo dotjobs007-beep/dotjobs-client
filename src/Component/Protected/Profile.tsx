@@ -418,7 +418,7 @@ export default function ProfilePage() {
           <Card className="rounded-xl p-6 w-full max-w-md shadow-2xl border border-gray-100 max-h-[90vh] overflow-y-auto">
             <h2 className="text-xl font-bold mb-4">Edit Profile</h2>
 
-            <label className="block text-sm font-medium text-gray-700 mb-1">
+            <label className="block text-sm font-medium text-white mb-1">
               About
             </label>
             <textarea
@@ -430,7 +430,7 @@ export default function ProfilePage() {
               rows={4}
             />
 
-            <label className="block text-sm font-medium text-gray-700 mb-1">
+            <label className="block text-sm font-medium text-white mb-1">
               Skills (comma separated)
             </label>
             <input
@@ -442,7 +442,7 @@ export default function ProfilePage() {
               placeholder="e.g. React, Node.js"
             />
 
-            <label className="block text-sm font-medium text-gray-700 mb-1">
+            <label className="block text-sm font-medium text-white mb-1">
               LinkedIn Profile
             </label>
             <input
@@ -453,7 +453,7 @@ export default function ProfilePage() {
               placeholder="e.g. https://www.linkedin.com/in/username"
             />
 
-            <label className="block text-sm font-medium text-gray-700 mb-1">
+            <label className="block text-sm font-medium text-white mb-1">
               x Profile
             </label>
             <input
@@ -464,7 +464,7 @@ export default function ProfilePage() {
               placeholder="e.g. https://www.x.com/in/username"
             />
 
-            <label className="block text-sm font-medium text-gray-700 mb-1">
+            <label className="block text-sm font-medium text-white mb-1">
               GitHub Profile
             </label>
             <input
@@ -475,7 +475,7 @@ export default function ProfilePage() {
               placeholder="e.g. https://www.github.com/in/username"
             />
 
-            <label className="block text-sm font-medium text-gray-700 mb-1">
+            <label className="block text-sm font-medium text-white mb-1">
               Job Seeker
             </label>
             <input
@@ -491,7 +491,7 @@ export default function ProfilePage() {
               className="mr-2 leading-tight"
             />
 
-            <label className="block text-sm font-medium text-gray-700 mb-1">
+            <label className="block text-sm font-medium text-white mb-1">
               Location
             </label>
             <input
@@ -503,7 +503,7 @@ export default function ProfilePage() {
             />
 
             {/* Gender */}
-            <label className="block text-sm font-medium text-gray-700 mb-1">
+            <label className="block text-sm font-medium text-white mb-1">
               Gender
             </label>
             <select
@@ -523,7 +523,7 @@ export default function ProfilePage() {
             </select>
 
             {/* Ethnicity / Race (optional) */}
-            <label className="block text-sm font-medium text-gray-700 mb-1">
+            <label className="block text-sm font-medium text-white mb-1">
               Race / Ethnicity (optional)
             </label>
             <select
@@ -546,14 +546,14 @@ export default function ProfilePage() {
               <option value="mixed_multiracial">Mixed / Multiracial</option>
               <option value="prefer_not">Prefer not to say</option>
             </select>
-            <p className="text-xs text-gray-500 mb-4">
+            <p className="text-xs text-gray-300 mb-4">
               Select the option that best describes you. This information is
               collected only for diversity and inclusion purposes and will not
               affect your application.
             </p>
 
             {/* Primary Language */}
-            <label className="block text-sm font-medium text-gray-700 mb-1">
+            <label className="block text-sm font-medium text-white mb-1">
               Primary Language
             </label>
             <input
