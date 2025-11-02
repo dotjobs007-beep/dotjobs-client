@@ -29,6 +29,8 @@ export default function JobCard({
   buttonText = "Apply Now",
 }: JobCardProps) {
 
+  console.log("count", applicantCount)
+
   const {theme} = useAuth();
   return (
     <Card

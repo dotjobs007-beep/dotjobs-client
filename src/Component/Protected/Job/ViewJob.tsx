@@ -7,6 +7,8 @@ import { useRouter } from "next/navigation";
 import { useJob } from "@/app/context/jobcontext";
 import Link from "next/link";
 import { getRelativeTime } from "@/utils/relativeTime";
+import service from "@/helper/service.helper";
+import { toast } from "react-hot-toast/headless";
 
 export default function ViewJobDetails() {
   const router = useRouter();
@@ -20,6 +22,32 @@ export default function ViewJobDetails() {
       ? `${jobDetails.salary_range.min} - ${jobDetails.salary_range.max} ${jobDetails.salary_type}`
       : null,
   ].filter(Boolean);
+
+  const handleApplySubmit = async () => {
+    // Open the link immediately
+    if (jobDetails?.company_website) {
+      window.open(jobDetails.company_website, '_blank', 'noopener,noreferrer');
+    } else {
+      router.push("/jobs");
+    }
+
+    // If it's a job posted by admin, submit application in the background
+    if (jobDetails?.postedByAdmin) {
+      const payload = {
+        jobId: jobDetails?._id,
+      } as any;
+
+      // Don't await - let it run in background
+      handleResumeSubmitWithPayload(payload);
+    }
+  };
+
+  const handleResumeSubmitWithPayload = async (body: any) => {
+    const res = await service.fetcher(`/job/job-application`, "POST", {
+      data: body,
+      withCredentials: true,
+    });
+  };
 
   return (
     <main className="px-6 py-8 lg:px-[10rem]">
@@ -70,7 +98,12 @@ export default function ViewJobDetails() {
           <h2 className="font-bold text-xl my-4">Requirements</h2>
           <p className="leading-relaxed">{jobDetails?.requirements}</p>
 
-          {jobDetails?.postedByAdmin && <p className="mt-10">Note: In order to apply, click on the button to visit the company site.</p>}
+          {jobDetails?.postedByAdmin && (
+            <p className="mt-10">
+              Note: In order to apply, click on the button to visit the company
+              site.
+            </p>
+          )}
         </div>
 
         {/* Right Card */}
@@ -105,19 +138,15 @@ export default function ViewJobDetails() {
               )}
             </div>
             {jobDetails?.company_website ? (
-              <a
-                href={jobDetails.company_website}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="mt-6 block w-full"
+              <button
+                onClick={handleApplySubmit}
+                className="mt-6 w-full bg-purple-600 text-center text-white py-2 rounded-lg hover:bg-purple-700 transition"
               >
-                <div className="w-full bg-purple-600 text-center text-white py-2 rounded-lg hover:bg-purple-700 transition">
-                  <b> Visit Company Site</b>
-                </div>
-              </a>
+                <b> Visit Company Site</b>
+              </button>
             ) : (
               <button
-                onClick={() => router.push("/jobs")}
+                onClick={handleApplySubmit}
                 className="mt-6 w-full bg-gray-300 text-center text-gray-700 py-2 rounded-lg transition"
               >
                 <b> Visit Company</b>
