@@ -44,7 +44,7 @@ export default function TalentDetails() {
                 >
                   <div className="relative w-22 h-22 rounded-full overflow-hidden border-4 border-white/30 mb-4 shadow-md">
                     <Image
-                      src={userDetails.avatar}
+                      src={userDetails.avatar || "https://res.cloudinary.com/dk06cndku/image/upload/v1762076415/placeholder_hwkwwj.png"}
                       alt="User Avatar"
                       fill
                       className="object-cover"
