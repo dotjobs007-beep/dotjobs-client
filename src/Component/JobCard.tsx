@@ -69,7 +69,7 @@ export default function JobCard({
           <p className="text-[12px] text-white font-medium">
             Salary:{" "}
             {salaryRange
-              ? `${salaryRange.min} - ${salaryRange.max} ${salaryType?.toLocaleUpperCase()}`
+              ? `${salaryRange.min?.toLocaleString()} - ${salaryRange.max?.toLocaleString()} ${salaryType?.toLocaleUpperCase()}`
               : "Not specified"}
           </p>
 
