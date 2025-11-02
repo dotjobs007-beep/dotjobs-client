@@ -315,6 +315,8 @@ export interface IPublicService {
   page: number;
   limit: number;
   sortBy?: string;
+  totalUsers?: number;
+  totalPages?: number;
 }
 
 export interface IJobsDetails {
