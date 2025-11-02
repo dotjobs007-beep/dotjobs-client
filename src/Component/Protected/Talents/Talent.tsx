@@ -52,18 +52,27 @@ export default function Talents() {
         return;
       }
 
-      // server returns { data: { data: users, pagination } }
+      // server returns { user: users[], page, limit, sortBy }
       const payload = res.data ?? res; // defensive
-      const list = payload.user ?? payload; // defensive
+      
+      // Extract users array
+      const usersData = payload.user ?? [];
 
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-      const usersData = Array.isArray(list) ? list : list.data ?? [];
-      // try pagination in different shapes
-      const pag = (payload.pagination ||
-        (list.pagination ?? null)) as IPagination | null;
+      // Build pagination object from individual fields
+      const totalUsers = payload.totalUsers ?? 0;
+      const currentPage = payload.page ?? pageNum;
+      const pageSize = payload.limit ?? 10;
+      const totalPages = Math.ceil(totalUsers / pageSize);
+
+      const pag: IPagination = {
+        totalUsers,
+        totalPages,
+        currentPage,
+        pageSize,
+      };
 
       setUsers(usersData as IUser[]);
-      setPagination(pag ?? null);
+      setPagination(pag);
       setPage(pageNum);
     } finally {
       setLoading(false);
