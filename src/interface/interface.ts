@@ -173,9 +173,9 @@ export interface IJobApplicant {
 }
 
 // -----------------------------
-// ✅ Pagination Info
+// ✅ Pagination Info for Applications
 // -----------------------------
-export interface IPagination {
+export interface IApplicationPagination {
   totalApplications: number;
   totalPages: number;
   currentPage: number;
@@ -187,7 +187,7 @@ export interface IPagination {
 // -----------------------------
 export interface IApplicantListResponse {
   data: IJobApplicant[];
-  pagination: IPagination;
+  pagination: IApplicationPagination;
 }
 
 export interface IUpdateProfile {
@@ -316,6 +316,7 @@ export interface IPublicService {
   limit: number;
   sortBy?: string;
   totalUsers?: number;
+  totalJobs?: number;
   totalPages?: number;
 }
 

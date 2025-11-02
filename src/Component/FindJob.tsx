@@ -8,6 +8,7 @@ import {
   IJob,
   IJobResponse,
   IPagination,
+  IPublicService,
 } from "@/interface/interface";
 import service from "@/helper/service.helper";
 import { useRouter } from "next/navigation";
@@ -101,10 +102,9 @@ export default function Jobs() {
       // Debug: log the parameters being sent
       console.log("Fetching jobs with params:", params.toString());
       
-      const res: IApiResponse<IJobResponse> = await service.fetcher(
-        `/job/fetch-jobs?${params.toString()}`,
-        "GET",
-        { withCredentials: true }
+      const res: IApiResponse<IPublicService> = await service.fetcher(
+        `/public/jobs?${params.toString()}`,
+        "GET"
       );
 
       if (res.code === 401) {
@@ -118,8 +118,20 @@ export default function Jobs() {
         return;
       }
 
-      setJobs(res.data.data);
-      setPagination(res.data.pagination);
+      // Handle the public service response structure
+      const jobsData = res.data.job?.data || [];
+      const paginationData = res.data.job?.pagination;
+      
+      // Build pagination object with the additional fields from the top level
+      const pagination: IPagination | null = paginationData ? {
+        totalJobs: res.data.totalJobs || paginationData.totalJobs,
+        totalPages: res.data.totalPages || paginationData.totalPages,
+        currentPage: paginationData.currentPage,
+        pageSize: paginationData.pageSize,
+      } : null;
+
+      setJobs(jobsData);
+      setPagination(pagination);
       setPage(pageNum);
     } finally {
       setLoading(false);
