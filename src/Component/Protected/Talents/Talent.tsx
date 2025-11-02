@@ -149,7 +149,7 @@ export default function Talents() {
           {users.map((u) => (
             <Card key={u._id} className="p-4 flex gap-4 items-center">
               <img
-                src={u.avatar || "/Images/auth_img.png"}
+                src={u.avatar || "https://res.cloudinary.com/dk06cndku/image/upload/v1762076415/placeholder_hwkwwj.png"}
                 alt={u.name}
                 className="w-16 h-16 rounded-full object-cover"
               />
