@@ -100,7 +100,6 @@ export default function Jobs() {
       if (maxSalary) params.append("maxSalary", maxSalary);
       
       // Debug: log the parameters being sent
-      console.log("Fetching jobs with params:", params.toString());
       
       const res: IApiResponse<IPublicService> = await service.fetcher(
         `/public/jobs?${params.toString()}`,
@@ -129,6 +128,8 @@ export default function Jobs() {
         currentPage: paginationData.currentPage,
         pageSize: paginationData.pageSize,
       } : null;
+
+      console.log("Fetched Jobs:", jobsData);
 
       setJobs(jobsData);
       setPagination(pagination);
