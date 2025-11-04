@@ -70,11 +70,9 @@ export default function ActionButtons({
       }
       
       // Reset authentication states
-      console.log("Resetting auth states...");
       setUserDetails(null);
       setIsLoggedIn(false);
       
-      console.log("Logout completed successfully");
       toast.success("Logged out successfully");
       router.push("/auth/signin");
     } catch (error) {
@@ -100,6 +98,10 @@ export default function ActionButtons({
     closeMenu(); // Close menu on navigation
   };
 
+  const handleWalletConnect = async () => {
+    await polkadotWalletConnect();
+  }
+
   if (isLoggedIn) {
     return (
       <div className="flex justify-between gap-3">
@@ -115,7 +117,7 @@ export default function ActionButtons({
         ) : (
           <button
             onClick={() => {
-                polkadotWalletConnect();
+                handleWalletConnect();
             }}
             className="px-4 py-2 rounded-lg bg-purple-600 text-[12px] text-white font-medium hover:bg-purple-700 transition-colors"
           >

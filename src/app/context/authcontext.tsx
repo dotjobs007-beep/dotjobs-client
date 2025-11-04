@@ -1,12 +1,8 @@
 "use client";
 import { createContext, useContext, useEffect, useState } from "react";
-import { getRedirectResult, onAuthStateChanged } from "firebase/auth";
-import { auth } from "@/Firebase/firebase";
 import service from "@/helper/service.helper";
 import { IApiResponse, IUserDetails } from "@/interface/interface";
-import clientLogger from "@/utils/clientLogger";
 import { useRouter } from "next/navigation";
-import router from "next/dist/shared/lib/router/router";
 import { usePolkadotWallet } from "@/hooks/usePolkadotWallet";
 import toast from "react-hot-toast";
 
@@ -28,6 +24,8 @@ interface AuthContextType {
   isWalletMissing: boolean;
   theme?: "light" | "dark";
   setTheme: (theme: "light" | "dark") => void;
+  walletAddressOnLogin: string | null;
+  polkadotWalletConnectOnLogin: () => Promise<void>;
 }
 
 const AuthContext = createContext<AuthContextType | null>(null);
@@ -40,13 +38,10 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [ctxWalletAddress, setCtxWalletAddress] = useState<string | null>(null);
   const [isWalletMissing, setIsWalletMissing] = useState(false);
   const [theme, setTheme] = useState<"light" | "dark">("light");
-  const {
-    connectWallet,
-    walletAddress,
-    walletMissing,
-    isMobile,
-    disconnectWallet,
-  } = usePolkadotWallet();
+  const [walletAddressOnLogin, setWalletAddressOnLogin] = useState<
+    string | null
+  >(null);
+  const { connectWallet, disconnectWallet } = usePolkadotWallet();
   const [showMobileWalletConnect, setShowMobileWalletConnect] = useState(false);
   const router = useRouter();
   // Load login state from localStorage
@@ -66,9 +61,15 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const polkadotWalletConnect = async () => {
     // Use the result returned by connectWallet to avoid stale state
     const result = await connectWallet();
-
+    if (!result.walletAddress) {
+      clearWalletState();
+      return;
+    }
     if (result.walletAddress) {
       setShowMobileWalletConnect(false);
+      handleWalletConnected(result.walletAddress);
+      setCtxWalletAddress(result.walletAddress);
+      setIsWalletConnected(true);
       return;
     }
 
@@ -79,58 +80,40 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
     if (result.walletMissing && !result.isMobile) {
       setIsWalletMissing(true);
+      // toast.error("Wallet is missing");
     }
   };
 
   // Enhanced wallet cleanup function
   const clearWalletState = async () => {
-    console.log("Starting comprehensive wallet state cleanup...");
-    
     try {
       // Clear context state first (most important)
-      setCtxWalletAddress(null);
+      setCtxWalletAddress("");
+      setWalletAddressOnLogin("");
       setIsWalletConnected(false);
       setShowMobileWalletConnect(false);
       setIsWalletMissing(false);
       setConnectingWallet(false);
-      console.log("Auth context wallet states cleared");
-      
+
       // Call the hook's comprehensive disconnect function
       if (disconnectWallet) {
         await disconnectWallet();
-        console.log("Hook wallet disconnect completed");
       }
-      
+
       // Additional cleanup - force reset of any cached connection state
       try {
         localStorage.removeItem("walletConnectionState");
         sessionStorage.removeItem("walletConnectionState");
-        console.log("Additional connection state cleared");
       } catch (storageError) {
         console.warn("Error clearing additional storage:", storageError);
       }
-      
     } catch (error) {
       console.error("Error in clearWalletState:", error);
       // Don't throw, allow logout to continue even if wallet cleanup fails
     }
-    
-    console.log("Comprehensive wallet state cleanup completed");
   };
 
-  useEffect(() => {
-    // When walletAddress becomes available, handle post-connection steps
-    if (walletAddress) {
-      handleWalletConnected();
-    } else {
-      // If the hook reports no wallet, clear context state so UI updates
-      setCtxWalletAddress(null);
-      setIsWalletConnected(false);
-    }
-  }, [walletAddress]);
-
-  const handleWalletConnected = async () => {
-    if (!walletAddress) return;
+  const handleWalletConnected = async (walletAddress: string) => {
     setConnectingWallet(true);
     const response: IApiResponse<IUserDetails> = await service.fetcher(
       `/user/connect-wallet/${walletAddress}`,
@@ -153,6 +136,30 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     setIsWalletConnected(true);
   };
 
+  const polkadotWalletConnectOnLogin = async () => {
+    const result = await connectWallet();
+
+    if (result.walletAddress && isWalletConnected) {
+      clearWalletState();
+    }
+
+    if (result.walletAddress) {
+      setShowMobileWalletConnect(false);
+      setWalletAddressOnLogin(result.walletAddress);
+      setIsWalletConnected(true);
+      setCtxWalletAddress(result.walletAddress);
+      return;
+    }
+    // If no wallet address and mobile with wallet missing — show mobile deep link options
+    if (!result.walletAddress && result.walletMissing && result.isMobile) {
+      setShowMobileWalletConnect(true);
+    }
+
+    if (result.walletMissing && !result.isMobile) {
+      setIsWalletMissing(true);
+      // toast.error("Wallet is missing");
+    }
+  };
 
   return (
     <AuthContext.Provider
@@ -173,6 +180,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         isWalletMissing,
         theme,
         setTheme,
+        walletAddressOnLogin,
+        polkadotWalletConnectOnLogin,
       }}
     >
       {children}

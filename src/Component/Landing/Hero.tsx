@@ -166,7 +166,6 @@ export default function Hero() {
                 priority={index === 0}
                 sizes="100vw"
                 onError={(e) => {
-                  console.log(`Failed to load image at index ${index}:`, image);
                   setFailedImages(prev => new Set([...prev, index]));
                 }}
               />

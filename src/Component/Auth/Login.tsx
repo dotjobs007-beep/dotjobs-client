@@ -32,25 +32,26 @@ export default function SignIn() {
   const [menuOpen, setMenuOpen] = useState(false);
   const [isLoadingWallet, setIsLoadingWallet] = useState(false);
   const router = useRouter();
+  const [isLoginSuccess, setIsLoginSuccess] = useState(false);
 
   const {
+    isLoggedIn,
     setIsLoggedIn,
     setUserDetails,
-    ctxWalletAddress,
+    walletAddressOnLogin,
     showMobileWalletConnect,
-    polkadotWalletConnect,
+    polkadotWalletConnectOnLogin
   } = useAuth();
 
   const closeMenu = () => setMenuOpen(false);
 
-  console.log("Wallet Address in SignIn:", ctxWalletAddress);
 
   const img =
     theme === "dark"
       ? "/Images/auth_img_dark.png"
       : "/Images/auth_img_light.png";
 
-    const handleAuthentication = async (token: string) => {
+    const handleAuthentication = async (walletAddressOnLogin: string) => {
 
     setIsLoadingWallet(true);
     try {
@@ -59,7 +60,7 @@ export default function SignIn() {
            "POST",
            {
              data: {
-              address: ctxWalletAddress,
+              address: walletAddressOnLogin,
              },
              withCredentials: true,
            }
@@ -71,6 +72,7 @@ export default function SignIn() {
         setIsLoggedIn(true);
         setUserDetails(response.data.user);
         router.push("/jobs");
+        setIsLoginSuccess(true)
       } else {
         toast.error(response.message);
       }
@@ -81,11 +83,14 @@ export default function SignIn() {
     }
   };
 
+
 useEffect(() => {
-    if (ctxWalletAddress) {
-      handleAuthentication(ctxWalletAddress);
+    // Only trigger wallet authentication if user is not already logged in
+    // This prevents automatic login attempts when wallet is connected from other pages
+    if (walletAddressOnLogin && !isLoggedIn) {
+      handleAuthentication(walletAddressOnLogin);
     }
-}, [ctxWalletAddress]);
+}, [walletAddressOnLogin]);
 
 
 
@@ -191,12 +196,12 @@ useEffect(() => {
         ) : (
           <button
             onClick={() => {
-              polkadotWalletConnect();
+              polkadotWalletConnectOnLogin();
             }}
             className="px-4 py-2 rounded-lg bg-purple-600 text-[12px] mt-5 text-white font-medium hover:bg-purple-700 transition-colors"
           >
-            {ctxWalletAddress
-              ? `${ctxWalletAddress.slice(0, 6)}...${ctxWalletAddress.slice(
+            {walletAddressOnLogin && isLoginSuccess
+              ? `${walletAddressOnLogin.slice(0, 6)}...${walletAddressOnLogin.slice(
                   -4
                 )}`
               : "Connect Wallet To Sign In"}

@@ -20,34 +20,25 @@ export function usePolkadotWallet() {
       return { walletAddress: null, walletMissing: false, isMobile };
     }
 
-    try {
-      console.log("Starting fresh wallet connection...");
-      
+    try {      
       const { web3Enable, web3Accounts, web3AccountsSubscribe } = await import("@polkadot/extension-dapp");
       
       // Clear any existing cache by enabling with a fresh request
-      console.log("Enabling extension access...");
       const extensions = await web3Enable("DotJobs Platform");
       
       if (extensions.length === 0) {
-        console.log("No extensions found");
         setWalletMissing(true);
         return { walletAddress: null, walletMissing: true, isMobile };
       }
       
-      console.log("Extensions found:", extensions.length);
 
       // Get fresh accounts list - this should prompt user to select accounts if needed
-      console.log("Fetching accounts...");
       const accounts = await web3Accounts();
       
       if (accounts.length === 0) {
-        console.log("No accounts found or user denied access");
         setInitialized(true);
         return { walletAddress: null, walletMissing: false, isMobile };
       }
-
-      console.log("Accounts found:", accounts.length);
       
       // For now, use the first account, but this will prompt user to authorize if not cached
       const selectedAddress = accounts[0].address;
@@ -55,32 +46,26 @@ export function usePolkadotWallet() {
       setWalletMissing(false);
 
       // Store only after successful connection
-      localStorage.setItem("polkadotWalletAddress", selectedAddress);
-      console.log("Wallet connected successfully:", selectedAddress);
-      
+      localStorage.setItem("polkadotWalletAddress", selectedAddress);      
       return { walletAddress: selectedAddress, walletMissing: false, isMobile };
     } catch (err) {
-      console.error("Wallet connection error:", err);
       setWalletMissing(true);
       return { walletAddress: null, walletMissing: true, isMobile };
     }
   };
 
   const disconnectWallet = async () => {
-    console.log("Starting comprehensive wallet disconnect...");
     
     // Clear all local state first (most important)
     setWalletAddress(null);
     setWalletMissing(false);
     setInitialized(false);
-    console.log("Local wallet state cleared");
     
     // Remove ALL wallet-related items from storage
     try {
       localStorage.removeItem("polkadotWalletAddress");
       localStorage.removeItem("walletjs:connected");
       localStorage.removeItem("walletconnect");
-      console.log("LocalStorage cleaned");
     } catch (error) {
       console.warn("Error clearing localStorage:", error);
     }
@@ -91,14 +76,12 @@ export function usePolkadotWallet() {
       sessionStorage.removeItem("walletConnection");
       sessionStorage.removeItem("walletjs:connected");
       sessionStorage.removeItem("extensionAccess");
-      console.log("SessionStorage cleaned");
     } catch (error) {
       console.warn("Error clearing session storage:", error);
     }
 
     // Force clear extension connection cache
     try {
-      console.log("Clearing extension cache...");
       const { web3Enable } = await import("@polkadot/extension-dapp");
       
       // Try to reset the extension connection by re-enabling with different params
@@ -120,13 +103,11 @@ export function usePolkadotWallet() {
         }
       }
       
-      console.log("Extension cache clearing attempted");
     } catch (error) {
       console.warn("Error clearing extension cache (this is optional):", error);
       // Don't throw, this is optional cleanup
     }
     
-    console.log("Comprehensive wallet disconnect completed");
   };
 
   // Note: Removed automatic restoration to allow fresh wallet selection after logout
