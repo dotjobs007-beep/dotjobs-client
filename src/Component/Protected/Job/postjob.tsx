@@ -170,13 +170,6 @@ export default function PostJob() {
 
     try {
       // Debug environment variables
-      console.log("Base URL:", process.env.NEXT_PUBLIC_BASE_URL);
-      console.log("Secret Key available:", !!process.env.NEXT_PUBLIC_SECRET_KEY);
-      console.log("User authenticated:", !!localStorage.getItem("dottoken"));
-      
-      // Log the request body for debugging
-      console.log("Submitting job with data:", body);
-
       const res: IApiResponse<any> = await service.fetcher(
         "/job/post-job",
         "POST",
@@ -185,8 +178,6 @@ export default function PostJob() {
           withCredentials: true,
         }
       );
-
-      console.log("API Response:", res);
 
       if (res.code === 401) {
         toast.error("Authentication required. Please sign in again.");

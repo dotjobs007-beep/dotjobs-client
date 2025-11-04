@@ -129,8 +129,6 @@ export default function Jobs() {
         pageSize: paginationData.pageSize,
       } : null;
 
-      console.log("Fetched Jobs:", jobsData);
-
       setJobs(jobsData);
       setPagination(pagination);
       setPage(pageNum);
