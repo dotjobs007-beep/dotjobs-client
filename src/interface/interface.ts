@@ -141,11 +141,13 @@ export interface IApplicantUser {
   address?: string;
   skill?: string[];
   verified_onchain: boolean;
+  onchain_status?: string;
   linkedInProfile?: string;
+  xProfile?: string;
+  githubProfile?: string;
   gender?: string;
   ethnicity?: string;
   primaryLanguage?: string;
-  xProfile?: string;
 }
 
 // -----------------------------
@@ -329,3 +331,147 @@ export interface IJobsDetails {
     pageSize: number
   }
 }
+
+// Ambassador Program interfaces
+export interface IAmbassador {
+  _id?: string;
+  title: string;
+  description: string;
+  requirements: string;
+  responsibilities: string;
+  benefits?: string;
+  is_active?: boolean;
+  category?: string;
+  postedByAdmin?: boolean;
+
+  program_type:
+    | "community"
+    | "marketing"
+    | "technical"
+    | "regional"
+    | "content"
+    | "developer-relations";
+
+  commitment_level: "full-time" | "part-time" | "flexible";
+
+  duration: "ongoing" | "3-months" | "6-months" | "1-year" | "project-based";
+
+  compensation_type: "paid" | "unpaid" | "token-based" | "perks-only" | "mixed";
+
+  compensation_details?: string;
+
+  company_name: string;
+  company_website?: string;
+  company_description?: string;
+  company_location: string;
+  applicantCount?: number;
+  logo?: string;
+  
+  // Social handles
+  twitter_handle?: string;
+  telegram_handle?: string;
+  discord_handle?: string;
+  facebook_handle?: string;
+  
+  application_deadline?: string;
+  max_ambassadors?: number;
+  createdAt?: string;
+  updatedAt?: string;
+}
+
+export interface IAmbassadorApplication {
+  ambassadorId: string;
+  resume?: string;
+  linkedInProfile?: string;
+  xProfile?: string;
+  motivation?: string;
+  relevantExperience?: string;
+  socialMediaLinks?: string;
+  fullName?: string;
+  contactMethod?: string;
+  contactHandle?: string;
+  polkadotExperience?: boolean;
+  polkadotDescription?: string;
+  portfolioLink?: string;
+  status?: "pending" | "reviewed" | "accepted" | "rejected";
+}
+
+export interface IAmbassadorPagination {
+  currentPage: number;
+  pageSize: number;
+  totalAmbassadors: number;
+  totalPages: number;
+}
+
+export interface IAmbassadorsDetails {
+  data: IAmbassador[];
+  pagination: IAmbassadorPagination;
+}
+
+export interface IAmbassadorPublicService {
+  ambassador: IAmbassadorsDetails;
+  page: number;
+  limit: number;
+  sortBy?: string;
+  totalAmbassadors?: number;
+  totalPages?: number;
+}
+
+export interface IAmbassadorApplicant {
+  _id: string;
+  ambassadorId: string;
+  applicantId: IApplicantUser;
+  status: ApplicationStatus;
+  linkedInProfile?: string;
+  motivation?: string;
+  relevantExperience?: string;
+  socialMediaLinks?: string;
+  fullName?: string;
+  contactMethod?: string;
+  contactHandle?: string;
+  polkadotExperience?: boolean;
+  polkadotDescription?: string;
+  portfolioLink?: string;
+  xProfile?: string;
+  resume?: string;
+  appliedAt: string;
+  createdAt: string;
+  updatedAt: string;
+}
+
+// Ambassador Application with populated ambassador details (for user's applications)
+export interface IMyAmbassadorApplication {
+  _id: string;
+  ambassadorId: {
+    _id: string;
+    title: string;
+    company_name: string;
+    logo?: string;
+    program_type: string;
+  };
+  applicantId: string;
+  resume?: string;
+  linkedInProfile?: string;
+  xProfile?: string;
+  motivation?: string;
+  relevantExperience?: string;
+  socialMediaLinks?: string;
+  fullName?: string;
+  contactMethod?: string;
+  contactHandle?: string;
+  polkadotExperience?: boolean;
+  polkadotDescription?: string;
+  portfolioLink?: string;
+  status: "pending" | "reviewed" | "accepted" | "rejected";
+  appliedAt: string;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface IAmbassadorsAppliedResponse {
+  status: string;
+  code: number;
+  message: string;
+  data: IMyAmbassadorApplication[];
+}
+
