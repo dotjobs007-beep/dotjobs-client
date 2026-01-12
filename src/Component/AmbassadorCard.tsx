@@ -88,30 +88,30 @@ export default function AmbassadorCard({
               color: primaryColor
             }}
           >
-            🎯 {programType}
+            {programType}
           </span>
 
           {/* Commitment Level */}
           <p className="text-[12px] text-white font-medium">
-            ⏱️ {commitmentLevel}
+            {commitmentLevel}
           </p>
 
           {/* Duration */}
           {duration && (
             <p className="text-[12px] text-white font-medium">
-              📅 {duration}
+            {duration}
             </p>
           )}
 
           {/* Compensation */}
           <p className="text-[12px] text-white font-medium">
-            💰 {compensationType}
+            {compensationType}
           </p>
 
           {/* Applicant Count */}
           {applicantCount !== undefined && (
             <p className="text-[12px] text-white font-medium">
-              👥 {applicantCount} applicants
+              {applicantCount} applicants
             </p>
           )}
         </div>
