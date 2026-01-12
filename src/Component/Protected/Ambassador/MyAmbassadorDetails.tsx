@@ -47,6 +47,8 @@ export default function MyAmbassadorDetails() {
   const [fetchingApplicants, setFetchingApplicants] = useState(false);
   const [selected, setSelected] = useState<IAmbassadorApplicant | null>(null);
   const [isUpdating, setIsUpdating] = useState(false);
+  const [isDeleting, setIsDeleting] = useState(false);
+  const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
 
   const primaryColor = theme === "dark" ? "#7F13EC" : "#AE1E67";
 
@@ -120,6 +122,30 @@ export default function MyAmbassadorDetails() {
   const openModal = () => {
     setShowModal(true);
     if (applicants.length === 0) fetchApplicants(1);
+  };
+
+  // Delete Ambassador
+  const deleteAmbassador = async () => {
+    if (!ambassador) return;
+    setIsDeleting(true);
+    try {
+      const res = await service.fetcher(
+        `/ambassador/delete-ambassador/${ambassador._id}`,
+        "DELETE",
+        { withCredentials: true }
+      );
+      if (res.code === 200 || res.status === "success") {
+        toast.success("Ambassador program deleted successfully");
+        router.replace("/jobs/my_ambassadors");
+      } else {
+        toast.error(res.message || "Failed to delete ambassador program");
+      }
+    } catch {
+      toast.error("Failed to delete ambassador program");
+    } finally {
+      setIsDeleting(false);
+      setShowDeleteConfirm(false);
+    }
   };
 
   // Accept / Reject / Review Applicant
@@ -232,6 +258,18 @@ export default function MyAmbassadorDetails() {
               >
                 <Users size={12} /> View Applicants ({ambassador.applicantCount || 0})
               </button>
+              <button
+                onClick={() => router.push(`/jobs/edit_ambassador/${ambassador._id}`)}
+                className="flex items-center gap-1 bg-blue-600 text-white px-3 py-1.5 rounded text-xs font-medium shadow hover:bg-blue-700 transition"
+              >
+                Edit Program
+              </button>
+              <button
+                onClick={() => setShowDeleteConfirm(true)}
+                className="flex items-center gap-1 bg-red-600 text-white px-3 py-1.5 rounded text-xs font-medium shadow hover:bg-red-700 transition"
+              >
+                Delete Program
+              </button>
             </div>
           </div>
         </div>
@@ -330,7 +368,13 @@ export default function MyAmbassadorDetails() {
                       </div>
                       <div>
                         <p className="font-medium text-gray-900 dark:text-white">{applicant.applicantId?.name || "Unknown"}</p>
-                        <p className="text-xs text-gray-500 dark:text-gray-400">{applicant.applicantId?.email}</p>
+                        <p className="text-xs text-gray-500 dark:text-gray-400">
+                          {applicant.contactMethod && applicant.contactHandle ? (
+                            <span className="capitalize">{applicant.contactMethod}: {applicant.contactHandle}</span>
+                          ) : (
+                            applicant.applicantId?.email
+                          )}
+                        </p>
                         <span
                           className={`text-xs px-2 py-0.5 rounded-full ${
                             applicant.status === "accepted"
@@ -437,6 +481,57 @@ export default function MyAmbassadorDetails() {
               </div>
 
               {/* Contact Info */}
+              {selected.contactMethod && selected.contactHandle && (
+                <div className="p-3 rounded-lg bg-purple-50 dark:bg-purple-900/30 border border-purple-200 dark:border-purple-800">
+                  <p className="text-xs text-purple-600 dark:text-purple-400 font-medium mb-1">Preferred Contact Method</p>
+                  <div className="flex items-center gap-2">
+                    <span className="capitalize font-semibold text-purple-700 dark:text-purple-300">{selected.contactMethod}:</span>
+                    <span className="font-medium dark:text-white">{selected.contactHandle}</span>
+                  </div>
+                </div>
+              )}
+
+              {/* Brief Introduction */}
+              {selected.briefIntroduction && (
+                <div className="p-3 rounded-lg bg-blue-50 dark:bg-blue-900/30 border border-blue-200 dark:border-blue-800">
+                  <p className="text-xs text-blue-600 dark:text-blue-400 font-medium mb-1">Brief Introduction</p>
+                  <p className="text-sm text-gray-700 dark:text-gray-300 whitespace-pre-wrap">{selected.briefIntroduction}</p>
+                </div>
+              )}
+
+              {/* Application Social Handles */}
+              {(selected.discordHandle || selected.telegramHandle || selected.twitterHandle || selected.githubHandle) && (
+                <div>
+                  <p className="text-xs text-gray-500 dark:text-gray-400 mb-2">Applicant Social Handles</p>
+                  <div className="grid grid-cols-2 gap-2 text-sm">
+                    {selected.discordHandle && (
+                      <div className="p-2 rounded bg-gray-50 dark:bg-gray-800">
+                        <span className="text-xs text-gray-500">Discord:</span>
+                        <p className="font-medium dark:text-white">{selected.discordHandle}</p>
+                      </div>
+                    )}
+                    {selected.telegramHandle && (
+                      <div className="p-2 rounded bg-gray-50 dark:bg-gray-800">
+                        <span className="text-xs text-gray-500">Telegram:</span>
+                        <p className="font-medium dark:text-white">{selected.telegramHandle}</p>
+                      </div>
+                    )}
+                    {selected.twitterHandle && (
+                      <div className="p-2 rounded bg-gray-50 dark:bg-gray-800">
+                        <span className="text-xs text-gray-500">Twitter/X:</span>
+                        <p className="font-medium dark:text-white">{selected.twitterHandle}</p>
+                      </div>
+                    )}
+                    {selected.githubHandle && (
+                      <div className="p-2 rounded bg-gray-50 dark:bg-gray-800">
+                        <span className="text-xs text-gray-500">GitHub:</span>
+                        <p className="font-medium dark:text-white">{selected.githubHandle}</p>
+                      </div>
+                    )}
+                  </div>
+                </div>
+              )}
+
               <div>
                 <p className="text-xs text-gray-500 dark:text-gray-400">Email</p>
                 <p className="font-medium dark:text-white">{selected.applicantId?.email || "N/A"}</p>
@@ -605,6 +700,34 @@ export default function MyAmbassadorDetails() {
                 className="flex-1 py-2 rounded-lg bg-red-600 text-white font-medium disabled:opacity-50"
               >
                 Reject
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Delete Confirmation Modal */}
+      {showDeleteConfirm && (
+        <div className="fixed inset-0 bg-black/50 flex justify-center items-center z-50">
+          <div className="bg-white dark:bg-gray-800 rounded-lg p-6 max-w-sm w-full mx-4 shadow-xl">
+            <h3 className="text-lg font-semibold mb-2">Delete Ambassador Program</h3>
+            <p className="text-gray-600 dark:text-gray-400 text-sm mb-4">
+              Are you sure you want to delete this ambassador program? This action cannot be undone and will also delete all applications.
+            </p>
+            <div className="flex gap-3">
+              <button
+                onClick={() => setShowDeleteConfirm(false)}
+                className="flex-1 px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 transition"
+                disabled={isDeleting}
+              >
+                Cancel
+              </button>
+              <button
+                onClick={deleteAmbassador}
+                className="flex-1 px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition"
+                disabled={isDeleting}
+              >
+                {isDeleting ? "Deleting..." : "Delete"}
               </button>
             </div>
           </div>

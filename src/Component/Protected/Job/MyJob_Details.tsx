@@ -28,6 +28,8 @@ export default function MyJobDetails() {
   const [fetchingApplicants, setFetchingApplicants] = useState(false);
   const [selected, setSelected] = useState<IJobApplicant | null>(null);
   const [isUpdating, setIsUpdating] = useState(false);
+  const [isDeleting, setIsDeleting] = useState(false);
+  const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
 
   // ✅ Fetch Job
   const fetchJobDetails = async () => {
@@ -86,6 +88,30 @@ export default function MyJobDetails() {
   const openModal = () => {
     setShowModal(true);
     if (applicants.length === 0) fetchApplicants(1);
+  };
+
+  // ✅ Delete Job
+  const deleteJob = async () => {
+    if (!job) return;
+    setIsDeleting(true);
+    try {
+      const res = await service.fetcher(
+        `/job/delete-job/${job._id}`,
+        "DELETE",
+        { withCredentials: true }
+      );
+      if (res.code === 200 || res.status === "success") {
+        toast.success("Job deleted successfully");
+        router.replace("/jobs/my_jobs");
+      } else {
+        toast.error(res.message || "Failed to delete job");
+      }
+    } catch {
+      toast.error("Failed to delete job");
+    } finally {
+      setIsDeleting(false);
+      setShowDeleteConfirm(false);
+    }
   };
 
   // ✅ Accept / Reject Applicant
@@ -189,7 +215,7 @@ export default function MyJobDetails() {
               {job.is_active ? "Active" : "Closed"}
             </span>
           </div>
-          <div className="mt-2 flex gap-2">
+          <div className="mt-2 flex gap-2 flex-wrap">
             <a
               href={job.company_website}
               target="_blank"
@@ -203,6 +229,18 @@ export default function MyJobDetails() {
               className="bg-gray-800 text-white px-3 py-1.5 rounded text-xs font-medium shadow hover:bg-gray-900 transition"
             >
               View Applicants
+            </button>
+            <button
+              onClick={() => router.push(`/jobs/edit_job/${job._id}`)}
+              className="bg-blue-600 text-white px-3 py-1.5 rounded text-xs font-medium shadow hover:bg-blue-700 transition"
+            >
+              Edit Job
+            </button>
+            <button
+              onClick={() => setShowDeleteConfirm(true)}
+              className="bg-red-600 text-white px-3 py-1.5 rounded text-xs font-medium shadow hover:bg-red-700 transition"
+            >
+              Delete Job
             </button>
           </div>
         </div>
@@ -569,6 +607,34 @@ export default function MyJobDetails() {
               </button>
             </div>
           </Card>
+        </div>
+      )}
+
+      {/* ✅ Delete Confirmation Modal */}
+      {showDeleteConfirm && (
+        <div className="fixed inset-0 bg-black/50 flex justify-center items-center z-50">
+          <div className="bg-white rounded-lg p-6 max-w-sm w-full mx-4 shadow-xl">
+            <h3 className="text-lg font-semibold text-gray-900 mb-2">Delete Job</h3>
+            <p className="text-gray-600 text-sm mb-4">
+              Are you sure you want to delete this job? This action cannot be undone and will also delete all applications.
+            </p>
+            <div className="flex gap-3">
+              <button
+                onClick={() => setShowDeleteConfirm(false)}
+                className="flex-1 px-4 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 transition"
+                disabled={isDeleting}
+              >
+                Cancel
+              </button>
+              <button
+                onClick={deleteJob}
+                className="flex-1 px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition"
+                disabled={isDeleting}
+              >
+                {isDeleting ? "Deleting..." : "Delete"}
+              </button>
+            </div>
+          </div>
         </div>
       )}
     </div>

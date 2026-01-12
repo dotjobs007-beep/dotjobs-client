@@ -434,6 +434,11 @@ export interface IAmbassadorApplicant {
   portfolioLink?: string;
   xProfile?: string;
   resume?: string;
+  briefIntroduction?: string;
+  discordHandle?: string;
+  telegramHandle?: string;
+  twitterHandle?: string;
+  githubHandle?: string;
   appliedAt: string;
   createdAt: string;
   updatedAt: string;
