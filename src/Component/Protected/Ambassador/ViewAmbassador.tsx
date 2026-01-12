@@ -2,7 +2,7 @@
 
 import Card from "../../Card";
 import Image from "next/image";
-import { ArrowRight, Bookmark, Users, Clock, Calendar, DollarSign, MapPin, ExternalLink, MessageCircle, Send, Facebook } from "lucide-react";
+import { ArrowRight, Bookmark, Users, Clock, Calendar, DollarSign, MapPin, ExternalLink, MessageCircle, Send, Facebook, X } from "lucide-react";
 
 // X (Twitter) Icon Component
 const XIcon = ({ className }: { className?: string }) => (
@@ -25,15 +25,66 @@ import { useAuth } from "@/app/context/authcontext";
 import { IAmbassador, IApiResponse } from "@/interface/interface";
 import { toast } from "react-hot-toast";
 
+interface ApplicationFormData {
+  briefIntroduction: string;
+  contactMethod: string;
+  contactHandle: string;
+  discordHandle: string;
+  telegramHandle: string;
+  twitterHandle: string;
+  githubHandle: string;
+}
+
 export default function ViewAmbassadorDetails() {
   const router = useRouter();
   const params = useParams();
-  const { theme, isLoggedIn } = useAuth();
+  const { theme, isLoggedIn, userDetails } = useAuth();
   const [ambassador, setAmbassador] = useState<IAmbassador | null>(null);
   const [loading, setLoading] = useState(true);
   const [applying, setApplying] = useState(false);
+  const [showApplicationModal, setShowApplicationModal] = useState(false);
+  const [formData, setFormData] = useState<ApplicationFormData>({
+    briefIntroduction: "",
+    contactMethod: "email",
+    contactHandle: "",
+    discordHandle: "",
+    telegramHandle: "",
+    twitterHandle: "",
+    githubHandle: "",
+  });
 
   const primaryColor = theme === "dark" ? "#7F13EC" : "#AE1E67";
+
+  // Get placeholder and label for contact handle based on selected method
+  const getContactInputProps = () => {
+    switch (formData.contactMethod) {
+      case "email":
+        return { placeholder: "your.email@example.com", label: "Email Address", type: "email" };
+      case "phone":
+        return { placeholder: "+1234567890", label: "Phone Number", type: "tel" };
+      case "discord":
+        return { placeholder: "username#1234", label: "Discord Username", type: "text" };
+      case "telegram":
+        return { placeholder: "@username", label: "Telegram Handle", type: "text" };
+      case "twitter":
+        return { placeholder: "@username", label: "Twitter/X Handle", type: "text" };
+      default:
+        return { placeholder: "Contact info", label: "Contact", type: "text" };
+    }
+  };
+
+  // Pre-populate form with user details when modal opens
+  useEffect(() => {
+    if (showApplicationModal && userDetails) {
+      setFormData((prev) => ({
+        ...prev,
+        briefIntroduction: prev.briefIntroduction || userDetails.about || "",
+        contactHandle: prev.contactHandle || userDetails.email || "",
+        twitterHandle: prev.twitterHandle || userDetails.xProfile || "",
+        githubHandle: prev.githubHandle || userDetails.githubProfile || "",
+      }));
+    }
+  }, [showApplicationModal, userDetails]);
 
   useEffect(() => {
     const fetchAmbassador = async () => {
@@ -61,10 +112,32 @@ export default function ViewAmbassadorDetails() {
     }
   }, [params.id, router]);
 
-  const handleApply = async () => {
+  const handleApply = () => {
     if (!isLoggedIn) {
       toast.error("Please sign in to apply");
       router.push("/auth/signin");
+      return;
+    }
+    setShowApplicationModal(true);
+  };
+
+  const handleFormChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>
+  ) => {
+    const { name, value } = e.target;
+    setFormData((prev) => ({ ...prev, [name]: value }));
+  };
+
+  const handleSubmitApplication = async (e: React.FormEvent) => {
+    e.preventDefault();
+
+    if (!formData.briefIntroduction.trim()) {
+      toast.error("Please provide a brief introduction about yourself");
+      return;
+    }
+
+    if (!formData.contactHandle.trim()) {
+      toast.error("Please provide your contact information");
       return;
     }
 
@@ -74,13 +147,23 @@ export default function ViewAmbassadorDetails() {
         `/ambassador/ambassador-application`,
         "POST",
         {
-          data: { ambassadorId: ambassador?._id },
+          data: {
+            ambassadorId: ambassador?._id,
+            briefIntroduction: formData.briefIntroduction,
+            contactMethod: formData.contactMethod,
+            contactHandle: formData.contactHandle,
+            discordHandle: formData.discordHandle,
+            telegramHandle: formData.telegramHandle,
+            twitterHandle: formData.twitterHandle,
+            githubHandle: formData.githubHandle,
+          },
           withCredentials: true,
         }
       );
 
       if (res.status === "success") {
         toast.success("Application submitted successfully!");
+        setShowApplicationModal(false);
       } else {
         toast.error(res.message || "Failed to submit application");
       }
@@ -364,6 +447,153 @@ export default function ViewAmbassadorDetails() {
           )}
         </div>
       </div>
+
+      {/* Application Modal */}
+      {showApplicationModal && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+          <div className="bg-white dark:bg-gray-900 rounded-xl max-w-lg w-full max-h-[90vh] overflow-y-auto">
+            <div className="flex items-center justify-between p-4 border-b dark:border-gray-700">
+              <h2 className="text-xl font-bold dark:text-white">Apply for {ambassador.title}</h2>
+              <button
+                onClick={() => setShowApplicationModal(false)}
+                className="p-2 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-full transition"
+              >
+                <X size={20} className="text-gray-500" />
+              </button>
+            </div>
+
+            <form onSubmit={handleSubmitApplication} className="p-4 space-y-4">
+              {/* Brief Introduction */}
+              <div>
+                <label className="block text-sm font-medium mb-1 dark:text-white">
+                  Brief Introduction About Yourself <span className="text-red-500">*</span>
+                </label>
+                <textarea
+                  name="briefIntroduction"
+                  value={formData.briefIntroduction}
+                  onChange={handleFormChange}
+                  rows={4}
+                  placeholder="Tell us about yourself, your background, and why you'd be a great ambassador..."
+                  className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-purple-500 outline-none dark:bg-gray-800 dark:border-gray-700 dark:text-white"
+                  required
+                />
+              </div>
+
+              {/* Preferred Contact Method */}
+              <div>
+                <label className="block text-sm font-medium mb-1 dark:text-white">
+                  Preferred Contact Method
+                </label>
+                <select
+                  name="contactMethod"
+                  value={formData.contactMethod}
+                  onChange={handleFormChange}
+                  className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-purple-500 outline-none dark:bg-gray-800 dark:border-gray-700 dark:text-white"
+                >
+                  <option value="email">Email</option>
+                  <option value="phone">Phone Number</option>
+                  <option value="discord">Discord</option>
+                  <option value="telegram">Telegram</option>
+                  <option value="twitter">Twitter/X</option>
+                </select>
+              </div>
+
+              {/* Contact Handle Input */}
+              <div>
+                <label className="block text-sm font-medium mb-1 dark:text-white">
+                  {getContactInputProps().label} <span className="text-red-500">*</span>
+                </label>
+                <input
+                  type={getContactInputProps().type}
+                  name="contactHandle"
+                  value={formData.contactHandle}
+                  onChange={handleFormChange}
+                  placeholder={getContactInputProps().placeholder}
+                  className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-purple-500 outline-none dark:bg-gray-800 dark:border-gray-700 dark:text-white"
+                  required
+                />
+              </div>
+
+              {/* Social Media Handles Section */}
+              <div className="space-y-3">
+                <p className="text-sm font-medium dark:text-white">
+                  Social Media Handles
+                  <span className="text-gray-500 font-normal ml-1">(Add if not in your profile)</span>
+                </p>
+
+                <div className="grid grid-cols-2 gap-3">
+                  <div>
+                    <label className="block text-xs text-gray-500 mb-1">Discord</label>
+                    <input
+                      type="text"
+                      name="discordHandle"
+                      value={formData.discordHandle}
+                      onChange={handleFormChange}
+                      placeholder="username#1234"
+                      className="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-purple-500 outline-none text-sm dark:bg-gray-800 dark:border-gray-700 dark:text-white"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-xs text-gray-500 mb-1">Telegram</label>
+                    <input
+                      type="text"
+                      name="telegramHandle"
+                      value={formData.telegramHandle}
+                      onChange={handleFormChange}
+                      placeholder="@username"
+                      className="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-purple-500 outline-none text-sm dark:bg-gray-800 dark:border-gray-700 dark:text-white"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-xs text-gray-500 mb-1">Twitter/X</label>
+                    <input
+                      type="text"
+                      name="twitterHandle"
+                      value={formData.twitterHandle}
+                      onChange={handleFormChange}
+                      placeholder="@username"
+                      className="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-purple-500 outline-none text-sm dark:bg-gray-800 dark:border-gray-700 dark:text-white"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-xs text-gray-500 mb-1">GitHub</label>
+                    <input
+                      type="text"
+                      name="githubHandle"
+                      value={formData.githubHandle}
+                      onChange={handleFormChange}
+                      placeholder="username"
+                      className="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-purple-500 outline-none text-sm dark:bg-gray-800 dark:border-gray-700 dark:text-white"
+                    />
+                  </div>
+                </div>
+              </div>
+
+              {/* Submit Buttons */}
+              <div className="flex gap-3 pt-2">
+                <button
+                  type="button"
+                  onClick={() => setShowApplicationModal(false)}
+                  className="flex-1 px-4 py-2 border rounded-lg hover:bg-gray-50 dark:hover:bg-gray-800 transition dark:border-gray-700 dark:text-white"
+                >
+                  Cancel
+                </button>
+                <button
+                  type="submit"
+                  disabled={applying}
+                  className="flex-1 px-4 py-2 text-white rounded-lg transition disabled:opacity-50"
+                  style={{ background: primaryColor }}
+                >
+                  {applying ? "Submitting..." : "Submit Application"}
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
     </main>
   );
 }
